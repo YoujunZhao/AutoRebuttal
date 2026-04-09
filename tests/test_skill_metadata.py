@@ -3,7 +3,7 @@ import unittest
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-SKILL_DIR = ROOT / "skill" / "super-rebuttal"
+SKILL_DIR = ROOT / "skills" / "super-rebuttal"
 
 
 class SkillMetadataTest(unittest.TestCase):
@@ -17,12 +17,14 @@ class SkillMetadataTest(unittest.TestCase):
         self.assertTrue((SKILL_DIR / "examples" / "sample-input.md").exists())
 
     def test_skill_frontmatter_declares_name(self) -> None:
+        self.assertTrue((SKILL_DIR / "SKILL.md").exists())
         content = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
         self.assertTrue(content.startswith("---\n"))
         self.assertIn("name: super-rebuttal", content)
         self.assertIn("description:", content)
 
     def test_openai_metadata_keys_exist(self) -> None:
+        self.assertTrue((SKILL_DIR / "agents" / "openai.yaml").exists())
         content = (SKILL_DIR / "agents" / "openai.yaml").read_text(encoding="utf-8")
         self.assertIn("display_name:", content)
         self.assertIn("short_description:", content)
