@@ -2,6 +2,7 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .omx/
+.worktrees/
 dist/
 build/
 .DS_Store
