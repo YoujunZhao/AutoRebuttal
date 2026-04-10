@@ -9,12 +9,21 @@ description: Use when drafting a conference or journal rebuttal from a paper, re
 
 Turn a manuscript, a review set, and venue constraints into a rebuttal strategy and final response text.
 
+First-class input artifacts include one paper PDF plus zero or more review PDFs. When PDFs are used, extract text on a best-effort basis for text-based files and keep each review as a separate source item.
+
 Load the detailed references only when needed:
 
 - `references/input-contract.md` for accepted inputs and fallback modes
 - `references/venue-policies.md` for dated venue rules
 - `references/rebuttal-playbook.md` for issue extraction and drafting tactics
 - `references/source-notes.md` for research basis and source links
+
+## Supported Inputs
+
+- one paper PDF, or extracted manuscript text
+- zero or more review PDFs, or copied review text
+- venue and budget constraints
+- author notes about promises, limits, or forbidden claims
 
 ## Core Rules
 

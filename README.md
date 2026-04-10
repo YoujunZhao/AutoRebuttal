@@ -6,6 +6,8 @@ SuperRebuttal is a rebuttal workflow package for coding agents. It is shaped lik
 
 It is built for one job: help authors turn a paper, reviews, and explicit rebuttal constraints into a structured, evidence-first response without fabricating experiments, gains, or citations.
 
+The current package also supports review PDF ingestion, so a paper PDF and a review PDF can both be part of the working input bundle.
+
 ## What It Is
 
 SuperRebuttal is not just a copied skill folder. It is a small rebuttal package that is meant to be installed, then invoked as a workflow.
@@ -24,7 +26,7 @@ SuperRebuttal starts from the moment an author brings a paper and reviews into t
 In practice, the flow is:
 
 1. install the package in the host tool
-2. provide manuscript context and reviews
+2. provide manuscript context, paper PDFs, and review PDF files when available
 3. determine the response format and budget
 4. cluster shared reviewer concerns
 5. produce a strategy-first response map
@@ -39,13 +41,15 @@ Installation differs by host tool. Today, the repository only presents two insta
 
 ### Codex
 
-Tell Codex:
+The repo-level manager CLI performs real filesystem install/update/remove operations against the Codex user-home skill path:
 
-```text
-Fetch and follow instructions from https://raw.githubusercontent.com/YoujunZhao/SuperRebuttal/refs/heads/codex/plugin-first-redesign/.codex/INSTALL.md
+```bash
+python scripts/superrebuttal_manager.py codex install
+python scripts/superrebuttal_manager.py codex update
+python scripts/superrebuttal_manager.py codex remove
 ```
 
-Manual Codex setup is documented in [`.codex/INSTALL.md`](.codex/INSTALL.md).
+By default this manages `~/.agents/skills/super-rebuttal`. Manual details and path notes are documented in [`.codex/INSTALL.md`](.codex/INSTALL.md).
 
 ### Claude Code
 
@@ -57,6 +61,14 @@ The repository includes a Claude-style plugin shell:
 This means the package is structured for Claude plugin installation and local marketplace registration.
 
 Important: the project does **not** currently claim public official marketplace publication. What is verified today is the plugin-shaped repository layout, not a public marketplace listing.
+
+The manager CLI follows the Claude plugin command model and prints the commands you should run:
+
+```bash
+python scripts/superrebuttal_manager.py claude install
+python scripts/superrebuttal_manager.py claude update
+python scripts/superrebuttal_manager.py claude remove
+```
 
 If you want to install it through the Claude plugin workflow, use the local marketplace shape that already ships in this repo:
 
@@ -119,7 +131,7 @@ Use the Claude-style command directly:
 ## The Basic Workflow
 
 1. **Install SuperRebuttal** into Codex or a Claude-style plugin environment.
-2. **Provide inputs**: paper PDF, manuscript text, or a faithful summary, plus reviews.
+2. **Provide inputs**: paper PDF, review PDF, manuscript text, or a faithful summary, plus reviews.
 3. **Choose a budgeting mode**:
    - `per-reviewer mode`
    - `shared-global mode`
@@ -141,6 +153,7 @@ The shared-global path is the correct generic fallback for many CV-style or foru
 
 These are the only things the project should present as verified support today:
 
+- Repo-level manager CLI via [`scripts/superrebuttal_manager.py`](scripts/superrebuttal_manager.py)
 - Codex installation via [`.codex/INSTALL.md`](.codex/INSTALL.md)
 - Claude plugin shell metadata via [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json)
 - Local Claude marketplace metadata via [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json)
@@ -165,6 +178,7 @@ That is intentionally weaker than saying "full venue support." These notes are r
 
 ### Package Shell
 
+- [`scripts/superrebuttal_manager.py`](scripts/superrebuttal_manager.py)
 - [`.codex/INSTALL.md`](.codex/INSTALL.md)
 - [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json)
 - [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json)

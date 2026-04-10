@@ -26,6 +26,28 @@ class ReadmeTruthTest(unittest.TestCase):
         content = (ROOT / "README.md").read_text(encoding="utf-8").lower()
         self.assertIn("shared-global mode", content)
 
+    def test_readmes_mention_review_pdf_support(self) -> None:
+        english = (ROOT / "README.md").read_text(encoding="utf-8").lower()
+        chinese = (ROOT / "README.zh-CN.md").read_text(encoding="utf-8").lower()
+        self.assertIn("review pdf", english)
+        self.assertIn("review pdf", chinese)
+
+    def test_readmes_document_codex_update_and_remove_cli_commands(self) -> None:
+        english = (ROOT / "README.md").read_text(encoding="utf-8")
+        chinese = (ROOT / "README.zh-CN.md").read_text(encoding="utf-8")
+        self.assertIn("python scripts/superrebuttal_manager.py codex update", english)
+        self.assertIn("python scripts/superrebuttal_manager.py codex remove", english)
+        self.assertIn("python scripts/superrebuttal_manager.py codex update", chinese)
+        self.assertIn("python scripts/superrebuttal_manager.py codex remove", chinese)
+
+    def test_readmes_document_claude_update_and_remove_cli_commands(self) -> None:
+        english = (ROOT / "README.md").read_text(encoding="utf-8")
+        chinese = (ROOT / "README.zh-CN.md").read_text(encoding="utf-8")
+        self.assertIn("python scripts/superrebuttal_manager.py claude update", english)
+        self.assertIn("python scripts/superrebuttal_manager.py claude remove", english)
+        self.assertIn("python scripts/superrebuttal_manager.py claude update", chinese)
+        self.assertIn("python scripts/superrebuttal_manager.py claude remove", chinese)
+
     def test_readme_includes_usage_and_invocation_examples(self) -> None:
         content = (ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn("## How To Use It", content)

@@ -5,10 +5,17 @@
 Best case:
 
 - paper PDF or extracted manuscript text
+- zero or more review PDFs, or extracted reviewer text
 - all reviewer comments
 - venue and year
 - global or per-review character / word limit
 - author notes on what can and cannot be promised
+
+When PDFs are provided, treat them as first-class source artifacts:
+
+- exactly one paper PDF may supply the manuscript context
+- review PDFs may be repeated and should preserve caller order
+- text extraction is best-effort and limited to text-based PDFs; scanned-image PDFs still need OCR outside this skill
 
 ## Accepted Fallbacks
 
@@ -34,6 +41,13 @@ If the venue is unknown, use:
   - strategy first
   - reviewer-by-reviewer prose
   - journal response letter
+- a prebuilt input bundle with:
+  - `paper.path`
+  - `paper.text`
+  - `reviews[].path`
+  - `reviews[].text`
+  - `source_files.paper_pdf`
+  - `source_files.review_pdfs`
 
 ## Default Output Modes
 
