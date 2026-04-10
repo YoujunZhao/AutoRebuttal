@@ -23,6 +23,12 @@ class PluginSurfaceTest(unittest.TestCase):
         self.assertIn("review pdf", content)
         self.assertIn("do not ask the user to paste review text", content)
 
+    def test_rebuttal_command_mentions_reviewer_cards_and_strategy_memo(self) -> None:
+        content = (ROOT / "commands" / "rebuttal.md").read_text(encoding="utf-8").lower()
+        self.assertIn("reviewer cards", content)
+        self.assertIn("strategy memo", content)
+        self.assertIn("reviewer stance", content)
+
 
 if __name__ == "__main__":
     unittest.main()

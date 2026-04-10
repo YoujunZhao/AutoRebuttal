@@ -18,6 +18,8 @@ The package is designed around a few core ideas:
 - unsupported venues should fall back to explicit user budgets instead of fake built-in support
 - missing evidence should become placeholders such as `XX` or `[RESULT-TO-FILL]`, not invented numbers
 - installation claims and venue claims should stay narrower than what the repo can actually prove
+- reviewer stance analysis should happen before the final draft
+- a global strategy memo should exist before reviewer-by-reviewer prose
 
 ## How It Works
 
@@ -28,12 +30,15 @@ In practice, the flow is:
 1. install the package in the host tool
 2. provide manuscript context, paper PDFs, and review PDF files when available
 3. determine the response format and budget
-4. cluster shared reviewer concerns
-5. produce a strategy-first response map
-6. draft the final rebuttal text
-7. keep unresolved evidence as explicit placeholders
+4. build reviewer cards
+5. cluster shared reviewer concerns
+6. produce a global strategy memo
+7. draft the final rebuttal text
+8. keep unresolved evidence as explicit placeholders
 
 This keeps the workflow closer to how strong rebuttals are actually written: first understand the concern set, then decide what can be answered directly, what should be acknowledged, and what must stay as a bounded placeholder.
+
+The project now explicitly models reviewer stance and attitude before prose generation. The goal is to sound less like a generic template and more like a targeted rebuttal.
 
 ## Installation
 

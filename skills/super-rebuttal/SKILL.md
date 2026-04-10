@@ -18,6 +18,9 @@ Load the detailed references only when needed:
 - `references/rebuttal-playbook.md` for issue extraction and drafting tactics
 - `references/source-notes.md` for research basis and source links
 - `scripts/build_input_bundle.py` when the user provides paper PDF and review PDF files together
+- `scripts/build_reviewer_cards.py` to create reviewer cards before drafting
+- `references/reviewer-model.md` for reviewer stance and attitude analysis
+- `references/human-rebuttal-style.md` for a more human-like rebuttal rhythm
 
 ## Supported Inputs
 
@@ -26,11 +29,23 @@ Load the detailed references only when needed:
 - venue and budget constraints
 - author notes about promises, limits, or forbidden claims
 
+## Human-Like Intermediate Artifacts
+
+Before drafting, form:
+
+1. reviewer cards
+2. a strategy memo
+3. the final rebuttal draft
+
+Reviewer cards should include reviewer stance, movability, attitude, and primary concerns.
+
 ## Core Rules
 
 - Read the paper, abstract, or author summary before drafting.
 - If one paper PDF and one or more review PDF files are available, build the input bundle first and treat extracted review text as the working review source.
 - Do not ask the user to paste review text when review PDF extraction succeeds.
+- Build reviewer cards before writing prose.
+- Build a strategy memo before reviewer-by-reviewer drafting.
 - Normalize reviews into atomic concerns before writing prose.
 - Use venue rules when available; if the user provides explicit limits, those override bundled defaults.
 - Never invent experiments, numerical gains, p-values, baselines, or citations.
@@ -43,17 +58,18 @@ Load the detailed references only when needed:
 1. Read the paper artifact or the author's summary.
 2. Read all reviews and convert them into atomic concerns.
 3. Summarize the venue or journal constraints.
-4. Map each reviewer to one or more likely personas such as empirical skeptic, novelty skeptic, clarity reviewer, or reproducibility reviewer.
-5. Merge overlapping concerns across reviewers.
-6. Choose a response strategy for each concern:
+4. Build reviewer cards, including reviewer stance, movability, attitude, and primary concerns.
+5. Build a strategy memo that identifies shared issues and a global strategy across reviewers.
+6. Merge overlapping concerns across reviewers.
+7. Choose a response strategy for each concern:
    - clarify existing evidence
    - acknowledge a limitation
    - promise a revision in wording or structure
    - propose future work
    - insert a result placeholder instead of fabricating a number
    - respectfully decline an unreasonable or out-of-scope request
-7. Draft reviewer-by-reviewer responses or a shared response letter.
-8. Run the final compliance check before presenting the draft.
+8. Draft reviewer-by-reviewer responses or a shared response letter.
+9. Run the final compliance check before presenting the draft.
 
 ## Required Output Structure
 

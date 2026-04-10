@@ -48,6 +48,14 @@ class ReadmeTruthTest(unittest.TestCase):
         self.assertIn("python scripts/superrebuttal_manager.py claude update", chinese)
         self.assertIn("python scripts/superrebuttal_manager.py claude remove", chinese)
 
+    def test_readmes_mention_reviewer_stance_and_global_strategy(self) -> None:
+        english = (ROOT / "README.md").read_text(encoding="utf-8").lower()
+        chinese = (ROOT / "README.zh-CN.md").read_text(encoding="utf-8").lower()
+        self.assertIn("reviewer stance", english)
+        self.assertIn("global strategy", english)
+        self.assertIn("reviewer", chinese)
+        self.assertIn("strategy", chinese)
+
     def test_readme_includes_usage_and_invocation_examples(self) -> None:
         content = (ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn("## How To Use It", content)

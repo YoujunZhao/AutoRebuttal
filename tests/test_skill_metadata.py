@@ -29,6 +29,13 @@ class SkillMetadataTest(unittest.TestCase):
         self.assertIn("review pdf", content)
         self.assertIn("do not ask the user to paste review text", content)
 
+    def test_skill_mentions_reviewer_cards_and_strategy_memo(self) -> None:
+        content = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8").lower()
+        self.assertIn("reviewer card", content)
+        self.assertIn("reviewer stance", content)
+        self.assertIn("strategy memo", content)
+        self.assertIn("attitude", content)
+
     def test_openai_metadata_keys_exist(self) -> None:
         self.assertTrue((SKILL_DIR / "agents" / "openai.yaml").exists())
         content = (SKILL_DIR / "agents" / "openai.yaml").read_text(encoding="utf-8")

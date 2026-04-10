@@ -8,6 +8,12 @@ If the user provides a paper PDF and one or more review PDF files, treat the rev
 
 Do not ask the user to paste review text if review PDF files are already available and text extraction succeeds.
 
+Before drafting, build reviewer cards and a strategy memo.
+
+Reviewer cards must capture reviewer stance, movability, attitude, and primary concerns.
+
+The strategy memo must summarize the global strategy across reviewers before reviewer-by-reviewer drafting starts.
+
 First identify whether the author needs:
 
 1. a per-reviewer response budget
