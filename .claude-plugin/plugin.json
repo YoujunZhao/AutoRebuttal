@@ -1,0 +1,18 @@
+{
+  "name": "super-rebuttal",
+  "description": "Plugin-first rebuttal workflow for Codex and Claude Code with evidence-first drafting and explicit budgeting modes",
+  "version": "0.2.0",
+  "author": {
+    "name": "Youjun Zhao"
+  },
+  "homepage": "https://github.com/YoujunZhao/SuperRebuttal",
+  "repository": "https://github.com/YoujunZhao/SuperRebuttal",
+  "license": "MIT",
+  "keywords": [
+    "rebuttal",
+    "peer-review",
+    "academic-writing",
+    "claude-code",
+    "codex"
+  ]
+}

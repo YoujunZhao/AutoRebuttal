@@ -37,7 +37,7 @@ class InstallSkillTest(unittest.TestCase):
 
             module = load_module(
                 "install_skill",
-                ROOT / "skill" / "super-rebuttal" / "scripts" / "install_skill.py",
+                ROOT / "skills" / "super-rebuttal" / "scripts" / "install_skill.py",
             )
 
             installed = module.install_skill(source=source, destination=target)

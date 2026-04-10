@@ -28,7 +28,7 @@ class PackageSkillTest(unittest.TestCase):
 
             module = load_module(
                 "package_skill",
-                ROOT / "skill" / "super-rebuttal" / "scripts" / "package_skill.py",
+                ROOT / "skills" / "super-rebuttal" / "scripts" / "package_skill.py",
             )
 
             archive = module.build_archive(skill_dir=skill_dir, dist_dir=dist_dir)
@@ -48,7 +48,7 @@ class PackageSkillTest(unittest.TestCase):
 
             module = load_module(
                 "package_skill_cli",
-                ROOT / "skill" / "super-rebuttal" / "scripts" / "package_skill.py",
+                ROOT / "skills" / "super-rebuttal" / "scripts" / "package_skill.py",
             )
 
             exit_code = module.main(

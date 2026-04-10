@@ -21,7 +21,7 @@ class ValidateBudgetTest(unittest.TestCase):
     def test_measure_budget_counts_characters(self) -> None:
         module = load_module(
             "validate_budget",
-            ROOT / "skill" / "super-rebuttal" / "scripts" / "validate_budget.py",
+            ROOT / "skills" / "super-rebuttal" / "scripts" / "validate_budget.py",
         )
 
         result = module.measure_budget("Reviewer 1: Thanks!", limit=30, mode="chars")
@@ -34,7 +34,7 @@ class ValidateBudgetTest(unittest.TestCase):
     def test_main_prints_budget_json(self) -> None:
         module = load_module(
             "validate_budget_cli",
-            ROOT / "skill" / "super-rebuttal" / "scripts" / "validate_budget.py",
+            ROOT / "skills" / "super-rebuttal" / "scripts" / "validate_budget.py",
         )
         stdout = io.StringIO()
 
