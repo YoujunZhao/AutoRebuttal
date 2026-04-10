@@ -4,209 +4,159 @@
 
 [English](#english) | [中文](#chinese)
 
-SuperRebuttal is a private-first skill package for drafting academic rebuttals and author responses across multiple agent ecosystems. The canonical skill lives in `skill/super-rebuttal`, and the thin installer wrappers in `install/` copy that one source of truth into Codex, Claude Code, or OpenClaw.
+SuperRebuttal is a private-first, plugin-shaped rebuttal workflow package. The repository is the product: it contains the installation surfaces, the internal `super-rebuttal` skill, the prompt entrypoint, the reference notes, and the tests that define what we can honestly claim today.
 
-The project is intended to stay private during initial development and internal use. The repository layout is suitable for later publication, but the expected operating model for the first phase is a private repository with controlled distribution.
+The goal is not to market a magical "supports every conference" assistant. The goal is to provide a truthful, evidence-first rebuttal workflow that:
+
+- installs like a small superpower package instead of a lone copied skill
+- helps authors map reviewer concerns before drafting prose
+- supports two tested budgeting modes
+- refuses to fabricate experiments, numbers, or citations
 
 <a id="english"></a>
 
 ## English
 
-### Purpose
+### What This Project Is
 
-SuperRebuttal exists to make rebuttal drafting more structured, venue-aware, and evidence-first. Instead of relying on one-off prompts, it packages a reusable workflow that helps an agent:
+SuperRebuttal is a plugin-first workflow package for rebuttal drafting. Internally it still uses a skill, but the user-facing model is:
 
-- read the manuscript or manuscript summary
-- normalize reviewer comments into concrete issues
-- map issues to likely reviewer concerns
-- draft polite, specific responses without inventing experiments or numbers
-- respect venue or user-provided response limits
+1. install the package
+2. provide manuscript context and reviews
+3. choose a rebuttal budgeting mode
+4. generate a strategy-first issue map
+5. draft the final rebuttal text
 
-### Key Features
+That shape is intentionally closer to `superpowers` than to a standalone "copy this skill folder" repo.
 
-- Canonical skill packaging under `skill/super-rebuttal` so all tools install the same artifact.
-- Thin wrappers under `install/` that call `skill/super-rebuttal/scripts/install_skill.py`.
-- Cross-tool default targets:
-  - Codex: `$HOME/.codex/skills/super-rebuttal`
-  - Claude Code: `$HOME/.claude/skills/super-rebuttal`
-  - OpenClaw: `$HOME/.openclaw/skills/super-rebuttal`
-- Evidence-first drafting stance that explicitly avoids fabricated experiments, fabricated gains, or unsupported citations.
-- Venue-aware positioning for common ML/AI rebuttal settings such as ICLR, NeurIPS, ICML, and ARR / ACL / EMNLP style author responses.
-- Support for reviewer-by-reviewer drafting, shared issue grouping, and budget-aware response shaping.
+### Workflow
 
-### Supported Tools
+The expected flow is:
 
-- Codex
-- Claude Code
-- OpenClaw
+1. Install SuperRebuttal into your host tool.
+2. Give the agent the paper PDF, manuscript text, or a faithful manuscript summary.
+3. Paste the reviews.
+4. Decide how the response is budgeted:
+   - `per-reviewer mode`
+   - `shared-global mode`
+5. Let the workflow cluster reviewer concerns and shared issues.
+6. Review the strategy-first output.
+7. Ask for final prose.
+8. Keep unresolved evidence as placeholders such as `XX` or `[RESULT-TO-FILL]`.
 
-Each tool should consume the same canonical skill contents. The wrappers are intentionally thin so behavior stays aligned across ecosystems.
+### Verified Support Today
 
-### Supported Venues
+These are the only things the repository should present as verified support today:
 
-SuperRebuttal is designed for rebuttal workflows common in:
+- Codex installation via [` .codex/INSTALL.md `](D:/rebuttalskill/.worktrees/plugin-first-redesign/.codex/INSTALL.md)
+- Claude plugin shell metadata via [` .claude-plugin/plugin.json `](D:/rebuttalskill/.worktrees/plugin-first-redesign/.claude-plugin/plugin.json)
+- Local Claude marketplace metadata via [` .claude-plugin/marketplace.json `](D:/rebuttalskill/.worktrees/plugin-first-redesign/.claude-plugin/marketplace.json)
+- A command entrypoint via [` commands/rebuttal.md `](D:/rebuttalskill/.worktrees/plugin-first-redesign/commands/rebuttal.md)
+- `per-reviewer mode`
+- `shared-global mode`
+
+### Checked Reference Notes, Not Full Venue Guarantees
+
+The repository includes checked reference notes for:
 
 - ICLR
 - NeurIPS
 - ICML
-- ARR / ACL / EMNLP-style author responses
-- Generic OpenReview response forms
-- Journal response letters when the user provides explicit constraints
+- ARR-style author responses
 
-Venue policies drift from year to year. Treat bundled policy guidance as a starting point, then verify the exact official rules for the target venue and cycle before submission.
+Those notes live under [`venue-policies.md`](D:/rebuttalskill/.worktrees/plugin-first-redesign/skills/super-rebuttal/references/venue-policies.md). They are reference material, not a promise that every venue-specific rebuttal format is fully automated or fully tested.
+
+### Generic Fallback
+
+If your venue is not explicitly covered, or if you do not trust the bundled venue notes for your current cycle, use explicit budgeting:
+
+- `per-reviewer mode`
+  Example: "Reply to each reviewer with 5000 characters."
+- `shared-global mode`
+  Example: "Reply to all reviewers together within 6000 characters."
+
+The shared-global path is the right fallback for CV-style or forum-style rebuttals where all reviewers are answered in one combined response.
 
 ### Installation
 
-Prerequisites:
+#### Codex
 
-- Python 3 available as `python`, `python3`, or Windows `py -3`
-- A complete checkout that includes the canonical skill at `skill/super-rebuttal`
-- Permission to write to your user-level skills directory
+The intended Codex entrypoint is [` .codex/INSTALL.md `](D:/rebuttalskill/.worktrees/plugin-first-redesign/.codex/INSTALL.md).
 
-#### Install for Codex
+The "Superpowers-style" install instruction is:
 
-Default destination: `$HOME/.codex/skills/super-rebuttal`
-
-PowerShell:
-
-```powershell
-./install/install-codex.ps1
+```text
+Fetch and follow instructions from https://raw.githubusercontent.com/YoujunZhao/SuperRebuttal/refs/heads/codex/plugin-first-redesign/.codex/INSTALL.md
 ```
 
-POSIX shell:
+Manual install remains documented in that file for clone + symlink / junction setups.
 
-```sh
-./install/install-codex.sh
-```
+#### Claude Code
 
-Optional custom destination:
+This repository now includes the plugin shell expected by Claude-style plugin packaging:
 
-```powershell
-./install/install-codex.ps1 -Destination "$HOME/.codex/skills/super-rebuttal"
-```
+- [` .claude-plugin/plugin.json `](D:/rebuttalskill/.worktrees/plugin-first-redesign/.claude-plugin/plugin.json)
+- [` .claude-plugin/marketplace.json `](D:/rebuttalskill/.worktrees/plugin-first-redesign/.claude-plugin/marketplace.json)
 
-```sh
-./install/install-codex.sh "$HOME/.codex/skills/super-rebuttal"
-```
+Important: the repository is still private and is **not** claiming public official marketplace publication. What is verified today is the plugin-shaped metadata and local marketplace layout, not a public marketplace listing.
 
-#### Install for Claude Code
+### How To Use It
 
-Default destination: `$HOME/.claude/skills/super-rebuttal`
+After installation, invoke the internal `super-rebuttal` workflow or the [`rebuttal` command](D:/rebuttalskill/.worktrees/plugin-first-redesign/commands/rebuttal.md), then provide:
 
-PowerShell:
-
-```powershell
-./install/install-claude-code.ps1
-```
-
-POSIX shell:
-
-```sh
-./install/install-claude-code.sh
-```
-
-Optional custom destination:
-
-```powershell
-./install/install-claude-code.ps1 -Destination "$HOME/.claude/skills/super-rebuttal"
-```
-
-```sh
-./install/install-claude-code.sh "$HOME/.claude/skills/super-rebuttal"
-```
-
-#### Install for OpenClaw
-
-Default destination: `$HOME/.openclaw/skills/super-rebuttal`
-
-PowerShell:
-
-```powershell
-./install/install-openclaw.ps1
-```
-
-POSIX shell:
-
-```sh
-./install/install-openclaw.sh
-```
-
-Optional custom destination:
-
-```powershell
-./install/install-openclaw.ps1 -Destination "$HOME/.openclaw/skills/super-rebuttal"
-```
-
-```sh
-./install/install-openclaw.sh "$HOME/.openclaw/skills/super-rebuttal"
-```
-
-### How the Install Wrappers Work
-
-All six wrappers do the same three things:
-
-1. Resolve the repository root relative to the wrapper location.
-2. Point at the canonical skill source in `skill/super-rebuttal`.
-3. Call `skill/super-rebuttal/scripts/install_skill.py` with `--source` and `--destination`.
-
-That keeps the install surface simple and avoids maintaining divergent copies of the skill for different tools.
-
-### How to Invoke the Skill
-
-After installation, use your host tool's normal skill workflow and reference `super-rebuttal` by name. Exact UI wording varies by tool version, but the practical sequence is:
-
-1. Open the tool where the skill was installed.
-2. Select or invoke the `super-rebuttal` skill using that tool's native skill interface.
-3. Provide manuscript context, reviewer comments, venue or journal constraints, and any response budget.
-4. Ask for either a strategy-first outline or a final rebuttal draft.
-
-Recommended input bundle:
-
-- paper PDF or extracted manuscript text
-- reviewer comments
-- venue and year, if known
-- global or per-review character / word budget
+- manuscript context
+- reviews
+- venue name and year, if known
+- one explicit budget mode if the venue format is not already clear
 - any hard constraints such as "do not promise new experiments"
 
 ### Sample Prompts
 
-- `Use super-rebuttal. I will paste the abstract, main claims, and three reviewer comments for ICLR 2026. First produce an issue map and response strategy, then draft the rebuttal.`
-- `Use super-rebuttal to draft reviewer-by-reviewer responses for NeurIPS. Do not invent new experiments. If evidence is missing, use placeholders such as [RESULT-TO-FILL].`
-- `Use super-rebuttal. The venue is unknown, but I have a limit of 5000 characters per reviewer. Help me cluster shared concerns before drafting prose.`
-- `Use super-rebuttal for a journal revision letter. Keep the tone formal, acknowledge genuine limitations, and separate changes already completed from changes promised for the revision.`
+- `Use super-rebuttal. I have a shared-global mode rebuttal with a total budget of 6000 characters. First cluster the shared concerns, then draft the response.`
+- `Use super-rebuttal. This is per-reviewer mode with 5000 characters for each reviewer. Do not invent any new experiment results.`
+- `Use super-rebuttal. The venue notes are uncertain, so ignore built-in venue assumptions and use the explicit budget I provide.`
 
-### What the Skill Should Help Produce
+### What The Internal Skill Does
 
-- a constraint summary
-- a reviewer issue map
-- grouped shared concerns across reviewers
-- response strategy notes
-- final rebuttal text
-- explicit placeholders for missing evidence rather than fabricated claims
+The canonical skill now lives at [`skills/super-rebuttal`](D:/rebuttalskill/.worktrees/plugin-first-redesign/skills/super-rebuttal).
 
-### Limitations
+It is responsible for:
 
-- It does not run experiments.
-- It does not fetch private reviews from conference systems.
-- It should not invent gains, p-values, new baselines, or citations.
-- Venue policies may change yearly, so users must verify the current official rules.
-- Final submission formatting and compliance remain the author's responsibility.
-- Tool-specific skill discovery UX may evolve, even though the canonical skill stays the same.
+- issue extraction
+- reviewer persona reasoning
+- shared-issue consolidation
+- response drafting
+- placeholder-based handling for missing evidence
 
-### Research Basis and Positioning
+The tested mode-selection logic lives in [`response_modes.py`](D:/rebuttalskill/.worktrees/plugin-first-redesign/skills/super-rebuttal/scripts/response_modes.py).
 
-SuperRebuttal is positioned as an evidence-first writing aid, not an autonomous publication agent. Its design is grounded in two practical sources of guidance:
+### What This Project Does Not Claim
 
-- public author-response and rebuttal instructions from major ML / NLP venues and journal workflows
-- common rebuttal best practices such as answering reviewer concerns directly, acknowledging limitations plainly, and separating existing evidence from promised follow-up work
+- It does not claim official public Claude marketplace publication.
+- It does not claim support for every conference rebuttal format.
+- It does not claim automatic experiment execution.
+- It does not claim that reference notes alone equal tested venue support.
+- It does not claim guaranteed score improvement.
 
-The intended reference base for the canonical skill includes venue-policy notes and source citations tracked alongside the skill content. Because policy language changes over time, the safe operating rule is: use the built-in guidance to structure the draft, then confirm the exact venue/year requirements against the official public source before submitting.
+### Research Basis
+
+The workflow is grounded in:
+
+- public venue instructions
+- public rebuttal studies and datasets
+- explicit non-fabrication rules
+
+See:
+
+- [`source-notes.md`](D:/rebuttalskill/.worktrees/plugin-first-redesign/skills/super-rebuttal/references/source-notes.md)
+- [`rebuttal-playbook.md`](D:/rebuttalskill/.worktrees/plugin-first-redesign/skills/super-rebuttal/references/rebuttal-playbook.md)
+- [`input-contract.md`](D:/rebuttalskill/.worktrees/plugin-first-redesign/skills/super-rebuttal/references/input-contract.md)
 
 ### Repository Status
 
-- Private-first by design for the initial release cycle
-- Meant to be shared selectively before any public publication
-- Structured so a later public release does not require reworking the installation model
+- private-first
+- plugin-first
+- truthful about verified vs fallback support
 
 [Back to top](#top)
 
@@ -214,200 +164,129 @@ The intended reference base for the canonical skill includes venue-policy notes 
 
 ## 中文
 
-### 项目目的
+### 这个项目现在是什么
 
-SuperRebuttal 用来把学术 rebuttal / author response 的起草流程做成可复用、可安装、可跨工具迁移的技能包。它不是一次性的提示词，而是一套更稳定的工作流，帮助代理：
+SuperRebuttal 现在被重构成一个 **plugin-first / superpower 风格** 的 rebuttal 工作流包，而不是“单独拷贝一个 skill 目录”的仓库。
 
-- 阅读论文或论文摘要
-- 将 reviewer comments 拆成可执行的问题项
-- 识别问题背后的常见审稿关注点
-- 在不虚构实验、不虚构数字的前提下起草礼貌且具体的回复
-- 按照会议或用户提供的篇幅限制组织内容
+对用户来说，它的使用方式应该是：
 
-### 核心特性
+1. 先安装这个包
+2. 提供论文和 reviews
+3. 选择回复预算模式
+4. 先得到 strategy-first 的问题图谱
+5. 再生成最终 rebuttal 文本
 
-- 以 `skill/super-rebuttal` 作为唯一规范技能目录，避免多工具之间内容漂移。
-- `install/` 下的薄封装脚本统一调用 `skill/super-rebuttal/scripts/install_skill.py`。
-- 三个默认安装目标：
-  - Codex：`$HOME/.codex/skills/super-rebuttal`
-  - Claude Code：`$HOME/.claude/skills/super-rebuttal`
-  - OpenClaw：`$HOME/.openclaw/skills/super-rebuttal`
-- 强调 evidence-first：不捏造实验、不捏造提升、不补写并不存在的引用。
-- 面向常见 ML / AI rebuttal 场景，适配 ICLR、NeurIPS、ICML、ARR / ACL / EMNLP 等常见 author response 工作流。
-- 支持 reviewer-by-reviewer 回复、共享问题合并、以及预算约束下的篇幅控制。
+### 工作流
 
-### 支持的工具
+推荐流程如下：
 
-- Codex
-- Claude Code
-- OpenClaw
+1. 安装 SuperRebuttal
+2. 提供论文 PDF、正文文本，或者可信的论文摘要
+3. 粘贴 reviews
+4. 选择预算模式：
+   - `per-reviewer mode`
+   - `shared-global mode`
+5. 让工作流先做 reviewer concern 归并
+6. 检查 strategy-first 输出
+7. 再要求生成最终 rebuttal
+8. 对缺失证据使用 `XX`、`[RESULT-TO-FILL]` 之类的占位符
 
-三个工具都应安装同一个 canonical skill。安装脚本故意保持很薄，只负责把同一份技能复制到不同工具的技能目录。
+### 今天真正验证过的支持范围
 
-### 支持的场景与 venue
+目前这个仓库只应该宣称下面这些“已验证支持”：
 
-SuperRebuttal 主要面向以下类型的回复场景：
+- 通过 [` .codex/INSTALL.md `](D:/rebuttalskill/.worktrees/plugin-first-redesign/.codex/INSTALL.md) 进行 Codex 安装
+- 具备 Claude plugin 形态的 [` .claude-plugin/plugin.json `](D:/rebuttalskill/.worktrees/plugin-first-redesign/.claude-plugin/plugin.json)
+- 具备本地 Claude marketplace 形态的 [` .claude-plugin/marketplace.json `](D:/rebuttalskill/.worktrees/plugin-first-redesign/.claude-plugin/marketplace.json)
+- 具备命令入口 [` commands/rebuttal.md `](D:/rebuttalskill/.worktrees/plugin-first-redesign/commands/rebuttal.md)
+- `per-reviewer mode`
+- `shared-global mode`
+
+### 已核对的 venue 参考，不等于“完整自动支持”
+
+仓库里现在带有核对过的公开参考说明，覆盖：
 
 - ICLR
 - NeurIPS
 - ICML
-- ARR / ACL / EMNLP 风格的 author response
-- 通用 OpenReview rebuttal / response 表单
-- 用户已明确给出约束的期刊回复信
+- ARR 风格 author response
 
-不同 venue、不同年份的规则会变化。内置 guidance 只能作为起点，真正提交前仍应核对目标 venue 和年份的官方最新规则。
+这些内容位于 [`venue-policies.md`](D:/rebuttalskill/.worktrees/plugin-first-redesign/skills/super-rebuttal/references/venue-policies.md)。它们是 **参考说明**，不是“这个 venue 已被完整自动化支持”的保证。
 
-### 安装说明
+### 通用降级方案
 
-前置条件：
+如果你的 venue 不在已核对范围内，或者你不想依赖内置 venue notes，就直接手动给预算：
 
-- 机器上可用 Python 3，命令形式可以是 `python`、`python3` 或 Windows 下的 `py -3`
-- 仓库中包含 canonical skill 目录 `skill/super-rebuttal`
-- 当前用户对目标技能目录有写权限
+- `per-reviewer mode`
+  例如：“每个 reviewer 回复 5000 字符”
+- `shared-global mode`
+  例如：“所有 reviewer 合起来总共 6000 字符”
 
-#### 安装到 Codex
+对于很多 CV 风格、统一回复框风格的 rebuttal，这种 `shared-global mode` 就是更稳妥的通用路径。
 
-默认目标：`$HOME/.codex/skills/super-rebuttal`
+### 安装方式
 
-PowerShell：
+#### Codex
 
-```powershell
-./install/install-codex.ps1
+Codex 的入口现在是 [` .codex/INSTALL.md `](D:/rebuttalskill/.worktrees/plugin-first-redesign/.codex/INSTALL.md)。
+
+推荐直接告诉 Codex：
+
+```text
+Fetch and follow instructions from https://raw.githubusercontent.com/YoujunZhao/SuperRebuttal/refs/heads/codex/plugin-first-redesign/.codex/INSTALL.md
 ```
 
-POSIX shell：
+#### Claude Code
 
-```sh
-./install/install-codex.sh
-```
+这个仓库现在已经具备 Claude plugin 风格的外壳：
 
-自定义目标：
+- [` .claude-plugin/plugin.json `](D:/rebuttalskill/.worktrees/plugin-first-redesign/.claude-plugin/plugin.json)
+- [` .claude-plugin/marketplace.json `](D:/rebuttalskill/.worktrees/plugin-first-redesign/.claude-plugin/marketplace.json)
 
-```powershell
-./install/install-codex.ps1 -Destination "$HOME/.codex/skills/super-rebuttal"
-```
+但这里要说清楚：当前仓库仍然是 private，并且 **没有** 宣称已经上架到公开官方 marketplace。现在已验证的是“插件结构”和“本地 marketplace 形态”，不是公开上架状态。
 
-```sh
-./install/install-codex.sh "$HOME/.codex/skills/super-rebuttal"
-```
+### 如何使用
 
-#### 安装到 Claude Code
+安装后，可以调用内部的 `super-rebuttal` workflow，或者使用 [`rebuttal` 命令入口](D:/rebuttalskill/.worktrees/plugin-first-redesign/commands/rebuttal.md)，然后提供：
 
-默认目标：`$HOME/.claude/skills/super-rebuttal`
-
-PowerShell：
-
-```powershell
-./install/install-claude-code.ps1
-```
-
-POSIX shell：
-
-```sh
-./install/install-claude-code.sh
-```
-
-自定义目标：
-
-```powershell
-./install/install-claude-code.ps1 -Destination "$HOME/.claude/skills/super-rebuttal"
-```
-
-```sh
-./install/install-claude-code.sh "$HOME/.claude/skills/super-rebuttal"
-```
-
-#### 安装到 OpenClaw
-
-默认目标：`$HOME/.openclaw/skills/super-rebuttal`
-
-PowerShell：
-
-```powershell
-./install/install-openclaw.ps1
-```
-
-POSIX shell：
-
-```sh
-./install/install-openclaw.sh
-```
-
-自定义目标：
-
-```powershell
-./install/install-openclaw.ps1 -Destination "$HOME/.openclaw/skills/super-rebuttal"
-```
-
-```sh
-./install/install-openclaw.sh "$HOME/.openclaw/skills/super-rebuttal"
-```
-
-### 安装脚本的工作方式
-
-六个 wrapper 的逻辑完全一致：
-
-1. 根据脚本所在位置反推出仓库根目录。
-2. 固定指向 `skill/super-rebuttal` 这一份 canonical source。
-3. 调用 `skill/super-rebuttal/scripts/install_skill.py`，并传入 `--source` 与 `--destination`。
-
-这样可以保证 Codex、Claude Code、OpenClaw 安装的都是同一份技能内容，而不是三套分叉副本。
-
-### 如何调用技能
-
-安装完成后，在对应工具里通过该工具自己的技能入口调用 `super-rebuttal`。不同版本的 UI 文案可能不同，但实际使用流程基本一致：
-
-1. 打开已经安装该技能的工具。
-2. 在该工具的原生技能入口中选择或调用 `super-rebuttal`。
-3. 提供论文上下文、reviewer comments、venue 或期刊约束、以及字数 / 字符预算。
-4. 先让它输出 strategy-first 大纲，或直接要求生成最终 rebuttal 草稿。
-
-建议提供的输入材料：
-
-- 论文 PDF 或提取后的正文文本
-- reviewer comments
-- venue 与年份（如果知道）
-- 总体或按 reviewer 划分的字数 / 字符限制
-- 明确约束，例如 “不要承诺新实验”
+- 论文上下文
+- reviews
+- venue 和年份（如果知道）
+- 如果 venue 规则不明确，就直接给预算模式
+- 额外硬约束，例如“不要承诺新实验”
 
 ### 示例提示词
 
-- `Use super-rebuttal. I will paste the abstract, main claims, and three reviewer comments for ICLR 2026. First produce an issue map and response strategy, then draft the rebuttal.`
-- `Use super-rebuttal to draft reviewer-by-reviewer responses for NeurIPS. Do not invent new experiments. If evidence is missing, use placeholders such as [RESULT-TO-FILL].`
-- `Use super-rebuttal. The venue is unknown, but I have a limit of 5000 characters per reviewer. Help me cluster shared concerns before drafting prose.`
-- `Use super-rebuttal for a journal revision letter. Keep the tone formal, acknowledge genuine limitations, and separate changes already completed from changes promised for the revision.`
+- `Use super-rebuttal. I have a shared-global mode rebuttal with a total budget of 6000 characters. First cluster the shared concerns, then draft the response.`
+- `Use super-rebuttal. This is per-reviewer mode with 5000 characters for each reviewer. Do not invent any new experiment results.`
+- `Use super-rebuttal. The venue notes are uncertain, so ignore built-in venue assumptions and use the explicit budget I provide.`
 
-### 预期输出
+### 这个项目不再宣称什么
 
-- 约束摘要
-- reviewer 问题地图
-- 跨 reviewer 的共享问题归并
-- 回复策略说明
-- 最终 rebuttal 文本
-- 对缺失证据使用显式占位符，而不是虚构内容
+- 不再宣称支持 OpenClaw
+- 不再宣称“支持所有会议 rebuttal 格式”
+- 不再把 venue 参考说明写成“完整支持”
+- 不再暗示已经公开上架到 Claude 官方 marketplace
+- 不会替作者跑实验
 
-### 限制
+### 研究与规则依据
 
-- 不会替你运行实验。
-- 不会从投稿系统抓取私有评论。
-- 不应该虚构提升数字、统计显著性、新 baseline 或不存在的引用。
-- venue 规则会逐年变化，最终仍需作者自己核对官方要求。
-- 最终提交格式与合规责任仍在作者本人。
-- 即使 canonical skill 不变，不同工具的技能发现 UI 也可能变化。
+核心依据仍然是：
 
-### 研究依据与定位
+- 公开 venue 规则
+- 公开 rebuttal 研究和数据集
+- 明确的 non-fabrication 规则
 
-SuperRebuttal 的定位是 evidence-first 的写作辅助工具，而不是自动化投稿代理。它的设计依据主要来自两类公开且可解释的来源：
+可参考：
 
-- 主要 ML / NLP venue 与期刊工作流中的公开 rebuttal / author response 说明
-- 常见 rebuttal 写作实践，例如逐条回应 reviewer concern、明确承认限制、把已有证据与未来计划严格区分
+- [`source-notes.md`](D:/rebuttalskill/.worktrees/plugin-first-redesign/skills/super-rebuttal/references/source-notes.md)
+- [`rebuttal-playbook.md`](D:/rebuttalskill/.worktrees/plugin-first-redesign/skills/super-rebuttal/references/rebuttal-playbook.md)
+- [`input-contract.md`](D:/rebuttalskill/.worktrees/plugin-first-redesign/skills/super-rebuttal/references/input-contract.md)
 
-canonical skill 预期会把 venue policy notes 与 source citations 跟随技能内容一起维护。由于这些政策文本会持续变化，最稳妥的做法是：先用技能组织结构化草稿，再对照目标 venue / 年份的官方公开规则做最终检查。
+### 当前状态
 
-### 仓库状态
-
-- 初始阶段按 private-first 使用方式设计
-- 预期先做受控分发，再考虑公开发布
-- 仓库结构已经为后续公开化预留了空间，不需要重新设计安装模型
+- private-first
+- plugin-first
+- 只宣传已验证支持，未验证部分统一走显式 budget fallback
 
 [返回顶部](#top)

@@ -1,0 +1,15 @@
+{
+  "name": "super-rebuttal-dev",
+  "description": "Development marketplace for the SuperRebuttal plugin",
+  "owner": {
+    "name": "Youjun Zhao"
+  },
+  "plugins": [
+    {
+      "name": "super-rebuttal",
+      "description": "Plugin-first rebuttal workflow with tested per-reviewer and shared-global budgeting modes",
+      "version": "0.2.0",
+      "source": "./"
+    }
+  ]
+}
