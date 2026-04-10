@@ -18,6 +18,11 @@ class PluginSurfaceTest(unittest.TestCase):
     def test_rebuttal_command_exists(self) -> None:
         self.assertTrue((ROOT / "commands" / "rebuttal.md").exists())
 
+    def test_rebuttal_command_mentions_review_pdf_intake(self) -> None:
+        content = (ROOT / "commands" / "rebuttal.md").read_text(encoding="utf-8").lower()
+        self.assertIn("review pdf", content)
+        self.assertIn("do not ask the user to paste review text", content)
+
 
 if __name__ == "__main__":
     unittest.main()

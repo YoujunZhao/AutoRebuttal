@@ -23,6 +23,12 @@ class SkillMetadataTest(unittest.TestCase):
         self.assertIn("name: super-rebuttal", content)
         self.assertIn("description:", content)
 
+    def test_skill_prefers_review_pdf_extraction_before_reasking(self) -> None:
+        content = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8").lower()
+        self.assertIn("build_input_bundle.py", content)
+        self.assertIn("review pdf", content)
+        self.assertIn("do not ask the user to paste review text", content)
+
     def test_openai_metadata_keys_exist(self) -> None:
         self.assertTrue((SKILL_DIR / "agents" / "openai.yaml").exists())
         content = (SKILL_DIR / "agents" / "openai.yaml").read_text(encoding="utf-8")

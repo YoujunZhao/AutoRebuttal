@@ -17,6 +17,7 @@ Load the detailed references only when needed:
 - `references/venue-policies.md` for dated venue rules
 - `references/rebuttal-playbook.md` for issue extraction and drafting tactics
 - `references/source-notes.md` for research basis and source links
+- `scripts/build_input_bundle.py` when the user provides paper PDF and review PDF files together
 
 ## Supported Inputs
 
@@ -28,6 +29,8 @@ Load the detailed references only when needed:
 ## Core Rules
 
 - Read the paper, abstract, or author summary before drafting.
+- If one paper PDF and one or more review PDF files are available, build the input bundle first and treat extracted review text as the working review source.
+- Do not ask the user to paste review text when review PDF extraction succeeds.
 - Normalize reviews into atomic concerns before writing prose.
 - Use venue rules when available; if the user provides explicit limits, those override bundled defaults.
 - Never invent experiments, numerical gains, p-values, baselines, or citations.
