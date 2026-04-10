@@ -1,20 +1,14 @@
-<a id="top"></a>
-
 # SuperRebuttal
 
-[English](#english) | [中文](#chinese)
+[中文文档](README.zh-CN.md)
 
 SuperRebuttal is a rebuttal workflow package for coding agents. It is shaped like a small plugin-first superpower package: the repository contains the installation surfaces, the internal `super-rebuttal` skill, the prompt entrypoint, the policy notes, and the tests that define what the project can honestly claim today.
 
 It is built for one job: help authors turn a paper, reviews, and explicit rebuttal constraints into a structured, evidence-first response without fabricating experiments, gains, or citations.
 
-<a id="english"></a>
-
-## English
-
 ## What It Is
 
-SuperRebuttal is not just a single copied skill folder. It is a small rebuttal package that is meant to be installed, then invoked as a workflow.
+SuperRebuttal is not just a copied skill folder. It is a small rebuttal package that is meant to be installed, then invoked as a workflow.
 
 The package is designed around a few core ideas:
 
@@ -177,78 +171,3 @@ Start here:
 - plugin-first
 - narrow by design in what it claims
 - stronger on workflow discipline than on venue-specific automation
-
-[Back to top](#top)
-
-<a id="chinese"></a>
-
-## 中文
-
-## 它是什么
-
-SuperRebuttal 现在是一个 **plugin-first** 的 rebuttal 工作流包，不再是“单独拷贝一个 skill 目录”的仓库。
-
-它的目标很明确：
-
-- 先整理 reviewer concerns，再写 rebuttal
-- 未验证的 venue 不假装“内置支持”
-- 缺失证据用 `XX`、`[RESULT-TO-FILL]` 等占位符，而不是虚构结果
-
-## 它怎么工作
-
-推荐流程是：
-
-1. 安装这个包
-2. 提供论文和 reviews
-3. 选择预算模式
-4. 先产出 strategy-first 的问题图谱
-5. 再生成最终 rebuttal
-
-## 安装
-
-### Codex
-
-入口是 [`.codex/INSTALL.md`](.codex/INSTALL.md)。
-
-可以直接告诉 Codex：
-
-```text
-Fetch and follow instructions from https://raw.githubusercontent.com/YoujunZhao/SuperRebuttal/refs/heads/codex/plugin-first-redesign/.codex/INSTALL.md
-```
-
-### Claude Code
-
-仓库已经提供 Claude plugin 形态：
-
-- [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json)
-- [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json)
-
-目前只把“插件结构”和“本地 marketplace 形态”当成已验证，不宣称已经公开上架官方 marketplace。
-
-## 核心工作流
-
-1. 安装 SuperRebuttal
-2. 输入论文和 reviews
-3. 选择：
-   - `per-reviewer mode`
-   - `shared-global mode`
-4. 先生成问题归并和回复策略
-5. 再生成最终 rebuttal
-
-## 今天真正验证过的支持范围
-
-- Codex 安装入口
-- Claude plugin shell
-- `per-reviewer mode`
-- `shared-global mode`
-
-ICLR / NeurIPS / ICML / ARR 目前只作为已核对的公开参考说明存在，不写成“完整支持”。
-
-## 限制
-
-- 不跑实验
-- 不抓私有 reviews
-- 不承诺支持所有会议格式
-- 不把参考说明写成自动化能力
-
-[返回顶部](#top)
