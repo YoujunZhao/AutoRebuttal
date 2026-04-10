@@ -26,6 +26,12 @@ class ReadmeTruthTest(unittest.TestCase):
         content = (ROOT / "README.md").read_text(encoding="utf-8").lower()
         self.assertIn("shared-global mode", content)
 
+    def test_readme_includes_usage_and_invocation_examples(self) -> None:
+        content = (ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn("## How To Use It", content)
+        self.assertIn("Use the `rebuttal` command", content)
+        self.assertIn("Use the `super-rebuttal` skill", content)
+
     def test_readme_does_not_mention_openclaw(self) -> None:
         content = (ROOT / "README.md").read_text(encoding="utf-8").lower()
         self.assertNotIn("- openclaw\n", content)

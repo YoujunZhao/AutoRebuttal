@@ -56,6 +56,35 @@ Fetch and follow instructions from https://raw.githubusercontent.com/YoujunZhao/
 
 注意：项目目前 **不** 宣称已经公开上架官方 marketplace。现在能确认的是“插件结构正确”和“本地 marketplace 形态存在”。
 
+## 怎么调用 / 怎么使用
+
+安装完成之后，实际可用的调用方式有两种：
+
+- **使用 `rebuttal` command**
+- **使用 `super-rebuttal` skill**
+
+不同宿主工具的 UI 会有差异，但核心意图是一致的：先让 agent 进入 SuperRebuttal 工作流，再提供论文、reviews 和预算。
+
+### 调用示例
+
+使用 `rebuttal` command：
+
+```text
+Use the `rebuttal` command. I will paste the abstract, the main claims, and three reviewer comments. This is per-reviewer mode with 5000 characters each.
+```
+
+使用 `super-rebuttal` skill：
+
+```text
+Use the `super-rebuttal` skill. This is a shared-global mode rebuttal with a total limit of 6000 characters. First cluster shared concerns, then draft the final response.
+```
+
+如果 venue 形式不明确，就直接显式给预算：
+
+```text
+Use the `super-rebuttal` skill. Ignore venue defaults and use per-reviewer mode with 4000 characters per reviewer.
+```
+
 ## 基本工作流
 
 1. 安装 SuperRebuttal

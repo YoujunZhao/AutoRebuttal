@@ -58,6 +58,35 @@ This means the package is structured for Claude plugin installation and local ma
 
 Important: the project does **not** currently claim public official marketplace publication. What is verified today is the plugin-shaped repository layout, not a public marketplace listing.
 
+## How To Use It
+
+After installation, there are two practical invocation styles:
+
+- **Use the `rebuttal` command**
+- **Use the `super-rebuttal` skill**
+
+The exact UI differs by host tool, but the working intent is the same: tell the agent to enter the SuperRebuttal workflow, then provide the paper, the reviews, and the response budget.
+
+### Invocation Examples
+
+Use the `rebuttal` command:
+
+```text
+Use the `rebuttal` command. I will paste the abstract, the main claims, and three reviewer comments. This is per-reviewer mode with 5000 characters each.
+```
+
+Use the `super-rebuttal` skill:
+
+```text
+Use the `super-rebuttal` skill. This is a shared-global mode rebuttal with a total limit of 6000 characters. First cluster shared concerns, then draft the final response.
+```
+
+If the venue format is unclear, give the budget explicitly:
+
+```text
+Use the `super-rebuttal` skill. Ignore venue defaults and use per-reviewer mode with 4000 characters per reviewer.
+```
+
 ## The Basic Workflow
 
 1. **Install SuperRebuttal** into Codex or a Claude-style plugin environment.
