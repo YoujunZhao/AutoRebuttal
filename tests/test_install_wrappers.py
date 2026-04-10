@@ -6,6 +6,13 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 
 class ReadmeTruthTest(unittest.TestCase):
+    def test_readme_uses_product_style_sections(self) -> None:
+        content = (ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn("## How It Works", content)
+        self.assertIn("## Installation", content)
+        self.assertIn("## The Basic Workflow", content)
+        self.assertIn("## What's Inside", content)
+
     def test_readme_mentions_codex_install_doc(self) -> None:
         content = (ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn(".codex/INSTALL.md", content)
