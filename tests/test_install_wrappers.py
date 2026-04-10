@@ -31,6 +31,9 @@ class ReadmeTruthTest(unittest.TestCase):
         self.assertIn("## How To Use It", content)
         self.assertIn("Use the `rebuttal` command", content)
         self.assertIn("Use the `super-rebuttal` skill", content)
+        self.assertIn("/plugin marketplace add", content)
+        self.assertIn("/plugin install", content)
+        self.assertIn("What is the difference between `rebuttal` and `super-rebuttal`?", content)
 
     def test_readme_does_not_mention_openclaw(self) -> None:
         content = (ROOT / "README.md").read_text(encoding="utf-8").lower()

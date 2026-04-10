@@ -1,6 +1,6 @@
 # SuperRebuttal
 
-[中文文档](README.zh-CN.md)
+[Chinese README](README.zh-CN.md)
 
 SuperRebuttal is a rebuttal workflow package for coding agents. It is shaped like a small plugin-first superpower package: the repository contains the installation surfaces, the internal `super-rebuttal` skill, the prompt entrypoint, the policy notes, and the tests that define what the project can honestly claim today.
 
@@ -58,6 +58,19 @@ This means the package is structured for Claude plugin installation and local ma
 
 Important: the project does **not** currently claim public official marketplace publication. What is verified today is the plugin-shaped repository layout, not a public marketplace listing.
 
+If you want to install it through the Claude plugin workflow, use the local marketplace shape that already ships in this repo:
+
+```text
+/plugin marketplace add YoujunZhao/SuperRebuttal
+/plugin install super-rebuttal@super-rebuttal-dev
+```
+
+After that, the quickest Claude-style entrypoint is:
+
+```text
+/rebuttal
+```
+
 ## How To Use It
 
 After installation, there are two practical invocation styles:
@@ -66,6 +79,16 @@ After installation, there are two practical invocation styles:
 - **Use the `super-rebuttal` skill**
 
 The exact UI differs by host tool, but the working intent is the same: tell the agent to enter the SuperRebuttal workflow, then provide the paper, the reviews, and the response budget.
+
+### What is the difference between `rebuttal` and `super-rebuttal`?
+
+- **`rebuttal`**
+  This is the easier command-style entrypoint. Use it when you just want to start the workflow quickly.
+
+- **`super-rebuttal`**
+  This is the underlying skill / workflow engine. Use it when you want to invoke the skill explicitly.
+
+In short: `rebuttal` is the front door, and `super-rebuttal` is the actual engine behind it.
 
 ### Invocation Examples
 
@@ -85,6 +108,12 @@ If the venue format is unclear, give the budget explicitly:
 
 ```text
 Use the `super-rebuttal` skill. Ignore venue defaults and use per-reviewer mode with 4000 characters per reviewer.
+```
+
+Use the Claude-style command directly:
+
+```text
+/rebuttal
 ```
 
 ## The Basic Workflow
