@@ -43,3 +43,5 @@ class CharacterBudgetTest(unittest.TestCase):
         self.assertEqual(allocation["mode"], "shared-global")
         self.assertEqual(allocation["total_limit"], 6000)
         self.assertEqual(sum(allocation["section_plan"].values()), 6000)
+        self.assertIn("reviewer_sections", allocation)
+        self.assertEqual(len(allocation["reviewer_sections"]), 3)

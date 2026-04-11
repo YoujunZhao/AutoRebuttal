@@ -14,6 +14,16 @@ Reviewer cards must capture reviewer stance, movability, attitude, and primary c
 
 The strategy memo must summarize the global strategy across reviewers before reviewer-by-reviewer drafting starts.
 
+Use venue-aware formatting defaults:
+
+- ICLR: brief global summary first
+- ICML / NeurIPS / AAAI: reviewer blocks only
+- CVPR / ICCV / ECCV: brief global summary plus reviewer blocks
+
+Inside each reviewer block, default to `W1 / W2 / W3` point-to-point responses.
+
+When empirical evidence is requested, allow a local experiment placeholder table with `XX` values instead of fabricated numbers.
+
 First identify whether the author needs:
 
 1. a per-reviewer response budget

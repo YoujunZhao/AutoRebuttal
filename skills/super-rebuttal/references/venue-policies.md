@@ -13,6 +13,8 @@ User-provided constraints always override bundled defaults.
 | NeurIPS | 2025 | 10,000 characters per review | no additional files; no links in rebuttal; do not reveal identifying information; no paper or supplement revisions during rebuttal | https://nips.cc/Conferences/2025/PaperInformation/NeurIPS-FAQ |
 | ICML | 2026 | 5,000 characters per round | rebuttal, reviewer follow-up, and author follow-up all use 5,000-character rounds; do not revise the paper or supplement during discussion | https://icml.cc/Conferences/2026/PeerReviewFAQ |
 | ICML | 2025 | 5,000 characters per round | similar three-round response structure; reviewer instructions emphasize brief, targeted clarification | https://icml.cc/Conferences/2025/ReviewerInstructions |
+| AAAI | project preset | 2,500 characters per reviewer | project default requested by user; verify against the current official venue before submission | user-configured default |
+| CVPR / ICCV / ECCV | project preset | one-page rebuttal-PDF equivalent | project default: short summary to all reviewers, then reviewer blocks; verify exact yearly official format before submission | user-configured default |
 | ARR / ACL / EMNLP | 2026 guidance | numeric limit not publicly stated in ARR guidance | text only; no external links or images; minor add-on experiments only when directly requested; focus on factual errors and serious misunderstandings | https://aclrollingreview.org/authors |
 | OpenReview default rebuttal form | generic | 2,500 characters | this is the default form template only; venues can override it | https://docs.openreview.net/reference/default-forms/default-rebuttal-form |
 
@@ -30,11 +32,23 @@ User-provided constraints always override bundled defaults.
 - Avoid links and attached files.
 - Do not promise a revised manuscript during rebuttal.
 
+### AAAI
+
+- Default to per-reviewer formatting.
+- Use `2500` characters per reviewer as the current project preset unless the user overrides it.
+- Keep the response extremely dense and point-to-point.
+
 ### ICML 2025 / 2026
 
 - Keep each round concise and tightly scoped.
 - Because the budget is 5,000 characters, shared-issue compression matters.
 - Avoid treating rebuttal as a full revision letter.
+
+### CVPR / ICCV / ECCV
+
+- Default to a short summary to all reviewers first, then reviewer-by-reviewer blocks.
+- Use `W1 / W2 / W3` point-to-point structure inside each reviewer block.
+- Treat the overall space as roughly a one-page rebuttal-PDF equivalent unless the user provides a stricter explicit limit.
 
 ### ARR / ACL / EMNLP
 

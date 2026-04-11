@@ -56,6 +56,26 @@ class ReadmeTruthTest(unittest.TestCase):
         self.assertIn("reviewer", chinese)
         self.assertIn("strategy", chinese)
 
+    def test_readmes_mention_venue_aware_defaults_and_w_format(self) -> None:
+        english = (ROOT / "README.md").read_text(encoding="utf-8")
+        chinese = (ROOT / "README.zh-CN.md").read_text(encoding="utf-8")
+        self.assertIn("AAAI", english)
+        self.assertIn("CVPR", english)
+        self.assertIn("ICCV", english)
+        self.assertIn("ECCV", english)
+        self.assertIn("W1", english)
+        self.assertIn("W2", english)
+        self.assertIn("AAAI", chinese)
+        self.assertIn("CVPR", chinese)
+        self.assertIn("W1", chinese)
+
+    def test_readmes_mention_experiment_placeholder_tables(self) -> None:
+        english = (ROOT / "README.md").read_text(encoding="utf-8").lower()
+        chinese = (ROOT / "README.zh-CN.md").read_text(encoding="utf-8").lower()
+        self.assertIn("experiment placeholder", english)
+        self.assertIn("xx", english)
+        self.assertIn("xx", chinese)
+
     def test_readme_includes_usage_and_invocation_examples(self) -> None:
         content = (ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn("## How To Use It", content)

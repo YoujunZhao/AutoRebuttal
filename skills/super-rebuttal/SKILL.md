@@ -19,6 +19,11 @@ Load the detailed references only when needed:
 - `references/source-notes.md` for research basis and source links
 - `scripts/build_input_bundle.py` when the user provides paper PDF and review PDF files together
 - `scripts/build_reviewer_cards.py` to create reviewer cards before drafting
+- `scripts/build_venue_format_plan.py` to resolve venue-specific structure
+- `scripts/build_strategy_memo.py` to summarize shared issues and the global strategy
+- `scripts/build_style_plan.py` to decide how the initial rebuttal should sound
+- `scripts/allocate_rebuttal_budget.py` to plan characters before drafting
+- `scripts/build_experiment_placeholder_table.py` when a reviewer asks for new empirical evidence
 - `references/reviewer-model.md` for reviewer stance and attitude analysis
 - `references/human-rebuttal-style.md` for a more human-like rebuttal rhythm
 
@@ -35,7 +40,9 @@ Before drafting, form:
 
 1. reviewer cards
 2. a strategy memo
-3. the final rebuttal draft
+3. a venue-aware format plan
+4. a character budget plan
+5. the final rebuttal draft
 
 Reviewer cards should include reviewer stance, movability, attitude, and primary concerns.
 
@@ -46,6 +53,8 @@ Reviewer cards should include reviewer stance, movability, attitude, and primary
 - Do not ask the user to paste review text when review PDF extraction succeeds.
 - Build reviewer cards before writing prose.
 - Build a strategy memo before reviewer-by-reviewer drafting.
+- Build a venue-aware format plan before deciding whether a summary is needed.
+- Build a character budget plan before drafting.
 - Normalize reviews into atomic concerns before writing prose.
 - Use venue rules when available; if the user provides explicit limits, those override bundled defaults.
 - Never invent experiments, numerical gains, p-values, baselines, or citations.
@@ -70,6 +79,16 @@ Reviewer cards should include reviewer stance, movability, attitude, and primary
    - respectfully decline an unreasonable or out-of-scope request
 8. Draft reviewer-by-reviewer responses or a shared response letter.
 9. Run the final compliance check before presenting the draft.
+
+## Venue-Aware Formatting Defaults
+
+- ICLR: brief global summary, then reviewer blocks
+- ICML / NeurIPS / AAAI: reviewer blocks only
+- CVPR / ICCV / ECCV: brief global summary, then reviewer blocks
+
+Inside each reviewer block, default to `W1 / W2 / W3` point-to-point sections.
+
+If a reviewer asks for empirical evidence, include a local experiment placeholder table with `XX` values rather than fabricating results.
 
 ## Required Output Structure
 

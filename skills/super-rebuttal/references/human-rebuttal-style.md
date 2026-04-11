@@ -5,10 +5,12 @@ Strong rebuttals usually do not read like generic customer-support replies.
 Prefer:
 
 - a short global opener
+- `W1 / W2 / W3` point-to-point formatting under each reviewer
 - explicit issue framing
 - one strong point per paragraph
 - reviewer stance awareness
 - a global strategy memo before reviewer-by-reviewer prose
+- local experiment placeholder tables when empirical evidence is central
 
 Avoid:
 

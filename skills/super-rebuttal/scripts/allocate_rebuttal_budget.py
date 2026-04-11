@@ -34,6 +34,11 @@ def allocate_budget(
         opener = int(total_limit * 0.10)
         closing = int(total_limit * 0.08)
         shared_body = total_limit - opener - closing
+        per_reviewer = shared_body // reviewer_count if reviewer_count > 0 else 0
+        remainder = shared_body - (per_reviewer * reviewer_count)
+        reviewer_sections = [per_reviewer for _ in range(reviewer_count)]
+        for index in range(remainder):
+            reviewer_sections[index] += 1
         return {
             "mode": mode,
             "total_limit": total_limit,
@@ -43,6 +48,7 @@ def allocate_budget(
                 "shared_body": shared_body,
                 "closing": closing,
             },
+            "reviewer_sections": reviewer_sections,
         }
 
     raise ValueError(f"Unsupported mode: {mode}")

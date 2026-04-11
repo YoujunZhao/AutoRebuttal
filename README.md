@@ -57,6 +57,23 @@ SuperRebuttal now includes:
 
 This is the main difference between the upgraded workflow and the older generic style.
 
+## Venue-Aware Formatting Defaults
+
+- **ICLR**
+  uses a brief global summary first, then reviewer blocks
+- **ICML**
+  uses reviewer blocks only, with a `5000`-character per-reviewer default
+- **NeurIPS**
+  uses reviewer blocks only, with a `10000`-character per-reviewer default
+- **AAAI**
+  uses reviewer blocks only, with a `2500`-character per-reviewer project preset
+- **CVPR / ICCV / ECCV**
+  use a brief summary to all reviewers first, then reviewer blocks, and budget the response like a one-page rebuttal-PDF equivalent
+
+Inside each reviewer block, the formatter should prefer `W1 / W2 / W3` point-to-point responses instead of one merged paragraph.
+
+When a reviewer asks for empirical evidence, the formatter can insert an experiment placeholder table with `XX` values instead of fabricated numbers.
+
 ## Installation
 
 Installation differs by host tool. Today, the repository only presents two installation surfaces as verified.
