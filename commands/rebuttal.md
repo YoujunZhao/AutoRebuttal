@@ -29,4 +29,12 @@ First identify whether the author needs:
 1. a per-reviewer response budget
 2. one shared global rebuttal budget
 
+User-provided requirements always override venue defaults.
+
+Examples:
+
+- `venue=ICML per_reviewer=5000`
+- `venue=AAAI per_reviewer=3000`
+- `venue=ICLR global_summary=false per_reviewer=4500`
+
 If the venue format is not explicitly verified by the repository, ask for an explicit character or word limit and continue in generic mode.

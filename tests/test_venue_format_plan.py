@@ -63,6 +63,35 @@ class VenueFormatPlanTest(unittest.TestCase):
                 self.assertEqual(plan["budget_mode"], "cv-one-page")
                 self.assertEqual(plan["weakness_prefix"], "W")
 
+    def test_user_per_reviewer_limit_overrides_venue_default(self) -> None:
+        module = load_module(
+            "build_venue_format_plan",
+            ROOT / "skills" / "super-rebuttal" / "scripts" / "build_venue_format_plan.py",
+        )
+        plan = module.build_venue_format_plan("AAAI", per_reviewer_limit=5000)
+        self.assertEqual(plan["default_per_reviewer_limit"], 5000)
+        self.assertEqual(plan["budget_mode"], "per-reviewer")
+        self.assertEqual(plan["source"], "user-override")
+
+    def test_user_can_disable_global_summary_even_for_iclr(self) -> None:
+        module = load_module(
+            "build_venue_format_plan",
+            ROOT / "skills" / "super-rebuttal" / "scripts" / "build_venue_format_plan.py",
+        )
+        plan = module.build_venue_format_plan("ICLR", global_summary=False)
+        self.assertFalse(plan["global_summary"])
+        self.assertEqual(plan["source"], "user-override")
+
+    def test_unknown_venue_can_be_forced_into_per_reviewer_mode(self) -> None:
+        module = load_module(
+            "build_venue_format_plan",
+            ROOT / "skills" / "super-rebuttal" / "scripts" / "build_venue_format_plan.py",
+        )
+        plan = module.build_venue_format_plan("UnknownConf", per_reviewer_limit=4000)
+        self.assertEqual(plan["budget_mode"], "per-reviewer")
+        self.assertEqual(plan["default_per_reviewer_limit"], 4000)
+        self.assertEqual(plan["source"], "user-override")
+
 
 if __name__ == "__main__":
     unittest.main()
