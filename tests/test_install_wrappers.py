@@ -69,6 +69,14 @@ class ReadmeTruthTest(unittest.TestCase):
         self.assertIn("CVPR", chinese)
         self.assertIn("W1", chinese)
 
+    def test_readmes_mention_q_and_minor_point_handling(self) -> None:
+        english = (ROOT / "README.md").read_text(encoding="utf-8")
+        chinese = (ROOT / "README.zh-CN.md").read_text(encoding="utf-8")
+        self.assertIn("Q1", english)
+        self.assertIn("minor", english.lower())
+        self.assertIn("Q1", chinese)
+        self.assertIn("minor", chinese.lower())
+
     def test_readmes_mention_experiment_placeholder_tables(self) -> None:
         english = (ROOT / "README.md").read_text(encoding="utf-8").lower()
         chinese = (ROOT / "README.zh-CN.md").read_text(encoding="utf-8").lower()

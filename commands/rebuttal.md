@@ -22,6 +22,13 @@ Use venue-aware formatting defaults:
 
 Inside each reviewer block, default to `W1 / W2 / W3` point-to-point responses.
 
+Also respond to reviewer questions as `Q1 / Q2 / Q3`.
+
+If the review contains minor weaknesses or minor comments, respond to them too. Minor points may be handled as:
+
+- short `M1 / M2 / M3` responses, or
+- one merged `Minor points` paragraph when several minor comments are highly similar.
+
 When empirical evidence is requested, allow a local experiment placeholder table with `XX` values instead of fabricated numbers.
 
 First identify whether the author needs:

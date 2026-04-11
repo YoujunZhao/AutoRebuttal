@@ -88,6 +88,10 @@ Reviewer cards should include reviewer stance, movability, attitude, and primary
 
 Inside each reviewer block, default to `W1 / W2 / W3` point-to-point sections.
 
+Also respond to reviewer questions as `Q1 / Q2 / Q3`.
+
+If the review contains minor weaknesses or minor comments, respond to them as short `M#` items or merge them into one compact minor-points response when they are highly similar.
+
 If a reviewer asks for empirical evidence, include a local experiment placeholder table with `XX` values rather than fabricating results.
 
 ## Required Output Structure

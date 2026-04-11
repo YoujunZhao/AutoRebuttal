@@ -36,6 +36,12 @@ class SkillMetadataTest(unittest.TestCase):
         self.assertIn("strategy memo", content)
         self.assertIn("attitude", content)
 
+    def test_skill_mentions_w_q_and_minor_structure(self) -> None:
+        content = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("W1", content)
+        self.assertIn("Q1", content)
+        self.assertIn("minor", content.lower())
+
     def test_openai_metadata_keys_exist(self) -> None:
         self.assertTrue((SKILL_DIR / "agents" / "openai.yaml").exists())
         content = (SKILL_DIR / "agents" / "openai.yaml").read_text(encoding="utf-8")

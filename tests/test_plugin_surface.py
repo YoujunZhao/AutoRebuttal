@@ -29,6 +29,11 @@ class PluginSurfaceTest(unittest.TestCase):
         self.assertIn("strategy memo", content)
         self.assertIn("reviewer stance", content)
 
+    def test_rebuttal_command_mentions_questions_and_minor_points(self) -> None:
+        content = (ROOT / "commands" / "rebuttal.md").read_text(encoding="utf-8")
+        self.assertIn("Q1", content)
+        self.assertIn("minor", content.lower())
+
 
 if __name__ == "__main__":
     unittest.main()

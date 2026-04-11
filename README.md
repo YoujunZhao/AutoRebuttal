@@ -72,6 +72,12 @@ This is the main difference between the upgraded workflow and the older generic 
 
 Inside each reviewer block, the formatter should prefer `W1 / W2 / W3` point-to-point responses instead of one merged paragraph.
 
+It should also support:
+
+- `Q1 / Q2 / Q3` for direct reviewer questions
+- short `M1 / M2 / M3` responses for minor points
+- or one merged `Minor points` section when several minor comments are highly similar
+
 When a reviewer asks for empirical evidence, the formatter can insert an experiment placeholder table with `XX` values instead of fabricated numbers.
 
 User-supplied parameters always override these venue defaults. If the user gives `per_reviewer=5000`, `shared_total=6000`, or `global_summary=false`, those instructions win even when the venue preset says otherwise.
