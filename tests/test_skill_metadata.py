@@ -42,6 +42,11 @@ class SkillMetadataTest(unittest.TestCase):
         self.assertIn("Q1", content)
         self.assertIn("minor", content.lower())
 
+    def test_skill_mentions_image_review_pdf_fallback_and_reviewer_outline(self) -> None:
+        content = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8").lower()
+        self.assertIn("rendered page images", content)
+        self.assertIn("reviewer outline", content)
+
     def test_openai_metadata_keys_exist(self) -> None:
         self.assertTrue((SKILL_DIR / "agents" / "openai.yaml").exists())
         content = (SKILL_DIR / "agents" / "openai.yaml").read_text(encoding="utf-8")

@@ -18,6 +18,8 @@ Load the detailed references only when needed:
 - `references/rebuttal-playbook.md` for issue extraction and drafting tactics
 - `references/source-notes.md` for research basis and source links
 - `scripts/build_input_bundle.py` when the user provides paper PDF and review PDF files together
+- `scripts/render_review_pdf_pages.py` when a review PDF has no text layer and must continue through rendered page images
+- `scripts/build_reviewer_outline.py` to preserve `W/Q/M` structure before prose drafting
 - `scripts/build_reviewer_cards.py` to create reviewer cards before drafting
 - `scripts/build_venue_format_plan.py` to resolve venue-specific structure
 - `scripts/build_strategy_memo.py` to summarize shared issues and the global strategy
@@ -51,6 +53,8 @@ Reviewer cards should include reviewer stance, movability, attitude, and primary
 - Read the paper, abstract, or author summary before drafting.
 - If one paper PDF and one or more review PDF files are available, build the input bundle first and treat extracted review text as the working review source.
 - Do not ask the user to paste review text when review PDF extraction succeeds.
+- If a review PDF has no extractable text but can be rendered, continue from rendered page images instead of re-asking for pasted review text.
+- Build a reviewer outline before writing prose so each reviewer can preserve `W#`, `Q#`, and `M#` structure.
 - Build reviewer cards before writing prose.
 - Build a strategy memo before reviewer-by-reviewer drafting.
 - Build a venue-aware format plan before deciding whether a summary is needed.
@@ -67,18 +71,19 @@ Reviewer cards should include reviewer stance, movability, attitude, and primary
 1. Read the paper artifact or the author's summary.
 2. Read all reviews and convert them into atomic concerns.
 3. Summarize the venue or journal constraints.
-4. Build reviewer cards, including reviewer stance, movability, attitude, and primary concerns.
-5. Build a strategy memo that identifies shared issues and a global strategy across reviewers.
-6. Merge overlapping concerns across reviewers.
-7. Choose a response strategy for each concern:
+4. Build a reviewer outline for each reviewer, separating major weaknesses, direct reviewer questions, and minor points whenever those sections are present.
+5. Build reviewer cards, including reviewer stance, movability, attitude, and primary concerns.
+6. Build a strategy memo that identifies shared issues and a global strategy across reviewers.
+7. Merge overlapping concerns across reviewers.
+8. Choose a response strategy for each concern:
    - clarify existing evidence
    - acknowledge a limitation
    - promise a revision in wording or structure
    - propose future work
    - insert a result placeholder instead of fabricating a number
    - respectfully decline an unreasonable or out-of-scope request
-8. Draft reviewer-by-reviewer responses or a shared response letter.
-9. Run the final compliance check before presenting the draft.
+9. Draft reviewer-by-reviewer responses or a shared response letter.
+10. Run the final compliance check before presenting the draft.
 
 ## Venue-Aware Formatting Defaults
 
@@ -91,6 +96,8 @@ Inside each reviewer block, default to `W1 / W2 / W3` point-to-point sections.
 Also respond to reviewer questions as `Q1 / Q2 / Q3`.
 
 If the review contains minor weaknesses or minor comments, respond to them as short `M#` items or merge them into one compact minor-points response when they are highly similar.
+
+When reading OpenReview-style reviews, preserve header variants such as `Main Weaknesses`, `Key Questions For Authors`, and `Minor Weaknesses` rather than flattening them into `W#` only.
 
 If a reviewer asks for empirical evidence, include a local experiment placeholder table with `XX` values rather than fabricating results.
 

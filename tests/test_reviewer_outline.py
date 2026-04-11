@@ -41,3 +41,57 @@ class ReviewerOutlineTest(unittest.TestCase):
         self.assertEqual(outline["weaknesses"][0]["label"], "W1")
         self.assertEqual(outline["questions"][0]["label"], "Q1")
         self.assertEqual(outline["minor_points"][0]["label"], "M1")
+
+    def test_outline_builder_handles_openreview_style_headers_without_promoting_strengths(self) -> None:
+        module_path = ROOT / "skills" / "super-rebuttal" / "scripts" / "build_reviewer_outline.py"
+        module = load_module("build_reviewer_outline", module_path)
+        outline = module.build_reviewer_outline(
+            reviewer_id="Qc8x",
+            review_text=(
+                "Strengths And Weaknesses:\n"
+                "Strengths:\n"
+                "1. Good empirical gains.\n"
+                "2. Clear presentation.\n"
+                "Main Weaknesses\n"
+                "1. The novelty is limited.\n"
+                "2. Prompt robustness is unclear.\n"
+                "Key Questions For Authors:\n"
+                "1. What prompts were used?\n"
+                "2. Can baseline methods also benefit from external knowledge?\n"
+                "Minor Weaknesses:\n"
+                "1. Clarify Figure 2.\n"
+                "2. Fix minor typos.\n"
+            ),
+        )
+
+        self.assertEqual([item["text"] for item in outline["weaknesses"]], [
+            "The novelty is limited.",
+            "Prompt robustness is unclear.",
+        ])
+        self.assertEqual([item["label"] for item in outline["questions"]], ["Q1", "Q2"])
+        self.assertEqual(
+            [item["text"] for item in outline["questions"]],
+            [
+                "What prompts were used?",
+                "Can baseline methods also benefit from external knowledge?",
+            ],
+        )
+        self.assertEqual([item["label"] for item in outline["minor_points"]], ["M1", "M2"])
+        weakness_blob = " ".join(item["text"] for item in outline["weaknesses"])
+        self.assertNotIn("Good empirical gains", weakness_blob)
+
+    def test_outline_builder_handles_inline_header_content(self) -> None:
+        module_path = ROOT / "skills" / "super-rebuttal" / "scripts" / "build_reviewer_outline.py"
+        module = load_module("build_reviewer_outline", module_path)
+        outline = module.build_reviewer_outline(
+            reviewer_id="R2",
+            review_text=(
+                "Weaknesses: The novelty is limited.\n"
+                "Key Questions For Authors: What prompts were used?\n"
+                "Minor comments: Clarify Figure 2.\n"
+            ),
+        )
+
+        self.assertEqual(outline["weaknesses"][0]["text"], "The novelty is limited.")
+        self.assertEqual(outline["questions"][0]["text"], "What prompts were used?")
+        self.assertEqual(outline["minor_points"][0]["text"], "Clarify Figure 2.")

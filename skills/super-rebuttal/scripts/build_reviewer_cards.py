@@ -4,6 +4,13 @@ import argparse
 import json
 import pathlib
 import re
+import sys
+
+
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+
+from build_reviewer_outline import build_reviewer_outline
 
 
 POSITIVE_HINTS = {"strong", "interesting", "promising", "good", "solid"}
@@ -11,9 +18,12 @@ NEGATIVE_HINTS = {"unclear", "weak", "missing", "concern", "insufficient", "limi
 
 
 def _reviewer_id(index: int, text: str) -> str:
-    match = re.search(r"reviewer\s*([0-9]+)", text, re.IGNORECASE)
+    match = re.search(r"reviewer\s*([a-z0-9]+)", text, re.IGNORECASE)
     if match:
-        return f"R{match.group(1)}"
+        reviewer_token = match.group(1)
+        if reviewer_token.isdigit():
+            return f"R{reviewer_token}"
+        return reviewer_token
     return f"R{index + 1}"
 
 
@@ -71,19 +81,39 @@ def _primary_concerns(text: str) -> list[str]:
     return concerns
 
 
-def build_reviewer_cards(reviews: list[dict[str, str]]) -> list[dict[str, object]]:
+def _outline_text(outline: dict[str, object]) -> str:
+    parts: list[str] = []
+    for key in ("weaknesses", "questions", "minor_points"):
+        for item in outline.get(key, []):
+            if isinstance(item, dict):
+                text = item.get("text")
+                if isinstance(text, str) and text:
+                    parts.append(text)
+    return " ".join(parts)
+
+
+def build_reviewer_cards(reviews: list[dict[str, object]]) -> list[dict[str, object]]:
     cards: list[dict[str, object]] = []
     for index, review in enumerate(reviews):
-        text = review["text"]
-        sentiment = _sentiment(text)
+        text = review.get("text") or ""
+        reviewer_id = _reviewer_id(index, text)
+        outline = review.get("outline")
+        if not isinstance(outline, dict):
+            outline = build_reviewer_outline(reviewer_id=reviewer_id, review_text=text)
+        analysis_text = _outline_text(outline) or text
+        sentiment = _sentiment(analysis_text)
         cards.append(
             {
-                "reviewer_id": _reviewer_id(index, text),
+                "reviewer_id": reviewer_id,
                 "sentiment": sentiment,
-                "movability": _movability(text, sentiment),
-                "primary_concerns": _primary_concerns(text),
+                "movability": _movability(analysis_text, sentiment),
+                "primary_concerns": _primary_concerns(analysis_text),
                 "attitude": "supportive" if sentiment == "positive" else "skeptical" if sentiment == "negative" else "mixed",
                 "source_path": review.get("path"),
+                "outline": outline,
+                "question_count": len(outline.get("questions", [])),
+                "minor_point_count": len(outline.get("minor_points", [])),
+                "source_mode": review.get("extraction_mode", "text"),
             }
         )
     return cards

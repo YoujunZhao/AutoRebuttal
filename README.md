@@ -6,7 +6,7 @@ SuperRebuttal is a rebuttal workflow package for coding agents. It is shaped lik
 
 It is built for one job: help authors turn a paper, reviews, and explicit rebuttal constraints into a structured, evidence-first response without fabricating experiments, gains, or citations.
 
-The current package also supports review PDF ingestion, so a paper PDF and a review PDF can both be part of the working input bundle.
+The current package also supports review PDF ingestion, so a paper PDF and a review PDF can both be part of the working input bundle. If a review PDF is image-based instead of text-based, the bundle now falls back to rendered page images instead of failing outright.
 
 ## What It Is
 
@@ -23,19 +23,20 @@ The package is designed around a few core ideas:
 
 ## How It Works
 
-SuperRebuttal starts from the moment an author brings a paper and reviews into the session. Instead of jumping straight to final prose, it first identifies the response format, organizes the review concerns, models reviewer stance and attitude, builds a global strategy memo, and only then drafts.
+SuperRebuttal starts from the moment an author brings a paper and reviews into the session. Instead of jumping straight to final prose, it first identifies the response format, organizes the review concerns, builds a reviewer outline, models reviewer stance and attitude, builds a global strategy memo, and only then drafts.
 
 In practice, the flow is:
 
 1. install the package in the host tool
 2. provide manuscript context, paper PDFs, and review PDF files when available
 3. determine the response format and budget
-4. build reviewer cards with reviewer stance, movability, attitude, and primary concerns
-5. cluster shared reviewer concerns
-6. produce a global strategy memo before reviewer-by-reviewer prose
-7. allocate the character budget before drafting
-8. draft the final rebuttal text
-9. keep unresolved evidence as explicit placeholders
+4. build a reviewer outline with `W#`, `Q#`, and minor-point structure when the review supports it
+5. build reviewer cards with reviewer stance, movability, attitude, and primary concerns
+6. cluster shared reviewer concerns
+7. produce a global strategy memo before reviewer-by-reviewer prose
+8. allocate the character budget before drafting
+9. draft the final rebuttal text
+10. keep unresolved evidence as explicit placeholders
 
 This keeps the workflow closer to how strong rebuttals are actually written: first understand the concern set, then decide what can be answered directly, what should be acknowledged, and what must stay as a bounded placeholder.
 
@@ -77,6 +78,8 @@ It should also support:
 - `Q1 / Q2 / Q3` for direct reviewer questions
 - short `M1 / M2 / M3` responses for minor points
 - or one merged `Minor points` section when several minor comments are highly similar
+
+For OpenReview-style review exports, the parser should preserve headers such as `Main Weaknesses`, `Key Questions For Authors`, and `Minor Weaknesses` instead of flattening everything into `W#`.
 
 When a reviewer asks for empirical evidence, the formatter can insert an experiment placeholder table with `XX` values instead of fabricated numbers.
 
@@ -179,10 +182,12 @@ Use the Claude-style command directly:
 
 1. **Install SuperRebuttal** into Codex or a Claude-style plugin environment.
 2. **Provide inputs**: paper PDF, review PDF, manuscript text, or a faithful summary, plus reviews.
+   If a review PDF is image-based, SuperRebuttal should continue through rendered page images instead of asking for pasted review text immediately.
 3. **Choose a budgeting mode**:
    - `per-reviewer mode`
    - `shared-global mode`
 4. **Generate the issue map** before asking for final prose.
+   This issue map should build a reviewer outline first, so `W#`, `Q#`, and minor points are preserved in the final draft.
 5. **Draft the rebuttal** with evidence-first language.
 6. **Mark missing evidence explicitly** with placeholders instead of fabrication.
 
@@ -234,6 +239,10 @@ That is intentionally weaker than saying "full venue support." These notes are r
 ### Canonical Rebuttal Engine
 
 - [`skills/super-rebuttal/SKILL.md`](skills/super-rebuttal/SKILL.md)
+- [`skills/super-rebuttal/scripts/build_input_bundle.py`](skills/super-rebuttal/scripts/build_input_bundle.py)
+- [`skills/super-rebuttal/scripts/render_review_pdf_pages.py`](skills/super-rebuttal/scripts/render_review_pdf_pages.py)
+- [`skills/super-rebuttal/scripts/build_reviewer_outline.py`](skills/super-rebuttal/scripts/build_reviewer_outline.py)
+- [`skills/super-rebuttal/scripts/build_reviewer_cards.py`](skills/super-rebuttal/scripts/build_reviewer_cards.py)
 - [`skills/super-rebuttal/scripts/response_modes.py`](skills/super-rebuttal/scripts/response_modes.py)
 - [`skills/super-rebuttal/scripts/install_skill.py`](skills/super-rebuttal/scripts/install_skill.py)
 - [`skills/super-rebuttal/scripts/package_skill.py`](skills/super-rebuttal/scripts/package_skill.py)

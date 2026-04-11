@@ -8,7 +8,11 @@ If the user provides a paper PDF and one or more review PDF files, treat the rev
 
 Do not ask the user to paste review text if review PDF files are already available and text extraction succeeds.
 
+If a review PDF has no extractable text but can be rendered, continue from rendered page images instead of stopping or re-asking for pasted review text.
+
 Before drafting, build reviewer cards and a strategy memo.
+
+Build a reviewer outline for each reviewer before drafting. The reviewer outline must separate major weaknesses, direct reviewer questions, and minor points whenever the review contains them.
 
 Reviewer cards must capture reviewer stance, movability, attitude, and primary concerns.
 
@@ -28,6 +32,8 @@ If the review contains minor weaknesses or minor comments, respond to them too. 
 
 - short `M1 / M2 / M3` responses, or
 - one merged `Minor points` paragraph when several minor comments are highly similar.
+
+When parsing OpenReview-style reviews, recognize real header variants such as `Main Weaknesses`, `Key Questions For Authors`, and `Minor Weaknesses` instead of assuming only plain `Questions:` headers.
 
 When empirical evidence is requested, allow a local experiment placeholder table with `XX` values instead of fabricated numbers.
 

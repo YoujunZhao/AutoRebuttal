@@ -15,7 +15,8 @@ When PDFs are provided, treat them as first-class source artifacts:
 
 - exactly one paper PDF may supply the manuscript context
 - review PDFs may be repeated and should preserve caller order
-- text extraction is best-effort and limited to text-based PDFs; scanned-image PDFs still need OCR outside this skill
+- text extraction is best-effort and limited to text-based PDFs
+- if a review PDF has no text layer but can be rendered, keep it in the bundle with rendered page images so the runtime can still inspect it
 
 ## Accepted Fallbacks
 
@@ -46,6 +47,8 @@ If the venue is unknown, use:
   - `paper.text`
   - `reviews[].path`
   - `reviews[].text`
+  - `reviews[].page_images`
+  - `reviews[].extraction_mode`
   - `source_files.paper_pdf`
   - `source_files.review_pdfs`
 

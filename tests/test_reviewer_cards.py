@@ -67,6 +67,34 @@ class ReviewerCardsTest(unittest.TestCase):
         self.assertIn("empirical_support", card["primary_concerns"])
         self.assertEqual(card["movability"], "swing")
 
+    def test_reviewer_cards_preserve_outline_questions_and_minor_points(self) -> None:
+        module_path = ROOT / "skills" / "super-rebuttal" / "scripts" / "build_reviewer_cards.py"
+        module = load_module("build_reviewer_cards", module_path)
+        cards = module.build_reviewer_cards(
+            [
+                {
+                    "path": "Qc8x.pdf",
+                    "text": (
+                        "Official Review of Submission32408 by Reviewer Qc8x\n"
+                        "Strengths And Weaknesses:\n"
+                        "Strengths:\n"
+                        "1. Good gains.\n"
+                        "Main Weaknesses\n"
+                        "1. The novelty is limited.\n"
+                        "Key Questions For Authors:\n"
+                        "1. What prompts were used?\n"
+                        "Minor Weaknesses:\n"
+                        "1. Clarify Figure 2.\n"
+                    ),
+                }
+            ]
+        )
+        card = cards[0]
+        self.assertIn("outline", card)
+        self.assertEqual(card["outline"]["questions"][0]["label"], "Q1")
+        self.assertEqual(card["question_count"], 1)
+        self.assertEqual(card["minor_point_count"], 1)
+
 
 if __name__ == "__main__":
     unittest.main()

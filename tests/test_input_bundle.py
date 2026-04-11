@@ -126,6 +126,53 @@ class InputBundleCliTest(unittest.TestCase):
             [str(review_one_pdf), str(review_two_pdf)],
         )
 
+    def test_builder_falls_back_to_rendered_page_images_for_graphics_only_review_pdf(self) -> None:
+        script_path = (
+            ROOT / "skills" / "super-rebuttal" / "scripts" / "build_input_bundle.py"
+        )
+        self.assertTrue(
+            script_path.exists(),
+            "Expected skills/super-rebuttal/scripts/build_input_bundle.py to exist.",
+        )
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp = pathlib.Path(tmpdir)
+            paper_pdf = tmp / "paper.pdf"
+            review_pdf = tmp / "review.pdf"
+            write_text_pdf(paper_pdf, "Paper summary: our method improves robustness.")
+
+            import fitz
+
+            document = fitz.open()
+            page = document.new_page()
+            page.draw_rect(fitz.Rect(72, 72, 420, 240), color=(0, 0, 0), fill=(0.9, 0.9, 0.9))
+            document.save(review_pdf)
+            document.close()
+
+            completed = subprocess.run(
+                [
+                    sys.executable,
+                    str(script_path),
+                    "--paper-pdf",
+                    str(paper_pdf),
+                    "--review-pdf",
+                    str(review_pdf),
+                ],
+                capture_output=True,
+                cwd=ROOT,
+                text=True,
+            )
+
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        bundle = json.loads(completed.stdout)
+        self.assertEqual(len(bundle["reviews"]), 1)
+        review = bundle["reviews"][0]
+        self.assertEqual(review["path"], str(review_pdf))
+        self.assertIsNone(review["text"])
+        self.assertEqual(review["extraction_mode"], "image_fallback")
+        self.assertTrue(review["page_images"])
+        self.assertTrue(pathlib.Path(review["page_images"][0]).exists())
+
 
 if __name__ == "__main__":
     unittest.main()

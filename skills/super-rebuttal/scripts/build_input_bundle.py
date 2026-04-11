@@ -4,12 +4,14 @@ import argparse
 import json
 import pathlib
 import sys
+import tempfile
 
 
 if __package__ in {None, ""}:
     sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 from extract_pdf_text import extract_pdf_text
+from render_review_pdf_pages import render_review_pdf_pages
 
 
 def build_input_bundle(
@@ -17,19 +19,38 @@ def build_input_bundle(
 ) -> dict[str, object]:
     paper_path = pathlib.Path(paper_pdf).resolve()
     resolved_review_paths = [pathlib.Path(review_pdf).resolve() for review_pdf in review_pdfs or []]
+    tmp_root = pathlib.Path(tempfile.mkdtemp(prefix="superrebuttal_review_pages_"))
+
+    reviews = []
+    for review_path in resolved_review_paths:
+        try:
+            reviews.append(
+                {
+                    "path": str(review_path),
+                    "text": extract_pdf_text(review_path),
+                    "page_images": [],
+                    "extraction_mode": "text",
+                }
+            )
+        except ValueError:
+            reviews.append(
+                {
+                    "path": str(review_path),
+                    "text": None,
+                    "page_images": render_review_pdf_pages(
+                        pdf_path=review_path,
+                        output_dir=tmp_root / review_path.stem,
+                    ),
+                    "extraction_mode": "image_fallback",
+                }
+            )
 
     return {
         "paper": {
             "path": str(paper_path),
             "text": extract_pdf_text(paper_path),
         },
-        "reviews": [
-            {
-                "path": str(review_path),
-                "text": extract_pdf_text(review_path),
-            }
-            for review_path in resolved_review_paths
-        ],
+        "reviews": reviews,
         "source_files": {
             "paper_pdf": str(paper_path),
             "review_pdfs": [str(review_path) for review_path in resolved_review_paths],

@@ -34,6 +34,11 @@ class PluginSurfaceTest(unittest.TestCase):
         self.assertIn("Q1", content)
         self.assertIn("minor", content.lower())
 
+    def test_rebuttal_command_mentions_image_review_pdf_fallback_and_outline_step(self) -> None:
+        content = (ROOT / "commands" / "rebuttal.md").read_text(encoding="utf-8").lower()
+        self.assertIn("rendered page images", content)
+        self.assertIn("build a reviewer outline", content)
+
 
 if __name__ == "__main__":
     unittest.main()
