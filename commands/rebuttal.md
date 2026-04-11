@@ -9,6 +9,7 @@ If the user provides a paper PDF and one or more review PDF files, treat the rev
 Do not ask the user to paste review text if review PDF files are already available and text extraction succeeds.
 
 If a review PDF has no extractable text but can be rendered, continue from rendered page images instead of stopping or re-asking for pasted review text.
+For image-fallback reviews, inspect the rendered pages first and build a reviewer outline before generating reviewer cards. Do not synthesize reviewer cards from empty text.
 
 Before drafting, build reviewer cards and a strategy memo.
 

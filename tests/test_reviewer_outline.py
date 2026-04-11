@@ -95,3 +95,53 @@ class ReviewerOutlineTest(unittest.TestCase):
         self.assertEqual(outline["weaknesses"][0]["text"], "The novelty is limited.")
         self.assertEqual(outline["questions"][0]["text"], "What prompts were used?")
         self.assertEqual(outline["minor_points"][0]["text"], "Clarify Figure 2.")
+
+    def test_outline_builder_ignores_openreview_preamble_until_real_sections(self) -> None:
+        module_path = ROOT / "skills" / "super-rebuttal" / "scripts" / "build_reviewer_outline.py"
+        module = load_module("build_reviewer_outline", module_path)
+        outline = module.build_reviewer_outline(
+            reviewer_id="Qc8x",
+            review_text=(
+                "Official Review of Submission32408 by Reviewer Qc8x\n"
+                "Summary:\n"
+                "This paper studies generalized open-vocabulary 3D segmentation.\n"
+                "Main Weaknesses\n"
+                "1. The novelty is limited.\n"
+            ),
+        )
+
+        self.assertEqual([item["text"] for item in outline["weaknesses"]], ["The novelty is limited."])
+
+    def test_outline_builder_handles_questions_for_authors_header_without_partial_match(self) -> None:
+        module_path = ROOT / "skills" / "super-rebuttal" / "scripts" / "build_reviewer_outline.py"
+        module = load_module("build_reviewer_outline", module_path)
+        outline = module.build_reviewer_outline(
+            reviewer_id="R3",
+            review_text="Questions For Authors: What prompts were used?\n",
+        )
+
+        self.assertEqual(outline["questions"][0]["text"], "What prompts were used?")
+
+    def test_outline_builder_handles_question_number_and_lettered_item_prefixes(self) -> None:
+        module_path = ROOT / "skills" / "super-rebuttal" / "scripts" / "build_reviewer_outline.py"
+        module = load_module("build_reviewer_outline", module_path)
+        outline = module.build_reviewer_outline(
+            reviewer_id="R4",
+            review_text=(
+                "Weaknesses:\n"
+                "a) The novelty is limited.\n"
+                "b) The experiments are weak.\n"
+                "Questions:\n"
+                "Question 1: Why this baseline?\n"
+                "Question 2: How sensitive is the threshold?\n"
+            ),
+        )
+
+        self.assertEqual(
+            [item["text"] for item in outline["weaknesses"]],
+            ["The novelty is limited.", "The experiments are weak."],
+        )
+        self.assertEqual(
+            [item["text"] for item in outline["questions"]],
+            ["Why this baseline?", "How sensitive is the threshold?"],
+        )

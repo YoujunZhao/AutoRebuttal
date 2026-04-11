@@ -6,7 +6,7 @@ SuperRebuttal is a rebuttal workflow package for coding agents. It is shaped lik
 
 It is built for one job: help authors turn a paper, reviews, and explicit rebuttal constraints into a structured, evidence-first response without fabricating experiments, gains, or citations.
 
-The current package also supports review PDF ingestion, so a paper PDF and a review PDF can both be part of the working input bundle. If a review PDF is image-based instead of text-based, the bundle now falls back to rendered page images instead of failing outright.
+The current package also supports review PDF ingestion, so a paper PDF and a review PDF can both be part of the working input bundle. If a review PDF is image-based instead of text-based, the bundle now falls back to rendered page images instead of failing outright. Those rendered pages must still be inspected before reviewer cards are generated.
 
 ## What It Is
 
@@ -31,12 +31,13 @@ In practice, the flow is:
 2. provide manuscript context, paper PDFs, and review PDF files when available
 3. determine the response format and budget
 4. build a reviewer outline with `W#`, `Q#`, and minor-point structure when the review supports it
-5. build reviewer cards with reviewer stance, movability, attitude, and primary concerns
-6. cluster shared reviewer concerns
-7. produce a global strategy memo before reviewer-by-reviewer prose
-8. allocate the character budget before drafting
-9. draft the final rebuttal text
-10. keep unresolved evidence as explicit placeholders
+5. for image-fallback reviews, inspect the rendered review pages before reviewer-card generation
+6. build reviewer cards with reviewer stance, movability, attitude, and primary concerns
+7. cluster shared reviewer concerns
+8. produce a global strategy memo before reviewer-by-reviewer prose
+9. allocate the character budget before drafting
+10. draft the final rebuttal text
+11. keep unresolved evidence as explicit placeholders
 
 This keeps the workflow closer to how strong rebuttals are actually written: first understand the concern set, then decide what can be answered directly, what should be acknowledged, and what must stay as a bounded placeholder.
 
@@ -183,6 +184,7 @@ Use the Claude-style command directly:
 1. **Install SuperRebuttal** into Codex or a Claude-style plugin environment.
 2. **Provide inputs**: paper PDF, review PDF, manuscript text, or a faithful summary, plus reviews.
    If a review PDF is image-based, SuperRebuttal should continue through rendered page images instead of asking for pasted review text immediately.
+   The next step is to inspect those rendered pages and build a reviewer outline before reviewer cards are generated.
 3. **Choose a budgeting mode**:
    - `per-reviewer mode`
    - `shared-global mode`

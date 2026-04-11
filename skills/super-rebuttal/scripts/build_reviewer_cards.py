@@ -98,6 +98,11 @@ def build_reviewer_cards(reviews: list[dict[str, object]]) -> list[dict[str, obj
         text = review.get("text") or ""
         reviewer_id = _reviewer_id(index, text)
         outline = review.get("outline")
+        extraction_mode = str(review.get("extraction_mode", "text"))
+        if extraction_mode == "image_fallback" and not text and not isinstance(outline, dict):
+            raise ValueError(
+                "Image-fallback reviews require image-derived text or a prebuilt outline before reviewer-card generation."
+            )
         if not isinstance(outline, dict):
             outline = build_reviewer_outline(reviewer_id=reviewer_id, review_text=text)
         analysis_text = _outline_text(outline) or text
@@ -113,7 +118,7 @@ def build_reviewer_cards(reviews: list[dict[str, object]]) -> list[dict[str, obj
                 "outline": outline,
                 "question_count": len(outline.get("questions", [])),
                 "minor_point_count": len(outline.get("minor_points", [])),
-                "source_mode": review.get("extraction_mode", "text"),
+                "source_mode": extraction_mode,
             }
         )
     return cards

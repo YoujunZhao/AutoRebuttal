@@ -173,6 +173,61 @@ class InputBundleCliTest(unittest.TestCase):
         self.assertTrue(review["page_images"])
         self.assertTrue(pathlib.Path(review["page_images"][0]).exists())
 
+    def test_builder_uses_distinct_render_paths_for_same_stem_review_pdfs(self) -> None:
+        script_path = (
+            ROOT / "skills" / "super-rebuttal" / "scripts" / "build_input_bundle.py"
+        )
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp = pathlib.Path(tmpdir)
+            paper_pdf = tmp / "paper.pdf"
+            write_text_pdf(paper_pdf, "Paper summary: our method improves robustness.")
+
+            import fitz
+
+            def write_graphics_only_review(path: pathlib.Path) -> None:
+                document = fitz.open()
+                page = document.new_page()
+                page.draw_rect(
+                    fitz.Rect(72, 72, 420, 240),
+                    color=(0, 0, 0),
+                    fill=(0.9, 0.9, 0.9),
+                )
+                document.save(path)
+                document.close()
+
+            review_dir_one = tmp / "a"
+            review_dir_two = tmp / "b"
+            review_dir_one.mkdir()
+            review_dir_two.mkdir()
+            review_one_pdf = review_dir_one / "review.pdf"
+            review_two_pdf = review_dir_two / "review.pdf"
+            write_graphics_only_review(review_one_pdf)
+            write_graphics_only_review(review_two_pdf)
+
+            completed = subprocess.run(
+                [
+                    sys.executable,
+                    str(script_path),
+                    "--paper-pdf",
+                    str(paper_pdf),
+                    "--review-pdf",
+                    str(review_one_pdf),
+                    "--review-pdf",
+                    str(review_two_pdf),
+                ],
+                capture_output=True,
+                cwd=ROOT,
+                text=True,
+            )
+
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        bundle = json.loads(completed.stdout)
+        self.assertEqual(len(bundle["reviews"]), 2)
+        first_image = bundle["reviews"][0]["page_images"][0]
+        second_image = bundle["reviews"][1]["page_images"][0]
+        self.assertNotEqual(first_image, second_image)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import pathlib
 import sys
@@ -14,6 +15,11 @@ from extract_pdf_text import extract_pdf_text
 from render_review_pdf_pages import render_review_pdf_pages
 
 
+def _render_bucket(root: pathlib.Path, review_path: pathlib.Path, index: int) -> pathlib.Path:
+    digest = hashlib.sha1(str(review_path).encode("utf-8")).hexdigest()[:10]
+    return root / f"{index + 1:02d}_{review_path.stem}_{digest}"
+
+
 def build_input_bundle(
     *, paper_pdf: str | pathlib.Path, review_pdfs: list[str | pathlib.Path] | None = None
 ) -> dict[str, object]:
@@ -22,7 +28,7 @@ def build_input_bundle(
     tmp_root = pathlib.Path(tempfile.mkdtemp(prefix="superrebuttal_review_pages_"))
 
     reviews = []
-    for review_path in resolved_review_paths:
+    for index, review_path in enumerate(resolved_review_paths):
         try:
             reviews.append(
                 {
@@ -39,7 +45,7 @@ def build_input_bundle(
                     "text": None,
                     "page_images": render_review_pdf_pages(
                         pdf_path=review_path,
-                        output_dir=tmp_root / review_path.stem,
+                        output_dir=_render_bucket(tmp_root, review_path, index),
                     ),
                     "extraction_mode": "image_fallback",
                 }

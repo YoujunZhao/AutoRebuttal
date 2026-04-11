@@ -54,6 +54,7 @@ Reviewer cards should include reviewer stance, movability, attitude, and primary
 - If one paper PDF and one or more review PDF files are available, build the input bundle first and treat extracted review text as the working review source.
 - Do not ask the user to paste review text when review PDF extraction succeeds.
 - If a review PDF has no extractable text but can be rendered, continue from rendered page images instead of re-asking for pasted review text.
+- For image-fallback reviews, inspect the rendered pages first and build a reviewer outline before reviewer-card generation. Do not pretend empty text is a usable review.
 - Build a reviewer outline before writing prose so each reviewer can preserve `W#`, `Q#`, and `M#` structure.
 - Build reviewer cards before writing prose.
 - Build a strategy memo before reviewer-by-reviewer drafting.

@@ -95,6 +95,21 @@ class ReviewerCardsTest(unittest.TestCase):
         self.assertEqual(card["question_count"], 1)
         self.assertEqual(card["minor_point_count"], 1)
 
+    def test_reviewer_cards_reject_image_fallback_without_text_or_outline(self) -> None:
+        module_path = ROOT / "skills" / "super-rebuttal" / "scripts" / "build_reviewer_cards.py"
+        module = load_module("build_reviewer_cards", module_path)
+        with self.assertRaises(ValueError):
+            module.build_reviewer_cards(
+                [
+                    {
+                        "path": "review.pdf",
+                        "text": None,
+                        "page_images": ["review_p1.png"],
+                        "extraction_mode": "image_fallback",
+                    }
+                ]
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

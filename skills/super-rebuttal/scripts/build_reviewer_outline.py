@@ -8,6 +8,8 @@ import re
 
 HEADER_PATTERNS = {
     "ignore": (
+        r"official review(?: of .*?)?(?: by reviewer .*)?",
+        r"revisions",
         r"summary",
         r"strengths and weaknesses",
         r"strengths",
@@ -29,10 +31,10 @@ HEADER_PATTERNS = {
         r"weakness",
     ),
     "questions": (
-        r"questions",
-        r"question",
         r"key questions for authors",
         r"questions for authors",
+        r"questions",
+        r"question",
     ),
     "minor": (
         r"minor weaknesses",
@@ -44,7 +46,10 @@ HEADER_PATTERNS = {
     ),
 }
 
-ITEM_PREFIX_RE = re.compile(r"^(?:[\-\*\u2022]\s+|\(?\d+[\.\)]\s+)")
+ITEM_PREFIX_RE = re.compile(
+    r"^(?:question\s*\d+\s*:\s*|q\s*\d+\s*:\s*|[\-\*\u2022]\s+|\(?\d+[\.\)]\s+|\(?[a-zA-Z][\.\)]\s+)",
+    re.IGNORECASE,
+)
 INLINE_HEADER_TOKENS = [
     "Strengths And Weaknesses",
     "Strengths",
@@ -90,10 +95,14 @@ def _expand_inline_headers(review_text: str) -> str:
 
 def _match_header(line: str) -> tuple[str, str] | None:
     for section, patterns in HEADER_PATTERNS.items():
-        for pattern in patterns:
-            match = re.match(rf"^(?:{pattern})\s*:?\s*(.*)$", line, flags=re.IGNORECASE)
+        for pattern in sorted(patterns, key=len, reverse=True):
+            match = re.match(
+                rf"^(?:{pattern})(?::\s*(.*)|\s*$)",
+                line,
+                flags=re.IGNORECASE,
+            )
             if match:
-                return section, match.group(1).strip()
+                return section, (match.group(1) or "").strip()
     return None
 
 
@@ -121,7 +130,7 @@ def _append_item(
 
 
 def build_reviewer_outline(*, reviewer_id: str, review_text: str) -> dict[str, object]:
-    current_section = "weaknesses"
+    current_section = "ignore"
     weaknesses: list[dict[str, str]] = []
     questions: list[dict[str, str]] = []
     minor_points: list[dict[str, str]] = []

@@ -17,6 +17,7 @@ When PDFs are provided, treat them as first-class source artifacts:
 - review PDFs may be repeated and should preserve caller order
 - text extraction is best-effort and limited to text-based PDFs
 - if a review PDF has no text layer but can be rendered, keep it in the bundle with rendered page images so the runtime can still inspect it
+- image-fallback reviews need image-derived text or a prebuilt reviewer outline before reviewer-card generation
 
 ## Accepted Fallbacks
 
