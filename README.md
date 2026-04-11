@@ -23,22 +23,39 @@ The package is designed around a few core ideas:
 
 ## How It Works
 
-SuperRebuttal starts from the moment an author brings a paper and reviews into the session. Instead of jumping straight to final prose, it first identifies the response format, then organizes the review concerns, then drafts.
+SuperRebuttal starts from the moment an author brings a paper and reviews into the session. Instead of jumping straight to final prose, it first identifies the response format, organizes the review concerns, models reviewer stance and attitude, builds a global strategy memo, and only then drafts.
 
 In practice, the flow is:
 
 1. install the package in the host tool
 2. provide manuscript context, paper PDFs, and review PDF files when available
 3. determine the response format and budget
-4. build reviewer cards
+4. build reviewer cards with reviewer stance, movability, attitude, and primary concerns
 5. cluster shared reviewer concerns
-6. produce a global strategy memo
-7. draft the final rebuttal text
-8. keep unresolved evidence as explicit placeholders
+6. produce a global strategy memo before reviewer-by-reviewer prose
+7. allocate the character budget before drafting
+8. draft the final rebuttal text
+9. keep unresolved evidence as explicit placeholders
 
 This keeps the workflow closer to how strong rebuttals are actually written: first understand the concern set, then decide what can be answered directly, what should be acknowledged, and what must stay as a bounded placeholder.
 
 The project now explicitly models reviewer stance and attitude before prose generation. The goal is to sound less like a generic template and more like a targeted rebuttal.
+
+That also means the workflow now tries to identify:
+
+- which reviewers are swing reviewers
+- which concerns are global themes across multiple reviewers
+- where the draft should reassure, clarify, de-escalate, or sharply distinguish prior work
+
+## Human-Like Rebuttal Layer
+
+SuperRebuttal now includes:
+
+- **reviewer cards** for reviewer stance, movability, attitude, and primary concerns
+- a **global strategy memo** to decide what should lead the rebuttal
+- explicit **character-budget planning** so the opening, body, and closing are sized before drafting
+
+This is the main difference between the upgraded workflow and the older generic style.
 
 ## Installation
 

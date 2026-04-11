@@ -35,6 +35,38 @@ class ReviewerCardsTest(unittest.TestCase):
         self.assertIn("movability", card)
         self.assertIn("primary_concerns", card)
 
+    def test_reviewer_card_classifies_novelty_and_empirical_weakness(self) -> None:
+        module_path = ROOT / "skills" / "super-rebuttal" / "scripts" / "build_reviewer_cards.py"
+        module = load_module("build_reviewer_cards", module_path)
+        cards = module.build_reviewer_cards(
+            [
+                {
+                    "path": "R1.pdf",
+                    "text": "Reviewer 1: The novelty is unclear and the experiments are weak.",
+                }
+            ]
+        )
+        card = cards[0]
+        self.assertIn("novelty", card["primary_concerns"])
+        self.assertIn("empirical_support", card["primary_concerns"])
+        self.assertEqual(card["movability"], "swing")
+
+    def test_reviewer_card_classifies_scope_and_evidence_shortfall(self) -> None:
+        module_path = ROOT / "skills" / "super-rebuttal" / "scripts" / "build_reviewer_cards.py"
+        module = load_module("build_reviewer_cards", module_path)
+        cards = module.build_reviewer_cards(
+            [
+                {
+                    "path": "R2.pdf",
+                    "text": "Reviewer 2: The scope is limited and the evidence is insufficient.",
+                }
+            ]
+        )
+        card = cards[0]
+        self.assertIn("scope_mismatch", card["primary_concerns"])
+        self.assertIn("empirical_support", card["primary_concerns"])
+        self.assertEqual(card["movability"], "swing")
+
 
 if __name__ == "__main__":
     unittest.main()

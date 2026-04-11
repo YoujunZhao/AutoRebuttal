@@ -32,7 +32,14 @@ def _movability(text: str, sentiment: str) -> str:
     lowered = text.lower()
     if sentiment == "positive":
         return "supportive"
-    if "unclear" in lowered or "please clarify" in lowered or "missing" in lowered:
+    if (
+        "unclear" in lowered
+        or "please clarify" in lowered
+        or "missing" in lowered
+        or "insufficient" in lowered
+        or "limited" in lowered
+        or "weak" in lowered
+    ):
         return "swing"
     return "fixed"
 
@@ -42,10 +49,16 @@ def _primary_concerns(text: str) -> list[str]:
     concerns: list[str] = []
     mapping = [
         ("novelty", "novelty"),
+        ("experiment", "empirical_support"),
+        ("evidence", "empirical_support"),
+        ("weak", "empirical_support"),
+        ("insufficient", "empirical_support"),
         ("baseline", "baseline_comparison"),
         ("ablation", "missing_ablation"),
         ("clarify", "clarity"),
         ("writing", "clarity"),
+        ("scope", "scope_mismatch"),
+        ("limited", "scope_mismatch"),
         ("reproduc", "reproducibility"),
         ("theory", "theory"),
         ("proof", "theory"),
