@@ -1,6 +1,23 @@
 from __future__ import annotations
 
 
+def resolve_workflow_mode(
+    *,
+    existing_rebuttal_text: str | None,
+    revise_command: bool,
+) -> dict[str, object]:
+    existing = (existing_rebuttal_text or "").strip()
+    if revise_command or existing:
+        return {
+            "workflow": "revise-existing",
+            "reason": "explicit revise command or existing rebuttal text",
+        }
+    return {
+        "workflow": "draft-from-scratch",
+        "reason": "no existing rebuttal provided",
+    }
+
+
 def resolve_response_mode(
     *,
     venue: str | None,

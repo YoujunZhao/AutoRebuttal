@@ -8,6 +8,11 @@ It is built for one job: help authors turn a paper, reviews, and explicit rebutt
 
 The current package also supports review PDF ingestion, so a paper PDF and a review PDF can both be part of the working input bundle. If a review PDF is image-based instead of text-based, the bundle now falls back to rendered page images instead of failing outright. Those rendered pages must still be inspected before reviewer cards are generated.
 
+The package now exposes two command-style entrypoints:
+
+- `/rebuttal` for drafting from paper + reviews
+- `/rebuttal_revies` for polishing an existing rebuttal draft
+
 ## What It Is
 
 SuperRebuttal is not just a copied skill folder. It is a small rebuttal package that is meant to be installed, then invoked as a workflow.
@@ -56,6 +61,7 @@ SuperRebuttal now includes:
 - **reviewer cards** for reviewer stance, movability, attitude, and primary concerns
 - a **global strategy memo** to decide what should lead the rebuttal
 - explicit **character-budget planning** so the opening, body, and closing are sized before drafting
+- a **block formatter** so `W1`, `Q1`, and `M1` start on their own line
 
 This is the main difference between the upgraded workflow and the older generic style.
 
@@ -73,12 +79,15 @@ This is the main difference between the upgraded workflow and the older generic 
   use a brief summary to all reviewers first, then reviewer blocks, and budget the response like a one-page rebuttal-PDF equivalent
 
 Inside each reviewer block, the formatter should prefer `W1 / W2 / W3` point-to-point responses instead of one merged paragraph.
+Each `W1`, `Q1`, and `M1` label should start on its own line.
 
 It should also support:
 
 - `Q1 / Q2 / Q3` for direct reviewer questions
 - short `M1 / M2 / M3` responses for minor points
 - or one merged `Minor points` section when several minor comments are highly similar
+
+`W1`, `Q1`, and `M1` should each start on their own line rather than appearing inline in one long paragraph.
 
 For OpenReview-style review exports, the parser should preserve headers such as `Main Weaknesses`, `Key Questions For Authors`, and `Minor Weaknesses` instead of flattening everything into `W#`.
 
@@ -128,7 +137,7 @@ If you want to install it through the Claude plugin workflow, use the local mark
 /plugin install super-rebuttal@super-rebuttal-dev
 ```
 
-After that, the quickest Claude-style entrypoint is:
+After that, the quickest Claude-style entrypoints are:
 
 ```text
 /rebuttal
@@ -136,9 +145,10 @@ After that, the quickest Claude-style entrypoint is:
 
 ## How To Use It
 
-After installation, there are two practical invocation styles:
+After installation, there are three practical invocation styles:
 
 - **Use the `rebuttal` command**
+- **Use the `/rebuttal_revies` command**
 - **Use the `super-rebuttal` skill**
 
 The exact UI differs by host tool, but the working intent is the same: tell the agent to enter the SuperRebuttal workflow, then provide the paper, the reviews, and the response budget.
@@ -148,10 +158,17 @@ The exact UI differs by host tool, but the working intent is the same: tell the 
 - **`rebuttal`**
   This is the easier command-style entrypoint. Use it when you just want to start the workflow quickly.
 
+- **`rebuttal_revies`**
+  This is the revise/polish entrypoint. Use it when you already have an existing rebuttal and want the agent to tighten, shorten, and clean it up under the venue and budget constraints.
+
 - **`super-rebuttal`**
   This is the underlying skill / workflow engine. Use it when you want to invoke the skill explicitly.
 
 In short: `rebuttal` is the front door, and `super-rebuttal` is the actual engine behind it.
+
+### What is `/rebuttal_revies`?
+
+`/rebuttal_revies` is the polish-mode command surface for an existing rebuttal draft. Use it when the author already has response text and wants revision, tightening, or structure cleanup against the reviews and constraints instead of a fresh draft from scratch.
 
 ### Invocation Examples
 
@@ -177,6 +194,13 @@ Use the Claude-style command directly:
 
 ```text
 /rebuttal
+/rebuttal_revies
+```
+
+Polish an existing rebuttal directly:
+
+```text
+/rebuttal_revies venue=ICML per_reviewer=5000
 ```
 
 ## The Basic Workflow
@@ -212,6 +236,7 @@ These are the only things the project should present as verified support today:
 - Claude plugin shell metadata via [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json)
 - Local Claude marketplace metadata via [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json)
 - A command entrypoint via [`commands/rebuttal.md`](commands/rebuttal.md)
+- A polish-mode command entrypoint via [`commands/rebuttal_revies.md`](commands/rebuttal_revies.md)
 - `per-reviewer mode`
 - `shared-global mode`
 
@@ -237,6 +262,7 @@ That is intentionally weaker than saying "full venue support." These notes are r
 - [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json)
 - [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json)
 - [`commands/rebuttal.md`](commands/rebuttal.md)
+- [`commands/rebuttal_revies.md`](commands/rebuttal_revies.md)
 
 ### Canonical Rebuttal Engine
 

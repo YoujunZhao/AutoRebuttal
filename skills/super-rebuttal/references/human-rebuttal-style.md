@@ -6,6 +6,7 @@ Prefer:
 
 - a short global opener
 - `W1 / W2 / W3` point-to-point formatting under each reviewer
+- each `W1`, `Q1`, and `M1` label starting on its own line
 - explicit issue framing
 - one strong point per paragraph
 - reviewer stance awareness

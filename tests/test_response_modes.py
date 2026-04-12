@@ -42,6 +42,17 @@ class ResponseModesSurfaceTest(unittest.TestCase):
         )
         self.assertEqual(mode["mode"], "shared-global")
 
+    def test_existing_rebuttal_text_resolves_revise_existing_mode(self) -> None:
+        module = load_module(
+            "response_modes",
+            ROOT / "skills" / "super-rebuttal" / "scripts" / "response_modes.py",
+        )
+        mode = module.resolve_workflow_mode(
+            existing_rebuttal_text="Reviewer Qc8x\nW1. Novelty is limited.",
+            revise_command=True,
+        )
+        self.assertEqual(mode["workflow"], "revise-existing")
+
 
 if __name__ == "__main__":
     unittest.main()

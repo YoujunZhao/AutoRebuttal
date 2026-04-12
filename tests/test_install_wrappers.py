@@ -93,6 +93,23 @@ class ReadmeTruthTest(unittest.TestCase):
         self.assertIn("/plugin install", content)
         self.assertIn("What is the difference between `rebuttal` and `super-rebuttal`?", content)
 
+    def test_readmes_mention_rebuttal_revies_polish_mode(self) -> None:
+        english = (ROOT / "README.md").read_text(encoding="utf-8")
+        chinese = (ROOT / "README.zh-CN.md").read_text(encoding="utf-8")
+        self.assertIn("/rebuttal_revies", english)
+        self.assertIn("existing rebuttal", english)
+        self.assertIn("/rebuttal_revies", chinese)
+
+    def test_readmes_mention_line_breaks_before_w_q_m_labels(self) -> None:
+        english = (ROOT / "README.md").read_text(encoding="utf-8").lower()
+        chinese = (ROOT / "README.zh-CN.md").read_text(encoding="utf-8").lower()
+        self.assertIn("own line", english)
+        self.assertIn("w1", english)
+        self.assertIn("q1", english)
+        self.assertIn("m1", english)
+        self.assertIn("w1", chinese)
+        self.assertIn("q1", chinese)
+
     def test_readme_does_not_mention_openclaw(self) -> None:
         content = (ROOT / "README.md").read_text(encoding="utf-8").lower()
         self.assertNotIn("- openclaw\n", content)

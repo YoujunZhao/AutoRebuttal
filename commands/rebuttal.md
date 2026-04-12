@@ -4,6 +4,8 @@ description: "Start the SuperRebuttal workflow for a paper, reviews, and respons
 
 Use the `super-rebuttal` skill.
 
+This command is the drafting entrypoint for a new rebuttal from paper and review inputs. If the user already has an existing rebuttal draft and wants revision-only polish, use `/rebuttal_revies` instead.
+
 If the user provides a paper PDF and one or more review PDF files, treat the review PDF files as first-class review sources.
 
 Do not ask the user to paste review text if review PDF files are already available and text extraction succeeds.
@@ -26,6 +28,7 @@ Use venue-aware formatting defaults:
 - CVPR / ICCV / ECCV: brief global summary plus reviewer blocks
 
 Inside each reviewer block, default to `W1 / W2 / W3` point-to-point responses.
+Each `W#`, `Q#`, and `M#` label should start on its own line instead of being buried mid-paragraph.
 
 Also respond to reviewer questions as `Q1 / Q2 / Q3`.
 

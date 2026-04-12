@@ -18,6 +18,9 @@ class PluginSurfaceTest(unittest.TestCase):
     def test_rebuttal_command_exists(self) -> None:
         self.assertTrue((ROOT / "commands" / "rebuttal.md").exists())
 
+    def test_rebuttal_revies_command_exists(self) -> None:
+        self.assertTrue((ROOT / "commands" / "rebuttal_revies.md").exists())
+
     def test_rebuttal_command_mentions_review_pdf_intake(self) -> None:
         content = (ROOT / "commands" / "rebuttal.md").read_text(encoding="utf-8").lower()
         self.assertIn("review pdf", content)
@@ -38,6 +41,12 @@ class PluginSurfaceTest(unittest.TestCase):
         content = (ROOT / "commands" / "rebuttal.md").read_text(encoding="utf-8").lower()
         self.assertIn("rendered page images", content)
         self.assertIn("build a reviewer outline", content)
+
+    def test_rebuttal_revies_command_mentions_polishing_existing_rebuttal(self) -> None:
+        content = (ROOT / "commands" / "rebuttal_revies.md").read_text(encoding="utf-8").lower()
+        self.assertIn("existing rebuttal", content)
+        self.assertIn("polish", content)
+        self.assertIn("do not invent", content)
 
 
 if __name__ == "__main__":

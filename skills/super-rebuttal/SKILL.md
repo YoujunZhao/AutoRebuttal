@@ -33,6 +33,7 @@ Load the detailed references only when needed:
 
 - one paper PDF, or extracted manuscript text
 - zero or more review PDFs, or copied review text
+- an existing rebuttal draft when the user wants revision-only polish
 - venue and budget constraints
 - author notes about promises, limits, or forbidden claims
 
@@ -55,6 +56,7 @@ Reviewer cards should include reviewer stance, movability, attitude, and primary
 - Do not ask the user to paste review text when review PDF extraction succeeds.
 - If a review PDF has no extractable text but can be rendered, continue from rendered page images instead of re-asking for pasted review text.
 - For image-fallback reviews, inspect the rendered pages first and build a reviewer outline before reviewer-card generation. Do not pretend empty text is a usable review.
+- If the user already has an existing rebuttal draft and asks to revise or polish it, treat that draft as a first-class input and use the `/rebuttal_revies` command surface behavior.
 - Build a reviewer outline before writing prose so each reviewer can preserve `W#`, `Q#`, and `M#` structure.
 - Build reviewer cards before writing prose.
 - Build a strategy memo before reviewer-by-reviewer drafting.
@@ -93,6 +95,7 @@ Reviewer cards should include reviewer stance, movability, attitude, and primary
 - CVPR / ICCV / ECCV: brief global summary, then reviewer blocks
 
 Inside each reviewer block, default to `W1 / W2 / W3` point-to-point sections.
+Each `W#`, `Q#`, and `M#` label should start on its own line.
 
 Also respond to reviewer questions as `Q1 / Q2 / Q3`.
 
