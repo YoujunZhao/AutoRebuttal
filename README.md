@@ -259,7 +259,6 @@ That is intentionally weaker than saying "full venue support." These notes are r
 ### Package Shell
 
 - [`scripts/autorebuttal_manager.py`](scripts/autorebuttal_manager.py)
-- [`scripts/superrebuttal_manager.py`](scripts/superrebuttal_manager.py)
 - [`.codex/INSTALL.md`](.codex/INSTALL.md)
 - [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json)
 - [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json)
@@ -274,6 +273,8 @@ That is intentionally weaker than saying "full venue support." These notes are r
 - [`skills/auto-rebuttal/scripts/build_reviewer_outline.py`](skills/auto-rebuttal/scripts/build_reviewer_outline.py)
 - [`skills/auto-rebuttal/scripts/build_reviewer_cards.py`](skills/auto-rebuttal/scripts/build_reviewer_cards.py)
 - [`skills/auto-rebuttal/scripts/response_modes.py`](skills/auto-rebuttal/scripts/response_modes.py)
+- [`skills/auto-rebuttal/scripts/build_draft_bundle.py`](skills/auto-rebuttal/scripts/build_draft_bundle.py)
+- [`skills/auto-rebuttal/scripts/build_revision_bundle.py`](skills/auto-rebuttal/scripts/build_revision_bundle.py)
 - [`skills/auto-rebuttal/scripts/install_skill.py`](skills/auto-rebuttal/scripts/install_skill.py)
 - [`skills/auto-rebuttal/scripts/package_skill.py`](skills/auto-rebuttal/scripts/package_skill.py)
 - [`skills/auto-rebuttal/scripts/validate_budget.py`](skills/auto-rebuttal/scripts/validate_budget.py)

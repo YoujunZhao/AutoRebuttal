@@ -24,6 +24,7 @@ class ReadmeTruthTest(unittest.TestCase):
         content = (ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn(".codex/INSTALL.md", content)
         self.assertIn("README.zh-CN.md", content)
+        self.assertNotIn("scripts/superrebuttal_manager.py", content)
 
     def test_readme_mentions_per_reviewer_mode(self) -> None:
         content = (ROOT / "README.md").read_text(encoding="utf-8").lower()
