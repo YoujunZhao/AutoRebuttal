@@ -5,6 +5,7 @@ import pathlib
 import tempfile
 
 from extract_pdf_text import extract_pdf_text
+from ocr_rendered_pages import ocr_rendered_pages
 from render_review_pdf_pages import render_review_pdf_pages
 
 
@@ -44,18 +45,28 @@ def detect_input_artifact(
                     "page_images": [],
                 }
             except ValueError:
-                if not allow_pdf_image_fallback:
-                    raise
                 tmp_root = pathlib.Path(tempfile.mkdtemp(prefix=temp_prefix))
+                page_images = render_review_pdf_pages(
+                    pdf_path=resolved_path,
+                    output_dir=_render_bucket(tmp_root, resolved_path, index),
+                )
+                ocr_text = ocr_rendered_pages(page_images).strip()
+                if ocr_text:
+                    return {
+                        "source_type": "pdf",
+                        "path": str(resolved_path),
+                        "text": ocr_text,
+                        "extraction_mode": "ocr",
+                        "page_images": page_images,
+                    }
+                if not allow_pdf_image_fallback:
+                    raise ValueError(f"No OCR text recovered from PDF: {resolved_path}")
                 return {
                     "source_type": "pdf",
                     "path": str(resolved_path),
                     "text": None,
                     "extraction_mode": "image_fallback",
-                    "page_images": render_review_pdf_pages(
-                        pdf_path=resolved_path,
-                        output_dir=_render_bucket(tmp_root, resolved_path, index),
-                    ),
+                    "page_images": page_images,
                 }
 
         return {

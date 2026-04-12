@@ -18,7 +18,8 @@ When PDFs are provided, treat them as first-class source artifacts:
 - review PDFs may be repeated and should preserve caller order
 - revise mode may receive one rebuttal PDF instead of review inputs
 - text extraction is best-effort and limited to text-based PDFs
-- if a review PDF has no text layer but can be rendered, keep it in the bundle with rendered page images so the runtime can still inspect it
+- if a review PDF has no text layer but can be rendered, OCR the rendered pages first
+- if a rebuttal PDF has no text layer but can be rendered, OCR the rendered pages first
 - image-fallback reviews need image-derived text or a prebuilt reviewer outline before reviewer-card generation
 
 Auto-detection rules:
@@ -26,6 +27,13 @@ Auto-detection rules:
 - existing filesystem path ending in `.pdf` -> treat as PDF artifact
 - existing filesystem path with any other suffix -> treat as text-file artifact
 - non-path string -> treat as raw text
+
+OCR rules:
+
+- text-layer PDF -> `extraction_mode = text`
+- image-based PDF with OCR success -> `extraction_mode = ocr`
+- image-based review PDF with OCR failure -> `extraction_mode = image_fallback`
+- image-based rebuttal PDF with OCR failure -> explicit error
 
 ## Accepted Fallbacks
 

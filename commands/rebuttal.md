@@ -22,8 +22,10 @@ If the user provides copied review text instead, treat it as a text review sourc
 
 Do not ask the user to paste review text if review PDF files are already available and text extraction succeeds.
 
-If a review PDF has no extractable text but can be rendered, continue from rendered page images instead of stopping or re-asking for pasted review text.
-For image-fallback reviews, inspect the rendered pages first and build a reviewer outline before generating reviewer cards. Do not synthesize reviewer cards from empty text.
+If a review PDF has no extractable text but can be rendered, run OCR on the rendered page images first.
+
+- if OCR succeeds, continue from the OCR text
+- if OCR fails, keep the honest image fallback and inspect the rendered pages before generating reviewer cards
 
 Before drafting, build reviewer cards and a strategy memo.
 
@@ -65,5 +67,6 @@ Examples:
 - `venue=ICML per_reviewer=5000`
 - `venue=AAAI per_reviewer=3000`
 - `venue=ICLR global_summary=false per_reviewer=4500`
+- `/rebuttal venue=ICML per_reviewer=5000`
 
 If the venue format is not explicitly verified by the repository, ask for an explicit character or word limit and continue in generic mode.

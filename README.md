@@ -6,7 +6,7 @@ AutoRebuttal is a rebuttal workflow package for coding agents. It is shaped like
 
 It is built for one job: help authors turn a paper, reviews, and explicit rebuttal constraints into a structured, evidence-first response without fabricating experiments, gains, or citations.
 
-The current package also supports review PDF ingestion, so a paper PDF and a review PDF can both be part of the working input bundle. If a review PDF is image-based instead of text-based, the bundle now falls back to rendered page images instead of failing outright. Those rendered pages must still be inspected before reviewer cards are generated.
+The current package also supports review PDF ingestion, so a paper PDF and a review PDF can both be part of the working input bundle. If a PDF is image-based instead of text-based, AutoRebuttal now tries OCR on the rendered pages first. Only if OCR still yields no usable text does the review path fall back to rendered-page inspection.
 
 The package now exposes two command-style entrypoints:
 
@@ -33,16 +33,18 @@ AutoRebuttal starts from the moment an author brings a paper and reviews into th
 In practice, the flow is:
 
 1. install the package in the host tool
-2. provide manuscript context, paper PDFs, and review PDF files when available
-3. determine the response format and budget
-4. build a reviewer outline with `W#`, `Q#`, and minor-point structure when the review supports it
-5. for image-fallback reviews, inspect the rendered review pages before reviewer-card generation
-6. build reviewer cards with reviewer stance, movability, attitude, and primary concerns
-7. cluster shared reviewer concerns
-8. produce a global strategy memo before reviewer-by-reviewer prose
-9. allocate the character budget before drafting
-10. draft the final rebuttal text
-11. keep unresolved evidence as explicit placeholders
+2. provide manuscript context, paper PDFs, review PDFs, review text, rebuttal PDFs, or rebuttal text depending on mode
+3. auto-detect whether each non-paper artifact is PDF or text
+4. if a PDF has no text layer, OCR the rendered pages first
+5. determine the response format and budget
+6. build a reviewer outline with `W#`, `Q#`, and minor-point structure when the review supports it
+7. if OCR still fails on a review PDF, inspect the rendered review pages before reviewer-card generation
+8. build reviewer cards with reviewer stance, movability, attitude, and primary concerns
+9. cluster shared reviewer concerns
+10. produce a global strategy memo before reviewer-by-reviewer prose
+11. allocate the character budget before drafting
+12. draft the final rebuttal text
+13. keep unresolved evidence as explicit placeholders
 
 This keeps the workflow closer to how strong rebuttals are actually written: first understand the concern set, then decide what can be answered directly, what should be acknowledged, and what must stay as a bounded placeholder.
 
@@ -176,7 +178,7 @@ In short: `rebuttal` is the front door, and `auto-rebuttal` is the actual engine
 Use the `rebuttal` command:
 
 ```text
-Use the `rebuttal` command. I will paste the abstract, the main claims, and three reviewer comments. This is per-reviewer mode with 5000 characters each.
+/rebuttal venue=ICML per_reviewer=5000
 ```
 
 Use the `auto-rebuttal` skill:
@@ -191,7 +193,7 @@ If the venue format is unclear, give the budget explicitly:
 Use the `auto-rebuttal` skill. Ignore venue defaults and use per-reviewer mode with 4000 characters per reviewer.
 ```
 
-Use the Claude-style command directly:
+Use the Claude-style commands directly:
 
 ```text
 /rebuttal
@@ -207,9 +209,10 @@ Polish an existing rebuttal directly:
 ## The Basic Workflow
 
 1. **Install AutoRebuttal** into Codex or a Claude-style plugin environment.
-2. **Provide inputs**: paper PDF, review PDF, manuscript text, or a faithful summary, plus reviews.
-   If a review PDF is image-based, AutoRebuttal should continue through rendered page images instead of asking for pasted review text immediately.
-   The next step is to inspect those rendered pages and build a reviewer outline before reviewer cards are generated.
+2. **Provide inputs**: paper PDF, review PDF, review text, rebuttal PDF, rebuttal text, manuscript text, or a faithful summary.
+   `/rebuttal` auto-detects whether each review input is PDF or text.
+   `/rebuttal_revise` auto-detects whether the rebuttal input is PDF or text, and paper PDF is optional.
+   If a PDF is image-based, AutoRebuttal tries OCR first.
 3. **Choose a budgeting mode**:
    - `per-reviewer mode`
    - `shared-global mode`

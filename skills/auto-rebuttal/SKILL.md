@@ -20,6 +20,7 @@ Load the detailed references only when needed:
 - `scripts/build_draft_bundle.py` when the user provides paper PDF plus review PDF or review text inputs
 - `scripts/build_revision_bundle.py` when the user provides an existing rebuttal PDF or rebuttal text, with optional paper PDF
 - `scripts/build_input_bundle.py` as the PDF-only compatibility wrapper for draft-mode bundle building
+- `scripts/ocr_rendered_pages.py` when a PDF must be OCRed after page rendering
 - `scripts/render_review_pdf_pages.py` when a review PDF has no text layer and must continue through rendered page images
 - `scripts/build_reviewer_outline.py` to preserve `W/Q/M` structure before prose drafting
 - `scripts/build_reviewer_cards.py` to create reviewer cards before drafting
@@ -58,9 +59,11 @@ Reviewer cards should include reviewer stance, movability, attitude, and primary
 - In draft mode, build the draft bundle first and auto-detect whether each review artifact is PDF or text.
 - In revise mode, build the revision bundle first and auto-detect whether the rebuttal artifact is PDF or text.
 - Do not ask the user to paste review text when review PDF extraction succeeds.
-- If a review PDF has no extractable text but can be rendered, continue from rendered page images instead of re-asking for pasted review text.
-- For image-fallback reviews, inspect the rendered pages first and build a reviewer outline before reviewer-card generation. Do not pretend empty text is a usable review.
+- If a review PDF has no extractable text but can be rendered, run OCR on the rendered pages first.
+- If OCR succeeds, continue from the OCR text.
+- If OCR fails, keep the rendered-page fallback and inspect the rendered pages before reviewer-card generation. Do not pretend empty text is a usable review.
 - If the user already has an existing rebuttal draft or rebuttal PDF and asks to revise or polish it, treat that rebuttal artifact as first-class input and use the `/rebuttal_revise` command surface behavior.
+- If a rebuttal PDF has no extractable text, run OCR on its rendered pages first; only fail if OCR also produces no usable text.
 - Build a reviewer outline before writing prose so each reviewer can preserve `W#`, `Q#`, and `M#` structure.
 - Build reviewer cards before writing prose.
 - Build a strategy memo before reviewer-by-reviewer drafting.

@@ -3,6 +3,9 @@ import pathlib
 import tempfile
 import unittest
 
+import fitz
+from PIL import Image, ImageDraw
+
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
@@ -76,6 +79,39 @@ class DraftBundleTest(unittest.TestCase):
         self.assertEqual(bundle["reviews"][1]["source_type"], "text")
         self.assertIn("clarify baseline fairness", bundle["reviews"][0]["text"])
         self.assertIn("prompt sensitivity", bundle["reviews"][1]["text"])
+
+    def test_draft_bundle_ocrs_image_only_review_pdf(self) -> None:
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_draft_bundle.py"
+        module = load_module("build_draft_bundle", module_path)
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp = pathlib.Path(tmpdir)
+            paper_pdf = tmp / "paper.pdf"
+            review_pdf = tmp / "review-image.pdf"
+            write_text_pdf(paper_pdf, "Paper summary: AutoRebuttal OCR paper.")
+
+            image = Image.new("RGB", (1400, 800), "white")
+            draw = ImageDraw.Draw(image)
+            draw.text((40, 40), "Key Questions For Authors", fill="black")
+            draw.text((40, 120), "1. Why this baseline?", fill="black")
+            png_path = tmp / "review.png"
+            image.save(png_path)
+
+            document = fitz.open()
+            page = document.new_page(width=700, height=400)
+            page.insert_image(fitz.Rect(0, 0, 700, 400), filename=str(png_path))
+            document.save(review_pdf)
+            document.close()
+
+            bundle = module.build_draft_bundle(
+                paper_pdf=paper_pdf,
+                review_inputs=[review_pdf],
+            )
+
+        self.assertEqual(bundle["reviews"][0]["source_type"], "pdf")
+        self.assertEqual(bundle["reviews"][0]["extraction_mode"], "ocr")
+        self.assertIn("Key Questions", bundle["reviews"][0]["text"])
+        self.assertIn("Why this baseline", bundle["reviews"][0]["text"])
 
 
 if __name__ == "__main__":

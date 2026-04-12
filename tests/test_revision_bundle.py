@@ -3,6 +3,9 @@ import pathlib
 import tempfile
 import unittest
 
+import fitz
+from PIL import Image, ImageDraw
+
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
@@ -83,6 +86,38 @@ class RevisionBundleTest(unittest.TestCase):
         self.assertEqual(bundle["rebuttal"]["source_type"], "text")
         self.assertIn("Existing rebuttal text", bundle["rebuttal"]["text"])
         self.assertIsNone(bundle["paper"])
+
+    def test_revision_bundle_ocrs_image_only_rebuttal_pdf(self) -> None:
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_revision_bundle.py"
+        module = load_module("build_revision_bundle", module_path)
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp = pathlib.Path(tmpdir)
+            rebuttal_pdf = tmp / "rebuttal-image.pdf"
+
+            image = Image.new("RGB", (1400, 800), "white")
+            draw = ImageDraw.Draw(image)
+            draw.text((40, 40), "Reviewer Qc8x", fill="black")
+            draw.text((40, 120), "W1. Existing rebuttal OCR content.", fill="black")
+            png_path = tmp / "rebuttal.png"
+            image.save(png_path)
+
+            document = fitz.open()
+            page = document.new_page(width=700, height=400)
+            page.insert_image(fitz.Rect(0, 0, 700, 400), filename=str(png_path))
+            document.save(rebuttal_pdf)
+            document.close()
+
+            bundle = module.build_revision_bundle(
+                rebuttal_input=rebuttal_pdf,
+                paper_pdf=None,
+            )
+
+        self.assertEqual(bundle["rebuttal"]["source_type"], "pdf")
+        self.assertEqual(bundle["rebuttal"]["extraction_mode"], "ocr")
+        self.assertIn("Reviewer", bundle["rebuttal"]["text"])
+        normalized = bundle["rebuttal"]["text"].replace(" ", "")
+        self.assertIn("ExistingrebuttalOCRcontent", normalized)
 
 
 if __name__ == "__main__":

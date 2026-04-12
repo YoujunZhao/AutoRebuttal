@@ -25,7 +25,10 @@ Do not invent experiments, numerical gains, citations, or promises that are not 
 
 If review PDF files are already available and text extraction succeeds, do not ask the user to paste review text again.
 
-If a rebuttal PDF has no extractable text, fail clearly instead of pretending the rebuttal was parsed.
+If a rebuttal PDF has no extractable text, run OCR on the rendered pages first.
+
+- if OCR succeeds, revise from the OCR text
+- if OCR fails, fail clearly instead of pretending the rebuttal was parsed
 
 If a review PDF is also available and has no extractable text but can be rendered, continue from rendered page images and rebuild the reviewer outline before revising the prose.
 
@@ -43,3 +46,9 @@ When polishing the final structure:
 - start every `W#`, `Q#`, and `M#` label on its own line
 
 If the existing rebuttal conflicts with the evidence, prefer a bounded correction or placeholder such as `XX` or `[RESULT-TO-FILL]` rather than a stronger unsupported claim.
+
+Example:
+
+```text
+/rebuttal_revise venue=ICML per_reviewer=5000
+```
