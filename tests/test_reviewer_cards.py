@@ -17,7 +17,7 @@ def load_module(module_name: str, path: pathlib.Path):
 
 class ReviewerCardsTest(unittest.TestCase):
     def test_reviewer_card_builder_exists_and_emits_core_fields(self) -> None:
-        module_path = ROOT / "skills" / "super-rebuttal" / "scripts" / "build_reviewer_cards.py"
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_reviewer_cards.py"
         self.assertTrue(module_path.exists(), "Expected build_reviewer_cards.py to exist.")
         module = load_module("build_reviewer_cards", module_path)
         cards = module.build_reviewer_cards(
@@ -36,7 +36,7 @@ class ReviewerCardsTest(unittest.TestCase):
         self.assertIn("primary_concerns", card)
 
     def test_reviewer_card_classifies_novelty_and_empirical_weakness(self) -> None:
-        module_path = ROOT / "skills" / "super-rebuttal" / "scripts" / "build_reviewer_cards.py"
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_reviewer_cards.py"
         module = load_module("build_reviewer_cards", module_path)
         cards = module.build_reviewer_cards(
             [
@@ -52,7 +52,7 @@ class ReviewerCardsTest(unittest.TestCase):
         self.assertEqual(card["movability"], "swing")
 
     def test_reviewer_card_classifies_scope_and_evidence_shortfall(self) -> None:
-        module_path = ROOT / "skills" / "super-rebuttal" / "scripts" / "build_reviewer_cards.py"
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_reviewer_cards.py"
         module = load_module("build_reviewer_cards", module_path)
         cards = module.build_reviewer_cards(
             [
@@ -68,7 +68,7 @@ class ReviewerCardsTest(unittest.TestCase):
         self.assertEqual(card["movability"], "swing")
 
     def test_reviewer_cards_preserve_outline_questions_and_minor_points(self) -> None:
-        module_path = ROOT / "skills" / "super-rebuttal" / "scripts" / "build_reviewer_cards.py"
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_reviewer_cards.py"
         module = load_module("build_reviewer_cards", module_path)
         cards = module.build_reviewer_cards(
             [
@@ -96,7 +96,7 @@ class ReviewerCardsTest(unittest.TestCase):
         self.assertEqual(card["minor_point_count"], 1)
 
     def test_reviewer_cards_reject_image_fallback_without_text_or_outline(self) -> None:
-        module_path = ROOT / "skills" / "super-rebuttal" / "scripts" / "build_reviewer_cards.py"
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_reviewer_cards.py"
         module = load_module("build_reviewer_cards", module_path)
         with self.assertRaises(ValueError):
             module.build_reviewer_cards(

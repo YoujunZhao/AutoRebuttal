@@ -19,7 +19,7 @@ class ResponseModesSurfaceTest(unittest.TestCase):
     def test_explicit_per_reviewer_budget_resolves_per_reviewer(self) -> None:
         module = load_module(
             "response_modes",
-            ROOT / "skills" / "super-rebuttal" / "scripts" / "response_modes.py",
+            ROOT / "skills" / "auto-rebuttal" / "scripts" / "response_modes.py",
         )
         mode = module.resolve_response_mode(
             venue=None,
@@ -32,7 +32,7 @@ class ResponseModesSurfaceTest(unittest.TestCase):
     def test_shared_budget_resolves_shared_global(self) -> None:
         module = load_module(
             "response_modes",
-            ROOT / "skills" / "super-rebuttal" / "scripts" / "response_modes.py",
+            ROOT / "skills" / "auto-rebuttal" / "scripts" / "response_modes.py",
         )
         mode = module.resolve_response_mode(
             venue=None,
@@ -45,7 +45,7 @@ class ResponseModesSurfaceTest(unittest.TestCase):
     def test_existing_rebuttal_text_resolves_revise_existing_mode(self) -> None:
         module = load_module(
             "response_modes",
-            ROOT / "skills" / "super-rebuttal" / "scripts" / "response_modes.py",
+            ROOT / "skills" / "auto-rebuttal" / "scripts" / "response_modes.py",
         )
         mode = module.resolve_workflow_mode(
             existing_rebuttal_text="Reviewer Qc8x\nW1. Novelty is limited.",

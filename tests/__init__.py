@@ -1,1 +1,1 @@
-"""Test package for SuperRebuttal helper scripts."""
+"""Test package for AutoRebuttal helper scripts."""

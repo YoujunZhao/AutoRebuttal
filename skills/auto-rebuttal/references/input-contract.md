@@ -6,6 +6,7 @@ Best case:
 
 - paper PDF or extracted manuscript text
 - zero or more review PDFs, or extracted reviewer text
+- an existing rebuttal PDF or rebuttal text when using revise mode
 - all reviewer comments
 - venue and year
 - global or per-review character / word limit
@@ -15,9 +16,16 @@ When PDFs are provided, treat them as first-class source artifacts:
 
 - exactly one paper PDF may supply the manuscript context
 - review PDFs may be repeated and should preserve caller order
+- revise mode may receive one rebuttal PDF instead of review inputs
 - text extraction is best-effort and limited to text-based PDFs
 - if a review PDF has no text layer but can be rendered, keep it in the bundle with rendered page images so the runtime can still inspect it
 - image-fallback reviews need image-derived text or a prebuilt reviewer outline before reviewer-card generation
+
+Auto-detection rules:
+
+- existing filesystem path ending in `.pdf` -> treat as PDF artifact
+- existing filesystem path with any other suffix -> treat as text-file artifact
+- non-path string -> treat as raw text
 
 ## Accepted Fallbacks
 
@@ -52,6 +60,12 @@ If the venue is unknown, use:
   - `reviews[].extraction_mode`
   - `source_files.paper_pdf`
   - `source_files.review_pdfs`
+- a prebuilt revision bundle with:
+  - `rebuttal.source_type`
+  - `rebuttal.path`
+  - `rebuttal.text`
+  - optional `paper.path`
+  - optional `paper.text`
 
 ## Default Output Modes
 

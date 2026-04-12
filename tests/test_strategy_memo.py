@@ -17,7 +17,7 @@ def load_module(module_name: str, path: pathlib.Path):
 
 class StrategyMemoTest(unittest.TestCase):
     def test_strategy_memo_builder_groups_shared_issues(self) -> None:
-        module_path = ROOT / "skills" / "super-rebuttal" / "scripts" / "build_strategy_memo.py"
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_strategy_memo.py"
         self.assertTrue(module_path.exists(), "Expected build_strategy_memo.py to exist.")
         module = load_module("build_strategy_memo", module_path)
         memo = module.build_strategy_memo(

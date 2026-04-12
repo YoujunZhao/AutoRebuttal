@@ -52,11 +52,11 @@ def write_text_pdf(path: pathlib.Path, text: str) -> None:
 class PdfExtractTest(unittest.TestCase):
     def test_extract_pdf_text_reads_review_sentence_from_text_pdf(self) -> None:
         module_path = (
-            ROOT / "skills" / "super-rebuttal" / "scripts" / "extract_pdf_text.py"
+            ROOT / "skills" / "auto-rebuttal" / "scripts" / "extract_pdf_text.py"
         )
         self.assertTrue(
             module_path.exists(),
-            "Expected skills/super-rebuttal/scripts/extract_pdf_text.py to exist.",
+            "Expected skills/auto-rebuttal/scripts/extract_pdf_text.py to exist.",
         )
 
         module = load_module("extract_pdf_text", module_path)
@@ -72,7 +72,7 @@ class PdfExtractTest(unittest.TestCase):
 
     def test_extract_pdf_text_ignores_non_rendered_strings(self) -> None:
         module_path = (
-            ROOT / "skills" / "super-rebuttal" / "scripts" / "extract_pdf_text.py"
+            ROOT / "skills" / "auto-rebuttal" / "scripts" / "extract_pdf_text.py"
         )
         module = load_module("extract_pdf_text", module_path)
 
@@ -112,7 +112,7 @@ class PdfExtractTest(unittest.TestCase):
 
     def test_extract_pdf_text_raises_when_no_text_is_recovered(self) -> None:
         module_path = (
-            ROOT / "skills" / "super-rebuttal" / "scripts" / "extract_pdf_text.py"
+            ROOT / "skills" / "auto-rebuttal" / "scripts" / "extract_pdf_text.py"
         )
         module = load_module("extract_pdf_text", module_path)
 

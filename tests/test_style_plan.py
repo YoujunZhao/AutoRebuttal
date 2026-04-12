@@ -17,7 +17,7 @@ def load_module(module_name: str, path: pathlib.Path):
 
 class StylePlanTest(unittest.TestCase):
     def test_style_plan_builder_exists_and_prioritizes_shared_issues(self) -> None:
-        module_path = ROOT / "skills" / "super-rebuttal" / "scripts" / "build_style_plan.py"
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_style_plan.py"
         self.assertTrue(module_path.exists(), "Expected build_style_plan.py to exist.")
         module = load_module("build_style_plan", module_path)
         plan = module.build_style_plan(

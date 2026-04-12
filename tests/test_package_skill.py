@@ -20,7 +20,7 @@ class PackageSkillTest(unittest.TestCase):
     def test_build_archive_contains_skill_root(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             root = pathlib.Path(tmpdir)
-            skill_dir = root / "skill" / "super-rebuttal"
+            skill_dir = root / "skill" / "auto-rebuttal"
             dist_dir = root / "dist"
             (skill_dir / "references").mkdir(parents=True)
             (skill_dir / "SKILL.md").write_text("stub", encoding="utf-8")
@@ -28,27 +28,27 @@ class PackageSkillTest(unittest.TestCase):
 
             module = load_module(
                 "package_skill",
-                ROOT / "skills" / "super-rebuttal" / "scripts" / "package_skill.py",
+                ROOT / "skills" / "auto-rebuttal" / "scripts" / "package_skill.py",
             )
 
             archive = module.build_archive(skill_dir=skill_dir, dist_dir=dist_dir)
 
-            self.assertEqual(archive, dist_dir / "super-rebuttal.zip")
+            self.assertEqual(archive, dist_dir / "auto-rebuttal.zip")
             with zipfile.ZipFile(archive) as zf:
-                self.assertIn("super-rebuttal/SKILL.md", zf.namelist())
-                self.assertIn("super-rebuttal/references/guide.md", zf.namelist())
+                self.assertIn("auto-rebuttal/SKILL.md", zf.namelist())
+                self.assertIn("auto-rebuttal/references/guide.md", zf.namelist())
 
     def test_main_creates_archive_from_arguments(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             root = pathlib.Path(tmpdir)
-            skill_dir = root / "skill" / "super-rebuttal"
+            skill_dir = root / "skill" / "auto-rebuttal"
             dist_dir = root / "dist"
             skill_dir.mkdir(parents=True)
             (skill_dir / "SKILL.md").write_text("stub", encoding="utf-8")
 
             module = load_module(
                 "package_skill_cli",
-                ROOT / "skills" / "super-rebuttal" / "scripts" / "package_skill.py",
+                ROOT / "skills" / "auto-rebuttal" / "scripts" / "package_skill.py",
             )
 
             exit_code = module.main(
@@ -56,7 +56,7 @@ class PackageSkillTest(unittest.TestCase):
             )
 
             self.assertEqual(exit_code, 0)
-            self.assertTrue((dist_dir / "super-rebuttal.zip").exists())
+            self.assertTrue((dist_dir / "auto-rebuttal.zip").exists())
 
 
 if __name__ == "__main__":

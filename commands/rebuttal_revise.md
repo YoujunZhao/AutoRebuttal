@@ -2,9 +2,22 @@
 description: "Polish an existing rebuttal draft against the reviews and response constraints"
 ---
 
-Use the `super-rebuttal` skill in polish mode.
+Use the `auto-rebuttal` skill in polish mode.
 
-This command is for revising an existing rebuttal, not starting from an empty draft. Treat the existing rebuttal text as a first-class input artifact alongside the paper, reviews, and venue or budget constraints.
+This command is for revising an existing rebuttal, not starting from an empty draft. Treat the existing rebuttal artifact as first-class input alongside the optional paper and any available review context.
+
+Use this command when the user wants to revise or polish an existing rebuttal under the active venue and budget constraints.
+
+Accepted inputs for this command:
+
+- rebuttal PDF
+- rebuttal text
+- optional paper PDF
+
+Auto-detect the rebuttal input:
+
+- rebuttal PDF -> parse it as a rebuttal document
+- rebuttal text -> treat it as existing rebuttal prose directly
 
 Start by identifying what should be preserved, tightened, reordered, or removed. Polish for clarity, specificity, and reviewer coverage without changing the factual basis of the response.
 
@@ -12,7 +25,9 @@ Do not invent experiments, numerical gains, citations, or promises that are not 
 
 If review PDF files are already available and text extraction succeeds, do not ask the user to paste review text again.
 
-If a review PDF has no extractable text but can be rendered, continue from rendered page images and rebuild the reviewer outline before revising the prose.
+If a rebuttal PDF has no extractable text, fail clearly instead of pretending the rebuttal was parsed.
+
+If a review PDF is also available and has no extractable text but can be rendered, continue from rendered page images and rebuild the reviewer outline before revising the prose.
 
 Before revising the draft:
 

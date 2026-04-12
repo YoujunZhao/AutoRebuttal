@@ -11,13 +11,13 @@ def build_archive(skill_dir: pathlib.Path, dist_dir: pathlib.Path) -> pathlib.Pa
     dist_dir = pathlib.Path(dist_dir)
     dist_dir.mkdir(parents=True, exist_ok=True)
 
-    archive_path = dist_dir / "super-rebuttal.zip"
+    archive_path = dist_dir / "auto-rebuttal.zip"
     with zipfile.ZipFile(archive_path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
         for path in skill_dir.rglob("*"):
             if path.is_file():
                 archive.write(
                     path,
-                    pathlib.Path("super-rebuttal") / path.relative_to(skill_dir),
+                    pathlib.Path("auto-rebuttal") / path.relative_to(skill_dir),
                 )
 
     return archive_path
@@ -27,7 +27,7 @@ def main(argv: list[str] | None = None) -> int:
     default_skill_dir = pathlib.Path(__file__).resolve().parents[1]
     default_dist_dir = default_skill_dir.parents[1] / "dist"
 
-    parser = argparse.ArgumentParser(description="Package the SuperRebuttal skill.")
+    parser = argparse.ArgumentParser(description="Package the AutoRebuttal skill.")
     parser.add_argument("--skill-dir", default=str(default_skill_dir))
     parser.add_argument("--dist-dir", default=str(default_dist_dir))
     args = parser.parse_args(argv)

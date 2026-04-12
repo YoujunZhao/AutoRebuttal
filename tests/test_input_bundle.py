@@ -45,11 +45,11 @@ def write_text_pdf(path: pathlib.Path, text: str) -> None:
 class InputBundleCliTest(unittest.TestCase):
     def test_builder_accepts_paper_pdf_without_review_pdfs(self) -> None:
         script_path = (
-            ROOT / "skills" / "super-rebuttal" / "scripts" / "build_input_bundle.py"
+            ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_input_bundle.py"
         )
         self.assertTrue(
             script_path.exists(),
-            "Expected skills/super-rebuttal/scripts/build_input_bundle.py to exist.",
+            "Expected skills/auto-rebuttal/scripts/build_input_bundle.py to exist.",
         )
 
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -78,11 +78,11 @@ class InputBundleCliTest(unittest.TestCase):
 
     def test_builder_accepts_paper_pdf_and_multiple_review_pdfs(self) -> None:
         script_path = (
-            ROOT / "skills" / "super-rebuttal" / "scripts" / "build_input_bundle.py"
+            ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_input_bundle.py"
         )
         self.assertTrue(
             script_path.exists(),
-            "Expected skills/super-rebuttal/scripts/build_input_bundle.py to exist.",
+            "Expected skills/auto-rebuttal/scripts/build_input_bundle.py to exist.",
         )
 
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -128,11 +128,11 @@ class InputBundleCliTest(unittest.TestCase):
 
     def test_builder_falls_back_to_rendered_page_images_for_graphics_only_review_pdf(self) -> None:
         script_path = (
-            ROOT / "skills" / "super-rebuttal" / "scripts" / "build_input_bundle.py"
+            ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_input_bundle.py"
         )
         self.assertTrue(
             script_path.exists(),
-            "Expected skills/super-rebuttal/scripts/build_input_bundle.py to exist.",
+            "Expected skills/auto-rebuttal/scripts/build_input_bundle.py to exist.",
         )
 
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -175,7 +175,7 @@ class InputBundleCliTest(unittest.TestCase):
 
     def test_builder_uses_distinct_render_paths_for_same_stem_review_pdfs(self) -> None:
         script_path = (
-            ROOT / "skills" / "super-rebuttal" / "scripts" / "build_input_bundle.py"
+            ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_input_bundle.py"
         )
 
         with tempfile.TemporaryDirectory() as tmpdir:

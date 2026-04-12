@@ -1,12 +1,24 @@
 ---
-description: "Start the SuperRebuttal workflow for a paper, reviews, and response constraints"
+description: "Start the AutoRebuttal workflow for a paper, reviews, and response constraints"
 ---
 
-Use the `super-rebuttal` skill.
+Use the `auto-rebuttal` skill.
 
-This command is the drafting entrypoint for a new rebuttal from paper and review inputs. If the user already has an existing rebuttal draft and wants revision-only polish, use `/rebuttal_revies` instead.
+This command is the drafting entrypoint for a new rebuttal from paper and review inputs. If the user already has an existing rebuttal draft and wants revision-only polish, use `/rebuttal_revise` instead.
+
+Accepted inputs for this command:
+
+- one paper PDF
+- one or more review PDFs
+- one or more text reviews
+
+Auto-detect each review input:
+
+- PDF review -> parse as a review document
+- text review -> treat as reviewer text directly
 
 If the user provides a paper PDF and one or more review PDF files, treat the review PDF files as first-class review sources.
+If the user provides copied review text instead, treat it as a text review source without asking them to convert it to PDF first.
 
 Do not ask the user to paste review text if review PDF files are already available and text extraction succeeds.
 

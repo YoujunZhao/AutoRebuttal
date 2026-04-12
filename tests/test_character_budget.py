@@ -17,7 +17,7 @@ def load_module(module_name: str, path: pathlib.Path):
 
 class CharacterBudgetTest(unittest.TestCase):
     def test_budget_allocator_handles_per_reviewer_limit(self) -> None:
-        module_path = ROOT / "skills" / "super-rebuttal" / "scripts" / "allocate_rebuttal_budget.py"
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "allocate_rebuttal_budget.py"
         self.assertTrue(module_path.exists(), "Expected allocate_rebuttal_budget.py to exist.")
         module = load_module("allocate_rebuttal_budget", module_path)
         allocation = module.allocate_budget(
@@ -32,7 +32,7 @@ class CharacterBudgetTest(unittest.TestCase):
         self.assertLessEqual(allocation["section_plan"]["opener"], 1000)
 
     def test_budget_allocator_handles_shared_global_limit(self) -> None:
-        module_path = ROOT / "skills" / "super-rebuttal" / "scripts" / "allocate_rebuttal_budget.py"
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "allocate_rebuttal_budget.py"
         module = load_module("allocate_rebuttal_budget", module_path)
         allocation = module.allocate_budget(
             mode="shared-global",

@@ -1,8 +1,8 @@
-# SuperRebuttal
+# AutoRebuttal
 
 [Chinese README](README.zh-CN.md)
 
-SuperRebuttal is a rebuttal workflow package for coding agents. It is shaped like a small plugin-first superpower package: the repository contains the installation surfaces, the internal `super-rebuttal` skill, the prompt entrypoint, the policy notes, and the tests that define what the project can honestly claim today.
+AutoRebuttal is a rebuttal workflow package for coding agents. It is shaped like a small plugin-first superpower package: the repository contains the installation surfaces, the internal `auto-rebuttal` skill, the prompt entrypoint, the policy notes, and the tests that define what the project can honestly claim today.
 
 It is built for one job: help authors turn a paper, reviews, and explicit rebuttal constraints into a structured, evidence-first response without fabricating experiments, gains, or citations.
 
@@ -11,11 +11,11 @@ The current package also supports review PDF ingestion, so a paper PDF and a rev
 The package now exposes two command-style entrypoints:
 
 - `/rebuttal` for drafting from paper + reviews
-- `/rebuttal_revies` for polishing an existing rebuttal draft
+- `/rebuttal_revise` for polishing an existing rebuttal draft
 
 ## What It Is
 
-SuperRebuttal is not just a copied skill folder. It is a small rebuttal package that is meant to be installed, then invoked as a workflow.
+AutoRebuttal is not just a copied skill folder. It is a small rebuttal package that is meant to be installed, then invoked as a workflow.
 
 The package is designed around a few core ideas:
 
@@ -28,7 +28,7 @@ The package is designed around a few core ideas:
 
 ## How It Works
 
-SuperRebuttal starts from the moment an author brings a paper and reviews into the session. Instead of jumping straight to final prose, it first identifies the response format, organizes the review concerns, builds a reviewer outline, models reviewer stance and attitude, builds a global strategy memo, and only then drafts.
+AutoRebuttal starts from the moment an author brings a paper and reviews into the session. Instead of jumping straight to final prose, it first identifies the response format, organizes the review concerns, builds a reviewer outline, models reviewer stance and attitude, builds a global strategy memo, and only then drafts.
 
 In practice, the flow is:
 
@@ -56,7 +56,7 @@ That also means the workflow now tries to identify:
 
 ## Human-Like Rebuttal Layer
 
-SuperRebuttal now includes:
+AutoRebuttal now includes:
 
 - **reviewer cards** for reviewer stance, movability, attitude, and primary concerns
 - a **global strategy memo** to decide what should lead the rebuttal
@@ -104,12 +104,12 @@ Installation differs by host tool. Today, the repository only presents two insta
 The repo-level manager CLI performs real filesystem install/update/remove operations against the Codex user-home skill path:
 
 ```bash
-python scripts/superrebuttal_manager.py codex install
-python scripts/superrebuttal_manager.py codex update
-python scripts/superrebuttal_manager.py codex remove
+python scripts/autorebuttal_manager.py codex install
+python scripts/autorebuttal_manager.py codex update
+python scripts/autorebuttal_manager.py codex remove
 ```
 
-By default this manages `~/.agents/skills/super-rebuttal`. Manual details and path notes are documented in [`.codex/INSTALL.md`](.codex/INSTALL.md).
+By default this manages `~/.agents/skills/auto-rebuttal`. Manual details and path notes are documented in [`.codex/INSTALL.md`](.codex/INSTALL.md).
 
 ### Claude Code
 
@@ -125,22 +125,23 @@ Important: the project does **not** currently claim public official marketplace 
 The manager CLI follows the Claude plugin command model and prints the commands you should run:
 
 ```bash
-python scripts/superrebuttal_manager.py claude install
-python scripts/superrebuttal_manager.py claude update
-python scripts/superrebuttal_manager.py claude remove
+python scripts/autorebuttal_manager.py claude install
+python scripts/autorebuttal_manager.py claude update
+python scripts/autorebuttal_manager.py claude remove
 ```
 
 If you want to install it through the Claude plugin workflow, use the local marketplace shape that already ships in this repo:
 
 ```text
-/plugin marketplace add YoujunZhao/SuperRebuttal
-/plugin install super-rebuttal@super-rebuttal-dev
+/plugin marketplace add YoujunZhao/AutoRebuttal
+/plugin install auto-rebuttal@auto-rebuttal-dev
 ```
 
 After that, the quickest Claude-style entrypoints are:
 
 ```text
 /rebuttal
+/rebuttal_revise
 ```
 
 ## How To Use It
@@ -148,27 +149,27 @@ After that, the quickest Claude-style entrypoints are:
 After installation, there are three practical invocation styles:
 
 - **Use the `rebuttal` command**
-- **Use the `/rebuttal_revies` command**
-- **Use the `super-rebuttal` skill**
+- **Use the `/rebuttal_revise` command**
+- **Use the `auto-rebuttal` skill**
 
-The exact UI differs by host tool, but the working intent is the same: tell the agent to enter the SuperRebuttal workflow, then provide the paper, the reviews, and the response budget.
+The exact UI differs by host tool, but the working intent is the same: tell the agent to enter the AutoRebuttal workflow, then provide the paper, the reviews, and the response budget.
 
-### What is the difference between `rebuttal` and `super-rebuttal`?
+### What is the difference between `rebuttal` and `auto-rebuttal`?
 
 - **`rebuttal`**
   This is the easier command-style entrypoint. Use it when you just want to start the workflow quickly.
 
-- **`rebuttal_revies`**
+- **`rebuttal_revise`**
   This is the revise/polish entrypoint. Use it when you already have an existing rebuttal and want the agent to tighten, shorten, and clean it up under the venue and budget constraints.
 
-- **`super-rebuttal`**
+- **`auto-rebuttal`**
   This is the underlying skill / workflow engine. Use it when you want to invoke the skill explicitly.
 
-In short: `rebuttal` is the front door, and `super-rebuttal` is the actual engine behind it.
+In short: `rebuttal` is the front door, and `auto-rebuttal` is the actual engine behind it.
 
-### What is `/rebuttal_revies`?
+### What is `/rebuttal_revise`?
 
-`/rebuttal_revies` is the polish-mode command surface for an existing rebuttal draft. Use it when the author already has response text and wants revision, tightening, or structure cleanup against the reviews and constraints instead of a fresh draft from scratch.
+`/rebuttal_revise` is the polish-mode command surface for an existing rebuttal draft. Use it when the author already has response text and wants revision, tightening, or structure cleanup against the reviews and constraints instead of a fresh draft from scratch.
 
 ### Invocation Examples
 
@@ -178,36 +179,36 @@ Use the `rebuttal` command:
 Use the `rebuttal` command. I will paste the abstract, the main claims, and three reviewer comments. This is per-reviewer mode with 5000 characters each.
 ```
 
-Use the `super-rebuttal` skill:
+Use the `auto-rebuttal` skill:
 
 ```text
-Use the `super-rebuttal` skill. This is a shared-global mode rebuttal with a total limit of 6000 characters. First cluster shared concerns, then draft the final response.
+Use the `auto-rebuttal` skill. This is a shared-global mode rebuttal with a total limit of 6000 characters. First cluster shared concerns, then draft the final response.
 ```
 
 If the venue format is unclear, give the budget explicitly:
 
 ```text
-Use the `super-rebuttal` skill. Ignore venue defaults and use per-reviewer mode with 4000 characters per reviewer.
+Use the `auto-rebuttal` skill. Ignore venue defaults and use per-reviewer mode with 4000 characters per reviewer.
 ```
 
 Use the Claude-style command directly:
 
 ```text
 /rebuttal
-/rebuttal_revies
+/rebuttal_revise
 ```
 
 Polish an existing rebuttal directly:
 
 ```text
-/rebuttal_revies venue=ICML per_reviewer=5000
+/rebuttal_revise venue=ICML per_reviewer=5000
 ```
 
 ## The Basic Workflow
 
-1. **Install SuperRebuttal** into Codex or a Claude-style plugin environment.
+1. **Install AutoRebuttal** into Codex or a Claude-style plugin environment.
 2. **Provide inputs**: paper PDF, review PDF, manuscript text, or a faithful summary, plus reviews.
-   If a review PDF is image-based, SuperRebuttal should continue through rendered page images instead of asking for pasted review text immediately.
+   If a review PDF is image-based, AutoRebuttal should continue through rendered page images instead of asking for pasted review text immediately.
    The next step is to inspect those rendered pages and build a reviewer outline before reviewer cards are generated.
 3. **Choose a budgeting mode**:
    - `per-reviewer mode`
@@ -231,12 +232,12 @@ The shared-global path is the correct generic fallback for many CV-style or foru
 
 These are the only things the project should present as verified support today:
 
-- Repo-level manager CLI via [`scripts/superrebuttal_manager.py`](scripts/superrebuttal_manager.py)
+- Repo-level manager CLI via [`scripts/autorebuttal_manager.py`](scripts/autorebuttal_manager.py)
 - Codex installation via [`.codex/INSTALL.md`](.codex/INSTALL.md)
 - Claude plugin shell metadata via [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json)
 - Local Claude marketplace metadata via [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json)
 - A command entrypoint via [`commands/rebuttal.md`](commands/rebuttal.md)
-- A polish-mode command entrypoint via [`commands/rebuttal_revies.md`](commands/rebuttal_revies.md)
+- A polish-mode command entrypoint via [`commands/rebuttal_revise.md`](commands/rebuttal_revise.md)
 - `per-reviewer mode`
 - `shared-global mode`
 
@@ -249,7 +250,7 @@ The repository also includes checked public reference notes for:
 - ICML
 - ARR-style author responses
 
-Those notes live in [`skills/super-rebuttal/references/venue-policies.md`](skills/super-rebuttal/references/venue-policies.md).
+Those notes live in [`skills/auto-rebuttal/references/venue-policies.md`](skills/auto-rebuttal/references/venue-policies.md).
 
 That is intentionally weaker than saying "full venue support." These notes are reference material, not a promise that every year and every venue-specific rebuttal form is fully automated or fully tested.
 
@@ -257,31 +258,32 @@ That is intentionally weaker than saying "full venue support." These notes are r
 
 ### Package Shell
 
+- [`scripts/autorebuttal_manager.py`](scripts/autorebuttal_manager.py)
 - [`scripts/superrebuttal_manager.py`](scripts/superrebuttal_manager.py)
 - [`.codex/INSTALL.md`](.codex/INSTALL.md)
 - [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json)
 - [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json)
 - [`commands/rebuttal.md`](commands/rebuttal.md)
-- [`commands/rebuttal_revies.md`](commands/rebuttal_revies.md)
+- [`commands/rebuttal_revise.md`](commands/rebuttal_revise.md)
 
 ### Canonical Rebuttal Engine
 
-- [`skills/super-rebuttal/SKILL.md`](skills/super-rebuttal/SKILL.md)
-- [`skills/super-rebuttal/scripts/build_input_bundle.py`](skills/super-rebuttal/scripts/build_input_bundle.py)
-- [`skills/super-rebuttal/scripts/render_review_pdf_pages.py`](skills/super-rebuttal/scripts/render_review_pdf_pages.py)
-- [`skills/super-rebuttal/scripts/build_reviewer_outline.py`](skills/super-rebuttal/scripts/build_reviewer_outline.py)
-- [`skills/super-rebuttal/scripts/build_reviewer_cards.py`](skills/super-rebuttal/scripts/build_reviewer_cards.py)
-- [`skills/super-rebuttal/scripts/response_modes.py`](skills/super-rebuttal/scripts/response_modes.py)
-- [`skills/super-rebuttal/scripts/install_skill.py`](skills/super-rebuttal/scripts/install_skill.py)
-- [`skills/super-rebuttal/scripts/package_skill.py`](skills/super-rebuttal/scripts/package_skill.py)
-- [`skills/super-rebuttal/scripts/validate_budget.py`](skills/super-rebuttal/scripts/validate_budget.py)
+- [`skills/auto-rebuttal/SKILL.md`](skills/auto-rebuttal/SKILL.md)
+- [`skills/auto-rebuttal/scripts/build_input_bundle.py`](skills/auto-rebuttal/scripts/build_input_bundle.py)
+- [`skills/auto-rebuttal/scripts/render_review_pdf_pages.py`](skills/auto-rebuttal/scripts/render_review_pdf_pages.py)
+- [`skills/auto-rebuttal/scripts/build_reviewer_outline.py`](skills/auto-rebuttal/scripts/build_reviewer_outline.py)
+- [`skills/auto-rebuttal/scripts/build_reviewer_cards.py`](skills/auto-rebuttal/scripts/build_reviewer_cards.py)
+- [`skills/auto-rebuttal/scripts/response_modes.py`](skills/auto-rebuttal/scripts/response_modes.py)
+- [`skills/auto-rebuttal/scripts/install_skill.py`](skills/auto-rebuttal/scripts/install_skill.py)
+- [`skills/auto-rebuttal/scripts/package_skill.py`](skills/auto-rebuttal/scripts/package_skill.py)
+- [`skills/auto-rebuttal/scripts/validate_budget.py`](skills/auto-rebuttal/scripts/validate_budget.py)
 
 ### Reference Material
 
-- [`skills/super-rebuttal/references/input-contract.md`](skills/super-rebuttal/references/input-contract.md)
-- [`skills/super-rebuttal/references/rebuttal-playbook.md`](skills/super-rebuttal/references/rebuttal-playbook.md)
-- [`skills/super-rebuttal/references/venue-policies.md`](skills/super-rebuttal/references/venue-policies.md)
-- [`skills/super-rebuttal/references/source-notes.md`](skills/super-rebuttal/references/source-notes.md)
+- [`skills/auto-rebuttal/references/input-contract.md`](skills/auto-rebuttal/references/input-contract.md)
+- [`skills/auto-rebuttal/references/rebuttal-playbook.md`](skills/auto-rebuttal/references/rebuttal-playbook.md)
+- [`skills/auto-rebuttal/references/venue-policies.md`](skills/auto-rebuttal/references/venue-policies.md)
+- [`skills/auto-rebuttal/references/source-notes.md`](skills/auto-rebuttal/references/source-notes.md)
 
 ### Tests
 
@@ -317,9 +319,9 @@ The workflow is grounded in:
 
 Start here:
 
-- [`skills/super-rebuttal/references/source-notes.md`](skills/super-rebuttal/references/source-notes.md)
-- [`skills/super-rebuttal/references/rebuttal-playbook.md`](skills/super-rebuttal/references/rebuttal-playbook.md)
-- [`skills/super-rebuttal/references/input-contract.md`](skills/super-rebuttal/references/input-contract.md)
+- [`skills/auto-rebuttal/references/source-notes.md`](skills/auto-rebuttal/references/source-notes.md)
+- [`skills/auto-rebuttal/references/rebuttal-playbook.md`](skills/auto-rebuttal/references/rebuttal-playbook.md)
+- [`skills/auto-rebuttal/references/input-contract.md`](skills/auto-rebuttal/references/input-contract.md)
 
 ## Project Status
 

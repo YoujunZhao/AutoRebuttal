@@ -22,10 +22,10 @@ def load_module(module_name: str, path: pathlib.Path):
 
 class ManagerCliTest(unittest.TestCase):
     def test_manager_cli_exposes_host_install_update_and_remove_commands(self) -> None:
-        script_path = ROOT / "scripts" / "superrebuttal_manager.py"
+        script_path = ROOT / "scripts" / "autorebuttal_manager.py"
         self.assertTrue(
             script_path.exists(),
-            "Expected repo-level scripts/superrebuttal_manager.py to exist.",
+            "Expected repo-level scripts/autorebuttal_manager.py to exist.",
         )
 
         for host in ("codex", "claude"):
@@ -49,12 +49,12 @@ class ManagerCliTest(unittest.TestCase):
                     self.assertIn(action, completed.stdout.lower())
 
     def test_codex_default_cycle_install_update_remove(self) -> None:
-        script_path = ROOT / "scripts" / "superrebuttal_manager.py"
+        script_path = ROOT / "scripts" / "autorebuttal_manager.py"
         self.assertTrue(script_path.exists())
 
         with tempfile.TemporaryDirectory() as tmpdir:
             home = pathlib.Path(tmpdir)
-            target = home / ".agents" / "skills" / "super-rebuttal"
+            target = home / ".agents" / "skills" / "auto-rebuttal"
 
             install = subprocess.run(
                 [sys.executable, str(script_path), "codex", "install", "--home", str(home)],
@@ -84,12 +84,12 @@ class ManagerCliTest(unittest.TestCase):
             self.assertFalse(target.exists())
 
     def test_codex_install_overwrites_existing_partial_directory(self) -> None:
-        script_path = ROOT / "scripts" / "superrebuttal_manager.py"
+        script_path = ROOT / "scripts" / "autorebuttal_manager.py"
         self.assertTrue(script_path.exists())
 
         with tempfile.TemporaryDirectory() as tmpdir:
             home = pathlib.Path(tmpdir)
-            target = home / ".agents" / "skills" / "super-rebuttal"
+            target = home / ".agents" / "skills" / "auto-rebuttal"
             (target / "examples").mkdir(parents=True)
             (target / "examples" / "stale.txt").write_text("old", encoding="utf-8")
 
@@ -113,14 +113,14 @@ class ManagerCliTest(unittest.TestCase):
 
     def test_claude_remove_renders_uninstall_command(self) -> None:
         module = load_module(
-            "superrebuttal_manager",
-            ROOT / "scripts" / "superrebuttal_manager.py",
+            "autorebuttal_manager",
+            ROOT / "scripts" / "autorebuttal_manager.py",
         )
         stdout = io.StringIO()
         with contextlib.redirect_stdout(stdout):
             exit_code = module.main(["claude", "remove", "--print-only"])
         self.assertEqual(exit_code, 0)
-        self.assertIn("/plugin uninstall super-rebuttal@super-rebuttal-dev", stdout.getvalue())
+        self.assertIn("/plugin uninstall auto-rebuttal@auto-rebuttal-dev", stdout.getvalue())
 
 
 if __name__ == "__main__":

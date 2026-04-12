@@ -6,6 +6,13 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 
 class ReadmeTruthTest(unittest.TestCase):
+    def test_readmes_use_autorebuttal_product_name(self) -> None:
+        english = (ROOT / "README.md").read_text(encoding="utf-8")
+        chinese = (ROOT / "README.zh-CN.md").read_text(encoding="utf-8")
+        self.assertIn("# AutoRebuttal", english)
+        self.assertIn("AutoRebuttal", chinese)
+        self.assertNotIn("SuperRebuttal", english)
+
     def test_readme_uses_product_style_sections(self) -> None:
         content = (ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn("## How It Works", content)
@@ -35,18 +42,18 @@ class ReadmeTruthTest(unittest.TestCase):
     def test_readmes_document_codex_update_and_remove_cli_commands(self) -> None:
         english = (ROOT / "README.md").read_text(encoding="utf-8")
         chinese = (ROOT / "README.zh-CN.md").read_text(encoding="utf-8")
-        self.assertIn("python scripts/superrebuttal_manager.py codex update", english)
-        self.assertIn("python scripts/superrebuttal_manager.py codex remove", english)
-        self.assertIn("python scripts/superrebuttal_manager.py codex update", chinese)
-        self.assertIn("python scripts/superrebuttal_manager.py codex remove", chinese)
+        self.assertIn("python scripts/autorebuttal_manager.py codex update", english)
+        self.assertIn("python scripts/autorebuttal_manager.py codex remove", english)
+        self.assertIn("python scripts/autorebuttal_manager.py codex update", chinese)
+        self.assertIn("python scripts/autorebuttal_manager.py codex remove", chinese)
 
     def test_readmes_document_claude_update_and_remove_cli_commands(self) -> None:
         english = (ROOT / "README.md").read_text(encoding="utf-8")
         chinese = (ROOT / "README.zh-CN.md").read_text(encoding="utf-8")
-        self.assertIn("python scripts/superrebuttal_manager.py claude update", english)
-        self.assertIn("python scripts/superrebuttal_manager.py claude remove", english)
-        self.assertIn("python scripts/superrebuttal_manager.py claude update", chinese)
-        self.assertIn("python scripts/superrebuttal_manager.py claude remove", chinese)
+        self.assertIn("python scripts/autorebuttal_manager.py claude update", english)
+        self.assertIn("python scripts/autorebuttal_manager.py claude remove", english)
+        self.assertIn("python scripts/autorebuttal_manager.py claude update", chinese)
+        self.assertIn("python scripts/autorebuttal_manager.py claude remove", chinese)
 
     def test_readmes_mention_reviewer_stance_and_global_strategy(self) -> None:
         english = (ROOT / "README.md").read_text(encoding="utf-8").lower()
@@ -88,17 +95,18 @@ class ReadmeTruthTest(unittest.TestCase):
         content = (ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn("## How To Use It", content)
         self.assertIn("Use the `rebuttal` command", content)
-        self.assertIn("Use the `super-rebuttal` skill", content)
+        self.assertIn("Use the `auto-rebuttal` skill", content)
         self.assertIn("/plugin marketplace add", content)
         self.assertIn("/plugin install", content)
-        self.assertIn("What is the difference between `rebuttal` and `super-rebuttal`?", content)
+        self.assertIn("What is the difference between `rebuttal` and `auto-rebuttal`?", content)
 
-    def test_readmes_mention_rebuttal_revies_polish_mode(self) -> None:
+    def test_readmes_mention_rebuttal_revise_polish_mode(self) -> None:
         english = (ROOT / "README.md").read_text(encoding="utf-8")
         chinese = (ROOT / "README.zh-CN.md").read_text(encoding="utf-8")
-        self.assertIn("/rebuttal_revies", english)
+        self.assertIn("/rebuttal_revise", english)
         self.assertIn("existing rebuttal", english)
-        self.assertIn("/rebuttal_revies", chinese)
+        self.assertIn("/rebuttal_revise", chinese)
+        self.assertNotIn("/rebuttal_revies", english)
 
     def test_readmes_mention_line_breaks_before_w_q_m_labels(self) -> None:
         english = (ROOT / "README.md").read_text(encoding="utf-8").lower()

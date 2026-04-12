@@ -17,7 +17,7 @@ def load_module(module_name: str, path: pathlib.Path):
 
 class ReviewerOutlineTest(unittest.TestCase):
     def test_outline_builder_splits_weaknesses_questions_and_minor_points(self) -> None:
-        module_path = ROOT / "skills" / "super-rebuttal" / "scripts" / "build_reviewer_outline.py"
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_reviewer_outline.py"
         self.assertTrue(module_path.exists(), "Expected build_reviewer_outline.py to exist.")
         module = load_module("build_reviewer_outline", module_path)
         outline = module.build_reviewer_outline(
@@ -43,7 +43,7 @@ class ReviewerOutlineTest(unittest.TestCase):
         self.assertEqual(outline["minor_points"][0]["label"], "M1")
 
     def test_outline_builder_handles_openreview_style_headers_without_promoting_strengths(self) -> None:
-        module_path = ROOT / "skills" / "super-rebuttal" / "scripts" / "build_reviewer_outline.py"
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_reviewer_outline.py"
         module = load_module("build_reviewer_outline", module_path)
         outline = module.build_reviewer_outline(
             reviewer_id="Qc8x",
@@ -81,7 +81,7 @@ class ReviewerOutlineTest(unittest.TestCase):
         self.assertNotIn("Good empirical gains", weakness_blob)
 
     def test_outline_builder_handles_inline_header_content(self) -> None:
-        module_path = ROOT / "skills" / "super-rebuttal" / "scripts" / "build_reviewer_outline.py"
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_reviewer_outline.py"
         module = load_module("build_reviewer_outline", module_path)
         outline = module.build_reviewer_outline(
             reviewer_id="R2",
@@ -97,7 +97,7 @@ class ReviewerOutlineTest(unittest.TestCase):
         self.assertEqual(outline["minor_points"][0]["text"], "Clarify Figure 2.")
 
     def test_outline_builder_ignores_openreview_preamble_until_real_sections(self) -> None:
-        module_path = ROOT / "skills" / "super-rebuttal" / "scripts" / "build_reviewer_outline.py"
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_reviewer_outline.py"
         module = load_module("build_reviewer_outline", module_path)
         outline = module.build_reviewer_outline(
             reviewer_id="Qc8x",
@@ -113,7 +113,7 @@ class ReviewerOutlineTest(unittest.TestCase):
         self.assertEqual([item["text"] for item in outline["weaknesses"]], ["The novelty is limited."])
 
     def test_outline_builder_handles_questions_for_authors_header_without_partial_match(self) -> None:
-        module_path = ROOT / "skills" / "super-rebuttal" / "scripts" / "build_reviewer_outline.py"
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_reviewer_outline.py"
         module = load_module("build_reviewer_outline", module_path)
         outline = module.build_reviewer_outline(
             reviewer_id="R3",
@@ -123,7 +123,7 @@ class ReviewerOutlineTest(unittest.TestCase):
         self.assertEqual(outline["questions"][0]["text"], "What prompts were used?")
 
     def test_outline_builder_handles_question_number_and_lettered_item_prefixes(self) -> None:
-        module_path = ROOT / "skills" / "super-rebuttal" / "scripts" / "build_reviewer_outline.py"
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_reviewer_outline.py"
         module = load_module("build_reviewer_outline", module_path)
         outline = module.build_reviewer_outline(
             reviewer_id="R4",

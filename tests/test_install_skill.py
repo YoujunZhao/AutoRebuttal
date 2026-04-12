@@ -23,11 +23,11 @@ class InstallSkillTest(unittest.TestCase):
             (source / "agents").mkdir(parents=True)
             (source / "references").mkdir(parents=True)
             (source / "SKILL.md").write_text(
-                "---\nname: super-rebuttal\ndescription: Use when drafting rebuttals\n---\n",
+                "---\nname: auto-rebuttal\ndescription: Use when drafting rebuttals\n---\n",
                 encoding="utf-8",
             )
             (source / "agents" / "openai.yaml").write_text(
-                "interface:\n  display_name: SuperRebuttal\n",
+                "interface:\n  display_name: AutoRebuttal\n",
                 encoding="utf-8",
             )
             (source / "references" / "guide.md").write_text(
@@ -37,7 +37,7 @@ class InstallSkillTest(unittest.TestCase):
 
             module = load_module(
                 "install_skill",
-                ROOT / "skills" / "super-rebuttal" / "scripts" / "install_skill.py",
+                ROOT / "skills" / "auto-rebuttal" / "scripts" / "install_skill.py",
             )
 
             installed = module.install_skill(source=source, destination=target)

@@ -18,7 +18,7 @@ def load_module(module_name: str, path: pathlib.Path):
 class RebuttalBlockFormatTest(unittest.TestCase):
     def test_formatter_moves_inline_w_q_m_labels_onto_new_lines(self) -> None:
         module_path = (
-            ROOT / "skills" / "super-rebuttal" / "scripts" / "format_rebuttal_blocks.py"
+            ROOT / "skills" / "auto-rebuttal" / "scripts" / "format_rebuttal_blocks.py"
         )
         self.assertTrue(module_path.exists(), "Expected format_rebuttal_blocks.py to exist.")
         module = load_module("format_rebuttal_blocks", module_path)
@@ -33,7 +33,7 @@ class RebuttalBlockFormatTest(unittest.TestCase):
 
     def test_formatter_preserves_existing_line_starts(self) -> None:
         module_path = (
-            ROOT / "skills" / "super-rebuttal" / "scripts" / "format_rebuttal_blocks.py"
+            ROOT / "skills" / "auto-rebuttal" / "scripts" / "format_rebuttal_blocks.py"
         )
         module = load_module("format_rebuttal_blocks", module_path)
 

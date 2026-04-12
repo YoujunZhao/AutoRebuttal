@@ -20,7 +20,7 @@ def install_skill(source: pathlib.Path, destination: pathlib.Path) -> pathlib.Pa
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Install the SuperRebuttal skill.")
+    parser = argparse.ArgumentParser(description="Install the AutoRebuttal skill.")
     parser.add_argument("--source", required=True)
     parser.add_argument("--destination", required=True)
     args = parser.parse_args(argv)

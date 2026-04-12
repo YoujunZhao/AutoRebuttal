@@ -30,7 +30,7 @@ def write_graphics_only_pdf(path: pathlib.Path) -> None:
 class RenderReviewPdfPagesTest(unittest.TestCase):
     def test_renderer_creates_pngs_for_graphics_only_review_pdf(self) -> None:
         module_path = (
-            ROOT / "skills" / "super-rebuttal" / "scripts" / "render_review_pdf_pages.py"
+            ROOT / "skills" / "auto-rebuttal" / "scripts" / "render_review_pdf_pages.py"
         )
         self.assertTrue(
             module_path.exists(),

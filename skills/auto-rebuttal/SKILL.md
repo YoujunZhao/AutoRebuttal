@@ -1,9 +1,9 @@
 ---
-name: super-rebuttal
+name: auto-rebuttal
 description: Use when drafting a conference or journal rebuttal from a paper, reviews, and venue constraints, especially when the response must stay polite, venue-aware, evidence-based, and free of fabricated experiments, gains, or citations.
 ---
 
-# Super Rebuttal
+# Auto Rebuttal
 
 ## Overview
 
@@ -17,7 +17,9 @@ Load the detailed references only when needed:
 - `references/venue-policies.md` for dated venue rules
 - `references/rebuttal-playbook.md` for issue extraction and drafting tactics
 - `references/source-notes.md` for research basis and source links
-- `scripts/build_input_bundle.py` when the user provides paper PDF and review PDF files together
+- `scripts/build_draft_bundle.py` when the user provides paper PDF plus review PDF or review text inputs
+- `scripts/build_revision_bundle.py` when the user provides an existing rebuttal PDF or rebuttal text, with optional paper PDF
+- `scripts/build_input_bundle.py` as the PDF-only compatibility wrapper for draft-mode bundle building
 - `scripts/render_review_pdf_pages.py` when a review PDF has no text layer and must continue through rendered page images
 - `scripts/build_reviewer_outline.py` to preserve `W/Q/M` structure before prose drafting
 - `scripts/build_reviewer_cards.py` to create reviewer cards before drafting
@@ -34,6 +36,7 @@ Load the detailed references only when needed:
 - one paper PDF, or extracted manuscript text
 - zero or more review PDFs, or copied review text
 - an existing rebuttal draft when the user wants revision-only polish
+- an existing rebuttal PDF when the user wants revision-only polish
 - venue and budget constraints
 - author notes about promises, limits, or forbidden claims
 
@@ -52,11 +55,12 @@ Reviewer cards should include reviewer stance, movability, attitude, and primary
 ## Core Rules
 
 - Read the paper, abstract, or author summary before drafting.
-- If one paper PDF and one or more review PDF files are available, build the input bundle first and treat extracted review text as the working review source.
+- In draft mode, build the draft bundle first and auto-detect whether each review artifact is PDF or text.
+- In revise mode, build the revision bundle first and auto-detect whether the rebuttal artifact is PDF or text.
 - Do not ask the user to paste review text when review PDF extraction succeeds.
 - If a review PDF has no extractable text but can be rendered, continue from rendered page images instead of re-asking for pasted review text.
 - For image-fallback reviews, inspect the rendered pages first and build a reviewer outline before reviewer-card generation. Do not pretend empty text is a usable review.
-- If the user already has an existing rebuttal draft and asks to revise or polish it, treat that draft as a first-class input and use the `/rebuttal_revies` command surface behavior.
+- If the user already has an existing rebuttal draft or rebuttal PDF and asks to revise or polish it, treat that rebuttal artifact as first-class input and use the `/rebuttal_revise` command surface behavior.
 - Build a reviewer outline before writing prose so each reviewer can preserve `W#`, `Q#`, and `M#` structure.
 - Build reviewer cards before writing prose.
 - Build a strategy memo before reviewer-by-reviewer drafting.
@@ -72,21 +76,22 @@ Reviewer cards should include reviewer stance, movability, attitude, and primary
 ## Required Workflow
 
 1. Read the paper artifact or the author's summary.
-2. Read all reviews and convert them into atomic concerns.
-3. Summarize the venue or journal constraints.
-4. Build a reviewer outline for each reviewer, separating major weaknesses, direct reviewer questions, and minor points whenever those sections are present.
-5. Build reviewer cards, including reviewer stance, movability, attitude, and primary concerns.
-6. Build a strategy memo that identifies shared issues and a global strategy across reviewers.
-7. Merge overlapping concerns across reviewers.
-8. Choose a response strategy for each concern:
+2. In draft mode, read all reviews and convert them into atomic concerns.
+3. In revise mode, read the existing rebuttal artifact first, then use the optional paper and review context for validation and cleanup.
+4. Summarize the venue or journal constraints.
+5. Build a reviewer outline for each reviewer, separating major weaknesses, direct reviewer questions, and minor points whenever those sections are present.
+6. Build reviewer cards, including reviewer stance, movability, attitude, and primary concerns.
+7. Build a strategy memo that identifies shared issues and a global strategy across reviewers.
+8. Merge overlapping concerns across reviewers.
+9. Choose a response strategy for each concern:
    - clarify existing evidence
    - acknowledge a limitation
    - promise a revision in wording or structure
    - propose future work
    - insert a result placeholder instead of fabricating a number
    - respectfully decline an unreasonable or out-of-scope request
-9. Draft reviewer-by-reviewer responses or a shared response letter.
-10. Run the final compliance check before presenting the draft.
+10. Draft reviewer-by-reviewer responses or a shared response letter, or revise the existing rebuttal draft.
+11. Run the final compliance check before presenting the draft.
 
 ## Venue-Aware Formatting Defaults
 

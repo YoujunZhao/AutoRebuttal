@@ -1,12 +1,12 @@
 {
-  "name": "super-rebuttal",
-  "description": "Plugin-first rebuttal workflow for Codex and Claude Code with evidence-first drafting and explicit budgeting modes",
+  "name": "auto-rebuttal",
+  "description": "AutoRebuttal plugin-first workflow for Codex and Claude Code with evidence-first drafting and explicit budgeting modes",
   "version": "0.2.0",
   "author": {
     "name": "Youjun Zhao"
   },
-  "homepage": "https://github.com/YoujunZhao/SuperRebuttal",
-  "repository": "https://github.com/YoujunZhao/SuperRebuttal",
+  "homepage": "https://github.com/YoujunZhao/AutoRebuttal",
+  "repository": "https://github.com/YoujunZhao/AutoRebuttal",
   "license": "MIT",
   "keywords": [
     "rebuttal",

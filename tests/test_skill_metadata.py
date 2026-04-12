@@ -3,7 +3,7 @@ import unittest
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-SKILL_DIR = ROOT / "skills" / "super-rebuttal"
+SKILL_DIR = ROOT / "skills" / "auto-rebuttal"
 
 
 class SkillMetadataTest(unittest.TestCase):
@@ -20,7 +20,7 @@ class SkillMetadataTest(unittest.TestCase):
         self.assertTrue((SKILL_DIR / "SKILL.md").exists())
         content = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
         self.assertTrue(content.startswith("---\n"))
-        self.assertIn("name: super-rebuttal", content)
+        self.assertIn("name: auto-rebuttal", content)
         self.assertIn("description:", content)
 
     def test_skill_prefers_review_pdf_extraction_before_reasking(self) -> None:

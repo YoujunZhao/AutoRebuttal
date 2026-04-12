@@ -1,4 +1,0 @@
-interface:
-  display_name: "SuperRebuttal"
-  short_description: "Draft venue-aware academic rebuttals without fabricating evidence"
-  default_prompt: "Use $super-rebuttal to analyze a paper, reviews, and venue constraints, then produce a rebuttal strategy and final draft without fabricating experiments or numbers."
