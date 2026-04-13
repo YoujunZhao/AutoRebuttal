@@ -48,6 +48,40 @@ class ReadmeTruthTest(unittest.TestCase):
         self.assertIn("README.zh-CN.md", content)
         self.assertNotIn("scripts/superrebuttal_manager.py", content)
 
+    def test_readme_includes_quick_install_for_codex(self) -> None:
+        content = (ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn("Quick Install", content)
+        self.assertIn("Fetch and follow instructions", content)
+        self.assertIn(".codex/INSTALL.md", content)
+
+    def test_codex_install_doc_prefers_clone_and_skill_junction(self) -> None:
+        content = (ROOT / ".codex" / "INSTALL.md").read_text(encoding="utf-8")
+        self.assertIn("git clone", content)
+        self.assertIn("~/.agents/skills/auto-rebuttal", content)
+        self.assertTrue("mklink" in content or "ln -s" in content)
+
+    def test_codex_install_doc_mentions_manager_as_optional(self) -> None:
+        content = (ROOT / ".codex" / "INSTALL.md").read_text(encoding="utf-8").lower()
+        self.assertIn("optional", content)
+        self.assertIn("autorebuttal_manager.py", content)
+
+    def test_readme_includes_quick_install_line_for_codex(self) -> None:
+        content = (ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn("Quick Install", content)
+        self.assertIn("Fetch and follow instructions", content)
+        self.assertIn(".codex/INSTALL.md", content)
+
+    def test_codex_install_doc_prefers_clone_and_skill_junction(self) -> None:
+        content = (ROOT / ".codex" / "INSTALL.md").read_text(encoding="utf-8")
+        self.assertIn("git clone", content)
+        self.assertIn("~/.agents/skills/auto-rebuttal", content)
+        self.assertTrue("mklink" in content or "ln -s" in content)
+
+    def test_codex_install_doc_mentions_manager_as_optional_path(self) -> None:
+        content = (ROOT / ".codex" / "INSTALL.md").read_text(encoding="utf-8").lower()
+        self.assertIn("optional", content)
+        self.assertIn("autorebuttal_manager.py", content)
+
     def test_readme_mentions_per_reviewer_mode(self) -> None:
         content = (ROOT / "README.md").read_text(encoding="utf-8").lower()
         self.assertIn("per-reviewer mode", content)

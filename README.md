@@ -21,9 +21,45 @@ The package exposes two command-style entrypoints:
 
 ## Installation
 
+## Quick Install
+
+Tell Codex:
+
+```text
+Fetch and follow instructions from https://raw.githubusercontent.com/YoujunZhao/AutoRebuttal/refs/heads/main/.codex/INSTALL.md
+```
+
 ### Codex
 
-The repo-level manager CLI performs real filesystem install/update/remove operations against the Codex user-home skill path:
+Preferred path: native skill discovery via clone + junction / symlink.
+
+Clone the repo:
+
+```bash
+git clone https://github.com/YoujunZhao/AutoRebuttal.git ~/.codex/AutoRebuttal
+```
+
+Create the skill symlink:
+
+```bash
+mkdir -p ~/.agents/skills
+ln -s ~/.codex/AutoRebuttal/skills/auto-rebuttal ~/.agents/skills/auto-rebuttal
+```
+
+Windows (PowerShell):
+
+```powershell
+New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.agents\skills"
+cmd /c mklink /J "$env:USERPROFILE\.agents\skills\auto-rebuttal" "$env:USERPROFILE\.codex\AutoRebuttal\skills\auto-rebuttal"
+```
+
+Update through the clone:
+
+```bash
+cd ~/.codex/AutoRebuttal && git pull
+```
+
+Optional manager CLI path:
 
 ```bash
 python scripts/autorebuttal_manager.py codex install
@@ -31,7 +67,7 @@ python scripts/autorebuttal_manager.py codex update
 python scripts/autorebuttal_manager.py codex remove
 ```
 
-By default this manages `~/.agents/skills/auto-rebuttal`. Manual details and path notes are documented in [`.codex/INSTALL.md`](.codex/INSTALL.md).
+Full details are documented in [`.codex/INSTALL.md`](.codex/INSTALL.md).
 
 ### Claude Code
 
