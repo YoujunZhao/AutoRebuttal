@@ -23,11 +23,23 @@ The package exposes two command-style entrypoints:
 
 ## Quick Install
 
+### Codex
+
 Tell Codex:
 
 ```text
 Fetch and follow instructions from https://raw.githubusercontent.com/YoujunZhao/AutoRebuttal/refs/heads/main/.codex/INSTALL.md
 ```
+
+### Claude Code
+
+Install it through the Claude plugin workflow, use:
+
+```text
+/plugin marketplace add YoujunZhao/AutoRebuttal
+/plugin install auto-rebuttal@auto-rebuttal-dev
+```
+## Other installation
 
 ### Codex
 
@@ -82,13 +94,6 @@ The manager CLI follows the Claude plugin command model and prints the commands 
 python scripts/autorebuttal_manager.py claude install
 python scripts/autorebuttal_manager.py claude update
 python scripts/autorebuttal_manager.py claude remove
-```
-
-If you want to install it through the Claude plugin workflow, use:
-
-```text
-/plugin marketplace add YoujunZhao/AutoRebuttal
-/plugin install auto-rebuttal@auto-rebuttal-dev
 ```
 
 ## How To Use It
