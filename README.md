@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/autorebuttal.png" width="700" alt="AutoResearchClaw Logo">
+  <img src="docs/autorebuttal.png" width="500" alt="AutoResearchClaw Logo">
 
 
 [![English](https://img.shields.io/badge/Language-English-blue)](./README.md)
