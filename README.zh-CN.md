@@ -4,6 +4,16 @@
 
 AutoRebuttal 是一个面向 coding agent 的 rebuttal workflow package。
 
+它支持：
+
+- `paper PDF`
+- `paper text`
+- `LaTeX paper`
+- `review PDF`
+- `review text`
+- `rebuttal PDF`
+- `rebuttal text`
+
 ## Installation
 
 ## Quick Install
@@ -97,33 +107,89 @@ Input: rebuttal PDF + optional paper PDF / LaTeX paper
 | `venue` | venue parameter | yes | 应用 ICML / NeurIPS / AAAI / IEEE / CVPR / ICCV / ECCV 等默认格式。 |
 | `per_reviewer` | per-reviewer parameter | yes | 指定每个 reviewer 的字符预算。IEEE 默认是 per-reviewer，但不预设字符上限。 |
 
-## Notes
+## How It Works
 
-- `paper PDF`
-- `paper text`
-- `LaTeX paper`
-- `review PDF`
-- `review text`
-- `rebuttal PDF`
-- `rebuttal text`
-- `revised_latex_paper`
+```mermaid
+flowchart TD
+    A["Install package"] --> B{"Choose mode"}
+    B -->|/rebuttal| C["Build Draft Bundle"]
+    B -->|/rebuttal_revise| D["Build Revision Bundle"]
+    C --> E["Detect paper_input or paper_pdf"]
+    E -->|PDF or text| F["Expected outputs: rebuttal_text"]
+    E -->|LaTeX .tex or project dir| G["Expected outputs: rebuttal_text + revised_latex_paper"]
+    C --> H["Normalize review_inputs"]
+    H --> I{"Review PDF has text layer?"}
+    I -->|Yes| J["Use extracted text"]
+    I -->|No| K["Render review pages"]
+    K --> L["Run best-effort OCR"]
+    L -->|Recovered text| J
+    L -->|Still empty| M["Keep image_fallback review pages"]
+    D --> N["Normalize rebuttal_input"]
+    N --> O{"Rebuttal PDF has text layer?"}
+    O -->|Yes| P["Use extracted text"]
+    O -->|No| Q["Render rebuttal pages and run OCR"]
+    Q -->|Recovered text| P
+    Q -->|Still empty| R["Raise explicit error"]
+    J --> S["Build reviewer outline, reviewer cards, and strategy memo"]
+    M --> S
+    P --> S
+    G --> T["Optional latex-dual output package"]
+    S --> U["Draft or revise rebuttal_text"]
+    T --> V["Package revised_latex_paper with entrypoint"]
+    U --> W["Return final artifacts"]
+    V --> W
+```
 
-AutoRebuttal 仍然会构建 reviewer outline、reviewer cards 和 global strategy。
+## Venue-Aware Formatting Defaults
 
-Venue defaults 里当前包含：
-
-- `AAAI`
-- `IEEE`
-- `CVPR`
-- `ICCV`
-- `ECCV`
+- **ICLR**
+  默认先给一小段 global summary，再进入 reviewer blocks
+- **ICML**
+  默认不加总述，直接 reviewer blocks，默认 `5000` 字符 / reviewer
+- **NeurIPS**
+  默认不加总述，直接 reviewer blocks，默认 `10000` 字符 / reviewer
+- **AAAI**
+  默认不加总述，直接 reviewer blocks，默认 `2500` 字符 / reviewer
+- **IEEE**
+  默认 `per-reviewer`，不预设字符上限
+- **CVPR / ICCV / ECCV**
+  默认先给所有 reviewer 的 summary，再进入 reviewer blocks，并按一页 rebuttal PDF 左右的规模规划
 
 point-to-point 结构继续支持：
 
 - `W1`
 - `Q1`
-- `minor`
-
-`Q1` 和 `minor` / `M1` 这类 point-to-point 结构仍然支持。
+- `minor` / `M1`
 
 如果 reviewer 需要实验支持，仍然用 `XX` 或 experiment placeholder table。
+
+## LaTeX Paper Contract
+
+如果 `paper_input` 是 LaTeX，workflow 输出 contract 变成：
+
+- `rebuttal_text`
+- `revised_latex_paper`
+
+当前支持的是：
+
+- 识别 `.tex`
+- 识别 LaTeX 项目目录
+- 保留 `entrypoint`
+- 保留 `latex_sources`
+- 输出 `revised_latex_paper`
+
+## Human-Like Rebuttal Layer
+
+AutoRebuttal 仍然会构建：
+
+- reviewer outline
+- reviewer cards
+- global strategy
+
+## Limitations
+
+- 不会运行实验
+- 不会自动抓取投稿系统中的私有 reviews
+- 不会为没有证据的结论编造数字
+- OCR 是 best-effort
+- IEEE 这里实现的是项目 preset，不代表所有 IEEE venue / 年份规则都完全一致
