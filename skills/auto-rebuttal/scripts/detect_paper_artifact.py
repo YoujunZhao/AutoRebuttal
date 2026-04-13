@@ -54,6 +54,13 @@ def detect_paper_artifact(paper_input: str | pathlib.Path) -> dict[str, object]:
     else:
         candidate = pathlib.Path(str(paper_input)).expanduser()
 
+    raw_value = str(paper_input)
+    looks_like_filesystem_artifact = (
+        candidate.suffix.lower() in {".pdf", ".tex"}
+        or "/" in raw_value
+        or "\\" in raw_value
+    )
+
     if candidate.exists():
         resolved = candidate.resolve()
         if resolved.suffix.lower() == ".pdf":
@@ -73,6 +80,9 @@ def detect_paper_artifact(paper_input: str | pathlib.Path) -> dict[str, object]:
             "text": resolved.read_text(encoding="utf-8"),
             "expected_outputs": ["rebuttal_text"],
         }
+
+    if looks_like_filesystem_artifact:
+        raise FileNotFoundError(f"Paper input path does not exist: {candidate}")
 
     return {
         "source_type": "text",

@@ -163,6 +163,15 @@ class DraftBundleTest(unittest.TestCase):
         self.assertIn("Detailed latex method", bundle["paper"]["text"])
         self.assertTrue(bundle["paper"]["latex_sources"])
 
+    def test_draft_bundle_rejects_missing_tex_path(self) -> None:
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_draft_bundle.py"
+        module = load_module("build_draft_bundle", module_path)
+        with self.assertRaises(FileNotFoundError):
+            module.build_draft_bundle(
+                paper_input=pathlib.Path("missing-paper.tex"),
+                review_inputs=[],
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
