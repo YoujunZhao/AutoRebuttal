@@ -39,6 +39,14 @@ def _base_plan(venue: str) -> dict[str, object]:
             "default_per_reviewer_limit": 2500,
             "weakness_prefix": "W",
         }
+    if normalized == "IEEE":
+        return {
+            "venue": normalized,
+            "global_summary": False,
+            "budget_mode": "per-reviewer",
+            "default_per_reviewer_limit": None,
+            "weakness_prefix": "W",
+        }
     if normalized in {"CVPR", "ICCV", "ECCV"}:
         return {
             "venue": normalized,

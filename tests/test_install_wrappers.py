@@ -15,11 +15,11 @@ class ReadmeTruthTest(unittest.TestCase):
 
     def test_readme_uses_product_style_sections(self) -> None:
         content = (ROOT / "README.md").read_text(encoding="utf-8")
-        self.assertIn("## How It Works", content)
         self.assertIn("## Installation", content)
-        self.assertIn("## The Basic Workflow", content)
-        self.assertIn("## What's Inside", content)
+        self.assertIn("## How To Use It", content)
         self.assertIn("## Parameters", content)
+        self.assertLess(content.index("## Installation"), content.index("## How To Use It"))
+        self.assertLess(content.index("## How To Use It"), content.index("## Parameters"))
 
     def test_readme_includes_workflow_diagram(self) -> None:
         content = (ROOT / "README.md").read_text(encoding="utf-8")
@@ -29,9 +29,9 @@ class ReadmeTruthTest(unittest.TestCase):
     def test_readme_includes_parameter_table(self) -> None:
         content = (ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn("| Parameter |", content)
-        self.assertIn("| `paper_input` |", content)
-        self.assertIn("| `review_inputs` |", content)
-        self.assertIn("| `rebuttal_input` |", content)
+        self.assertIn("| `rebuttal` / `rebuttal_revise` |", content)
+        self.assertIn("| `venue` |", content)
+        self.assertIn("| `per_reviewer` |", content)
 
     def test_readmes_document_latex_paper_contract(self) -> None:
         english = (ROOT / "README.md").read_text(encoding="utf-8")
@@ -90,12 +90,14 @@ class ReadmeTruthTest(unittest.TestCase):
         english = (ROOT / "README.md").read_text(encoding="utf-8")
         chinese = (ROOT / "README.zh-CN.md").read_text(encoding="utf-8")
         self.assertIn("AAAI", english)
+        self.assertIn("IEEE", english)
         self.assertIn("CVPR", english)
         self.assertIn("ICCV", english)
         self.assertIn("ECCV", english)
         self.assertIn("W1", english)
         self.assertIn("W2", english)
         self.assertIn("AAAI", chinese)
+        self.assertIn("IEEE", chinese)
         self.assertIn("CVPR", chinese)
         self.assertIn("W1", chinese)
 
@@ -117,11 +119,14 @@ class ReadmeTruthTest(unittest.TestCase):
     def test_readme_includes_usage_and_invocation_examples(self) -> None:
         content = (ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn("## How To Use It", content)
-        self.assertIn("Use the `rebuttal` command", content)
-        self.assertIn("Use the `auto-rebuttal` skill", content)
+        self.assertIn("/rebuttal venue=ICML per_reviewer=5000", content)
+        self.assertIn("/rebuttal_revise venue=ICML per_reviewer=5000", content)
+        self.assertIn("paper PDF", content)
+        self.assertIn("review PDF", content)
+        self.assertIn("LaTeX paper", content)
+        self.assertIn("review text", content)
         self.assertIn("/plugin marketplace add", content)
         self.assertIn("/plugin install", content)
-        self.assertIn("What is the difference between `rebuttal` and `auto-rebuttal`?", content)
 
     def test_readmes_mention_rebuttal_revise_polish_mode(self) -> None:
         english = (ROOT / "README.md").read_text(encoding="utf-8")

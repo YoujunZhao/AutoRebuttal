@@ -51,6 +51,16 @@ class VenueFormatPlanTest(unittest.TestCase):
         self.assertFalse(plan["global_summary"])
         self.assertEqual(plan["default_per_reviewer_limit"], 2500)
 
+    def test_ieee_defaults_to_per_reviewer_without_limit(self) -> None:
+        module = load_module(
+            "build_venue_format_plan",
+            ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_venue_format_plan.py",
+        )
+        plan = module.build_venue_format_plan("IEEE")
+        self.assertFalse(plan["global_summary"])
+        self.assertEqual(plan["budget_mode"], "per-reviewer")
+        self.assertIsNone(plan["default_per_reviewer_limit"])
+
     def test_cv_family_uses_summary_and_one_page_equivalent(self) -> None:
         module = load_module(
             "build_venue_format_plan",
