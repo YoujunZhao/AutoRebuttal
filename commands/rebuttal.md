@@ -9,6 +9,8 @@ This command is the drafting entrypoint for a new rebuttal from paper and review
 Accepted inputs for this command:
 
 - one paper PDF
+- paper text
+- one LaTeX paper as either a single `.tex` file or a directory containing `.tex` files
 - one or more review PDFs
 - one or more text reviews
 
@@ -17,17 +19,25 @@ Auto-detect each review input:
 - PDF review -> parse as a review document
 - text review -> treat as reviewer text directly
 
+Auto-detect the paper input too:
+
+- paper PDF -> parse it as a paper artifact
+- paper text -> treat it as manuscript text directly
+- `.tex` file or LaTeX project directory -> preserve it as a LaTeX paper artifact with an entrypoint and `latex_sources`
+
 If the user provides a paper PDF and one or more review PDF files, treat the review PDF files as first-class review sources.
 If the user provides copied review text instead, treat it as a text review source without asking them to convert it to PDF first.
 
 Do not ask the user to paste review text if review PDF files are already available and text extraction succeeds.
 
-If a review PDF has no extractable text but can be rendered, run OCR on the rendered page images first.
+If a review PDF has no extractable text but can be rendered, run best-effort OCR on the rendered page images first.
 
 - if OCR succeeds, continue from the OCR text
 - if OCR fails, keep the honest image fallback and inspect the rendered pages before generating reviewer cards
 
 Before drafting, build reviewer cards and a strategy memo.
+
+If the paper artifact is LaTeX, keep the LaTeX project context instead of flattening it away. The dual target for that path is `rebuttal_text` plus `revised_latex_paper`. Do not claim TeX compilation or arbitrary project rewriting beyond that repo-level output contract.
 
 Build a reviewer outline for each reviewer before drafting. The reviewer outline must separate major weaknesses, direct reviewer questions, and minor points whenever the review contains them.
 

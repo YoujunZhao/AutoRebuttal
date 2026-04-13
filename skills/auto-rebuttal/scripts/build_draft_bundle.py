@@ -10,15 +10,18 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 from detect_input_artifact import detect_input_artifact
-from extract_pdf_text import extract_pdf_text
+from detect_paper_artifact import detect_paper_artifact
 
 
 def build_draft_bundle(
     *,
-    paper_pdf: str | pathlib.Path,
+    paper_input: str | pathlib.Path | None = None,
+    paper_pdf: str | pathlib.Path | None = None,
     review_inputs: list[str | pathlib.Path] | None = None,
 ) -> dict[str, object]:
-    paper_path = pathlib.Path(paper_pdf).expanduser().resolve()
+    resolved_paper_input = paper_input if paper_input is not None else paper_pdf
+    if resolved_paper_input is None:
+        raise ValueError("A paper_input or paper_pdf value is required for draft mode.")
     reviews = [
         detect_input_artifact(
             review_input,
@@ -29,25 +32,23 @@ def build_draft_bundle(
         for index, review_input in enumerate(review_inputs or [])
     ]
     return {
-        "paper": {
-            "source_type": "pdf",
-            "path": str(paper_path),
-            "text": extract_pdf_text(paper_path),
-        },
+        "paper": detect_paper_artifact(resolved_paper_input),
         "reviews": reviews,
     }
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Build an AutoRebuttal draft bundle from a paper PDF and review inputs."
+        description="Build an AutoRebuttal draft bundle from a paper input and review inputs."
     )
-    parser.add_argument("--paper-pdf", required=True)
+    parser.add_argument("--paper-input")
+    parser.add_argument("--paper-pdf")
     parser.add_argument("--review-input", action="append", default=[])
     args = parser.parse_args(argv)
     print(
         json.dumps(
             build_draft_bundle(
+                paper_input=args.paper_input,
                 paper_pdf=args.paper_pdf,
                 review_inputs=args.review_input,
             ),

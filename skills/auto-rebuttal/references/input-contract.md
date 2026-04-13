@@ -4,7 +4,7 @@
 
 Best case:
 
-- paper PDF or extracted manuscript text
+- paper PDF, LaTeX file, LaTeX directory, or extracted manuscript text
 - zero or more review PDFs, or extracted reviewer text
 - an existing rebuttal PDF or rebuttal text when using revise mode
 - all reviewer comments
@@ -12,9 +12,10 @@ Best case:
 - global or per-review character / word limit
 - author notes on what can and cannot be promised
 
-When PDFs are provided, treat them as first-class source artifacts:
+When artifact files are provided, treat them as first-class source artifacts:
 
 - exactly one paper PDF may supply the manuscript context
+- exactly one paper LaTeX file or one LaTeX project directory may supply the manuscript context
 - review PDFs may be repeated and should preserve caller order
 - revise mode may receive one rebuttal PDF instead of review inputs
 - text extraction is best-effort and limited to text-based PDFs
@@ -25,6 +26,8 @@ When PDFs are provided, treat them as first-class source artifacts:
 Auto-detection rules:
 
 - existing filesystem path ending in `.pdf` -> treat as PDF artifact
+- existing filesystem path ending in `.tex` -> treat as LaTeX artifact
+- existing directory containing `.tex` files -> treat as LaTeX project artifact
 - existing filesystem path with any other suffix -> treat as text-file artifact
 - non-path string -> treat as raw text
 
@@ -34,6 +37,15 @@ OCR rules:
 - image-based PDF with OCR success -> `extraction_mode = ocr`
 - image-based review PDF with OCR failure -> `extraction_mode = image_fallback`
 - image-based rebuttal PDF with OCR failure -> explicit error
+
+LaTeX paper rules:
+
+- if `paper_input` is a single `.tex` file, preserve that file as the LaTeX source artifact
+- if `paper_input` is a directory, it must contain at least one `.tex` file
+- prefer `main.tex`, `paper.tex`, `ms.tex`, or `manuscript.tex` as the LaTeX `entrypoint`; otherwise fall back to the first `.tex` file found
+- preserve `latex_sources` and the combined paper `text`
+- when the paper source type is `latex`, the expected outputs are `rebuttal_text` and `revised_latex_paper`
+- this contract does not by itself prove TeX compilation or automatic multi-file patching
 
 ## Accepted Fallbacks
 
@@ -62,6 +74,9 @@ If the venue is unknown, use:
 - a prebuilt input bundle with:
   - `paper.path`
   - `paper.text`
+  - optional `paper.entrypoint`
+  - optional `paper.latex_sources`
+  - optional `paper.expected_outputs`
   - `reviews[].path`
   - `reviews[].text`
   - `reviews[].page_images`
@@ -74,6 +89,14 @@ If the venue is unknown, use:
   - `rebuttal.text`
   - optional `paper.path`
   - optional `paper.text`
+  - optional `paper.entrypoint`
+  - optional `paper.latex_sources`
+
+When the paper source type is `latex`, the expected output contract becomes:
+
+- `rebuttal_text`
+- `revised_latex_paper`
+- optional `entrypoint` in the final `latex-dual` package
 
 ## Default Output Modes
 

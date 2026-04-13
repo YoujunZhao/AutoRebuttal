@@ -2,13 +2,19 @@
 
 [Chinese README](README.zh-CN.md)
 
-AutoRebuttal is a rebuttal workflow package for coding agents. It is shaped like a small plugin-first superpower package: the repository contains the installation surfaces, the internal `auto-rebuttal` skill, the prompt entrypoint, the policy notes, and the tests that define what the project can honestly claim today.
+AutoRebuttal is a rebuttal workflow package for coding agents. The repository ships the installation surfaces, the internal `auto-rebuttal` skill, the command entrypoints, the reference notes, and the tests that define what the project can honestly claim today.
 
 It is built for one job: help authors turn a paper, reviews, and explicit rebuttal constraints into a structured, evidence-first response without fabricating experiments, gains, or citations.
 
-The current package also supports review PDF ingestion, so a paper PDF and a review PDF can both be part of the working input bundle. If a PDF is image-based instead of text-based, AutoRebuttal now tries OCR on the rendered pages first. Only if OCR still yields no usable text does the review path fall back to rendered-page inspection.
+The current repo proves three paper-input lanes:
 
-The package now exposes two command-style entrypoints:
+- paper PDF
+- extracted or manually supplied paper text
+- LaTeX paper input as either a single `.tex` file or a directory containing `.tex` files
+
+Review inputs remain PDF or text. Revise mode still starts from an existing rebuttal PDF or rebuttal text. OCR support is limited to the implemented rendered-page fallback path in `skills/auto-rebuttal/scripts/`; this repo does not claim generic OCR or full LaTeX compilation/edit automation beyond the helpers that already exist.
+
+The package exposes two command-style entrypoints:
 
 - `/rebuttal` for drafting from paper + reviews
 - `/rebuttal_revise` for polishing an existing rebuttal draft
@@ -28,44 +34,92 @@ The package is designed around a few core ideas:
 
 ## How It Works
 
-AutoRebuttal starts from the moment an author brings a paper and reviews into the session. Instead of jumping straight to final prose, it first identifies the response format, organizes the review concerns, builds a reviewer outline, models reviewer stance and attitude, builds a global strategy memo, and only then drafts.
+AutoRebuttal starts from the moment an author brings a paper and reviews into the session. Instead of jumping straight to final prose, it first identifies the response format, organizes the review concerns, builds a reviewer outline, models reviewer stance and attitude, builds a global strategy memo, and only then drafts or revises.
+
+The repo-level workflow is:
+
+```mermaid
+flowchart TD
+    A[Install package] --> B{Choose mode}
+    B -->|/rebuttal| C[Build Draft Bundle]
+    B -->|/rebuttal_revise| D[Build Revision Bundle]
+    C --> E[Detect paper_input or paper_pdf]
+    E -->|PDF or text| F[Expected outputs: rebuttal_text]
+    E -->|LaTeX .tex or project dir| G[Expected outputs: rebuttal_text + revised_latex_paper]
+    C --> H[Normalize review_inputs]
+    H --> I{Review PDF has text layer?}
+    I -->|Yes| J[Use extracted text]
+    I -->|No| K[Render review pages]
+    K --> L[Run best-effort OCR]
+    L -->|Recovered text| J
+    L -->|Still empty| M[Keep image_fallback review pages]
+    D --> N[Normalize rebuttal_input]
+    N --> O{Rebuttal PDF has text layer?}
+    O -->|Yes| P[Use extracted text]
+    O -->|No| Q[Render rebuttal pages and run OCR]
+    Q -->|Recovered text| P
+    Q -->|Still empty| R[Raise explicit error]
+    J --> S[Build reviewer outline, reviewer cards, and strategy memo]
+    M --> S
+    P --> S
+    G --> T[Optional latex-dual output package]
+    S --> U[Draft or revise rebuttal_text]
+    T --> V[Package revised_latex_paper with entrypoint]
+    U --> W[Return final artifacts]
+    V --> W
+```
 
 In practice, the flow is:
 
 1. install the package in the host tool
-2. provide manuscript context, paper PDFs, review PDFs, review text, rebuttal PDFs, or rebuttal text depending on mode
-3. auto-detect whether each non-paper artifact is PDF or text
-4. if a PDF has no text layer, OCR the rendered pages first
-5. determine the response format and budget
-6. build a reviewer outline with `W#`, `Q#`, and minor-point structure when the review supports it
-7. if OCR still fails on a review PDF, inspect the rendered review pages before reviewer-card generation
-8. build reviewer cards with reviewer stance, movability, attitude, and primary concerns
-9. cluster shared reviewer concerns
+2. provide manuscript context as a paper PDF, paper text, or LaTeX paper
+3. provide review PDFs, review text, rebuttal PDFs, or rebuttal text depending on mode
+4. auto-detect whether each non-paper artifact is PDF or text
+5. extract PDF text first, then use rendered-page OCR if extraction fails
+6. keep review PDFs as `image_fallback` page sets if OCR still yields no usable text
+7. fail clearly in revise mode if a rebuttal PDF still has no usable text after OCR
+8. build a reviewer outline with `W#`, `Q#`, and minor-point structure when the review supports it
+9. build reviewer cards with reviewer stance, movability, attitude, and primary concerns
 10. produce a global strategy memo before reviewer-by-reviewer prose
 11. allocate the character budget before drafting
-12. draft the final rebuttal text
-13. keep unresolved evidence as explicit placeholders
+12. return `rebuttal_text`, and for LaTeX paper inputs also target `revised_latex_paper`
 
-This keeps the workflow closer to how strong rebuttals are actually written: first understand the concern set, then decide what can be answered directly, what should be acknowledged, and what must stay as a bounded placeholder.
+## Parameters
 
-The project now explicitly models reviewer stance and attitude before prose generation. The goal is to sound less like a generic template and more like a targeted rebuttal.
+These are the real bundle-level parameters exposed by the scripts in `skills/auto-rebuttal/scripts/`.
 
-That also means the workflow now tries to identify:
+| Parameter | Used by | Accepts | Actual repo behavior |
+| --- | --- | --- | --- |
+| `paper_input` | `build_draft_bundle.py`, `build_revision_bundle.py` | raw paper text, UTF-8 text file, single `.tex` file, or LaTeX project directory | `.tex` and directory inputs become `source_type = "latex"`, preserve `entrypoint` plus `latex_sources`, and set `expected_outputs` to `rebuttal_text` + `revised_latex_paper`. Plain text inputs set `expected_outputs` to `rebuttal_text` only. |
+| `paper_pdf` | `build_draft_bundle.py`, `build_revision_bundle.py` | paper PDF path | Compatibility alias for the paper artifact. PDFs use text extraction first, then rendered-page OCR if extraction fails. |
+| `review_inputs` | `build_draft_bundle.py` | review PDF paths, review text file paths, or raw review text | Each item is auto-detected independently. Review PDFs may end in `extraction_mode = text`, `ocr`, or `image_fallback`. |
+| `rebuttal_input` | `build_revision_bundle.py` | rebuttal PDF path, rebuttal text file path, or raw rebuttal text | Rebuttal PDFs use text extraction first, then OCR. If OCR still yields no usable text, revise mode raises an explicit error instead of pretending the rebuttal was parsed. |
+| `entrypoint` | `detect_paper_artifact.py`, `build_latex_output_package.py` | resolved LaTeX entry file path | For LaTeX papers, the repo prefers `main.tex`, `paper.tex`, `ms.tex`, or `manuscript.tex`, then falls back to the first `.tex` file found. |
 
-- which reviewers are swing reviewers
-- which concerns are global themes across multiple reviewers
-- where the draft should reassure, clarify, de-escalate, or sharply distinguish prior work
+For LaTeX paper inputs, the output contract is also explicit:
+
+| Output key | When present | Meaning |
+| --- | --- | --- |
+| `rebuttal_text` | always | the rebuttal prose returned by the workflow |
+| `revised_latex_paper` | when the paper artifact is LaTeX | revised LaTeX paper content packaged by `build_latex_output_package.py` |
+| `entrypoint` | in the `latex-dual` package | the LaTeX entry file for the revised paper |
 
 ## Human-Like Rebuttal Layer
 
-AutoRebuttal now includes:
+AutoRebuttal includes:
 
 - **reviewer cards** for reviewer stance, movability, attitude, and primary concerns
 - a **global strategy memo** to decide what should lead the rebuttal
 - explicit **character-budget planning** so the opening, body, and closing are sized before drafting
 - a **block formatter** so `W1`, `Q1`, and `M1` start on their own line
 
-This is the main difference between the upgraded workflow and the older generic style.
+This is the main difference between the workflow and a generic "write me a rebuttal" prompt.
+
+That also means the workflow tries to identify:
+
+- which reviewers are swing reviewers
+- which concerns are global themes across multiple reviewers
+- where the draft should reassure, clarify, de-escalate, or sharply distinguish prior work
 
 ## Venue-Aware Formatting Defaults
 
@@ -88,8 +142,6 @@ It should also support:
 - `Q1 / Q2 / Q3` for direct reviewer questions
 - short `M1 / M2 / M3` responses for minor points
 - or one merged `Minor points` section when several minor comments are highly similar
-
-`W1`, `Q1`, and `M1` should each start on their own line rather than appearing inline in one long paragraph.
 
 For OpenReview-style review exports, the parser should preserve headers such as `Main Weaknesses`, `Key Questions For Authors`, and `Minor Weaknesses` instead of flattening everything into `W#`.
 
@@ -159,13 +211,13 @@ The exact UI differs by host tool, but the working intent is the same: tell the 
 ### What is the difference between `rebuttal` and `auto-rebuttal`?
 
 - **`rebuttal`**
-  This is the easier command-style entrypoint. Use it when you just want to start the workflow quickly.
+  This is the easier command-style entrypoint. Use it when you want to start the workflow quickly from a paper artifact plus review inputs.
 
 - **`rebuttal_revise`**
   This is the revise/polish entrypoint. Use it when you already have an existing rebuttal and want the agent to tighten, shorten, and clean it up under the venue and budget constraints.
 
 - **`auto-rebuttal`**
-  This is the underlying skill / workflow engine. Use it when you want to invoke the skill explicitly.
+  This is the underlying skill / workflow engine. Use it when you want to invoke the skill explicitly, or when you want to be precise about bundle-level behavior such as LaTeX paper intake and dual outputs.
 
 In short: `rebuttal` is the front door, and `auto-rebuttal` is the actual engine behind it.
 
@@ -185,6 +237,12 @@ Use the `auto-rebuttal` skill:
 
 ```text
 Use the `auto-rebuttal` skill. This is a shared-global mode rebuttal with a total limit of 6000 characters. First cluster shared concerns, then draft the final response.
+```
+
+If the paper source is LaTeX, keep the paper context as LaTeX instead of flattening it into prose:
+
+```text
+Use the `auto-rebuttal` skill. Treat ./paper as the LaTeX paper source, keep the detected entrypoint, and target a dual result with `rebuttal_text` plus `revised_latex_paper`.
 ```
 
 If the venue format is unclear, give the budget explicitly:
@@ -209,17 +267,17 @@ Polish an existing rebuttal directly:
 ## The Basic Workflow
 
 1. **Install AutoRebuttal** into Codex or a Claude-style plugin environment.
-2. **Provide inputs**: paper PDF, review PDF, review text, rebuttal PDF, rebuttal text, manuscript text, or a faithful summary.
-   `/rebuttal` auto-detects whether each review input is PDF or text.
-   `/rebuttal_revise` auto-detects whether the rebuttal input is PDF or text, and paper PDF is optional.
-   If a PDF is image-based, AutoRebuttal tries OCR first.
+2. **Provide inputs**:
+   - `/rebuttal` accepts a paper PDF, paper text, or LaTeX paper plus review PDF or review text inputs.
+   - `/rebuttal_revise` accepts an existing rebuttal PDF or rebuttal text, plus an optional paper PDF, paper text, or LaTeX paper.
 3. **Choose a budgeting mode**:
    - `per-reviewer mode`
    - `shared-global mode`
 4. **Generate the issue map** before asking for final prose.
    This issue map should build a reviewer outline first, so `W#`, `Q#`, and minor points are preserved in the final draft.
-5. **Draft the rebuttal** with evidence-first language.
+5. **Draft or revise the rebuttal** with evidence-first language.
 6. **Mark missing evidence explicitly** with placeholders instead of fabrication.
+7. **For LaTeX paper inputs**, keep the paper entrypoint and return the dual target of `rebuttal_text` plus `revised_latex_paper`.
 
 ### The Two Tested Budgeting Modes
 
@@ -233,14 +291,17 @@ The shared-global path is the correct generic fallback for many CV-style or foru
 
 ## Verified Support Today
 
-These are the only things the project should present as verified support today:
+These are the things the project can present as verified support today:
 
-- Repo-level manager CLI via [`scripts/autorebuttal_manager.py`](scripts/autorebuttal_manager.py)
+- repo-level manager CLI via [`scripts/autorebuttal_manager.py`](scripts/autorebuttal_manager.py)
 - Codex installation via [`.codex/INSTALL.md`](.codex/INSTALL.md)
 - Claude plugin shell metadata via [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json)
-- Local Claude marketplace metadata via [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json)
-- A command entrypoint via [`commands/rebuttal.md`](commands/rebuttal.md)
-- A polish-mode command entrypoint via [`commands/rebuttal_revise.md`](commands/rebuttal_revise.md)
+- local Claude marketplace metadata via [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json)
+- command entrypoints via [`commands/rebuttal.md`](commands/rebuttal.md) and [`commands/rebuttal_revise.md`](commands/rebuttal_revise.md)
+- draft and revision bundle builders via [`skills/auto-rebuttal/scripts/build_draft_bundle.py`](skills/auto-rebuttal/scripts/build_draft_bundle.py) and [`skills/auto-rebuttal/scripts/build_revision_bundle.py`](skills/auto-rebuttal/scripts/build_revision_bundle.py)
+- paper artifact detection for PDF, text, single `.tex` files, and LaTeX project directories via [`skills/auto-rebuttal/scripts/detect_paper_artifact.py`](skills/auto-rebuttal/scripts/detect_paper_artifact.py)
+- best-effort rendered-page OCR fallback for PDFs via [`skills/auto-rebuttal/scripts/ocr_rendered_pages.py`](skills/auto-rebuttal/scripts/ocr_rendered_pages.py) and [`skills/auto-rebuttal/scripts/render_review_pdf_pages.py`](skills/auto-rebuttal/scripts/render_review_pdf_pages.py)
+- a LaTeX output package helper via [`skills/auto-rebuttal/scripts/build_latex_output_package.py`](skills/auto-rebuttal/scripts/build_latex_output_package.py)
 - `per-reviewer mode`
 - `shared-global mode`
 
@@ -272,12 +333,14 @@ That is intentionally weaker than saying "full venue support." These notes are r
 
 - [`skills/auto-rebuttal/SKILL.md`](skills/auto-rebuttal/SKILL.md)
 - [`skills/auto-rebuttal/scripts/build_input_bundle.py`](skills/auto-rebuttal/scripts/build_input_bundle.py)
+- [`skills/auto-rebuttal/scripts/build_draft_bundle.py`](skills/auto-rebuttal/scripts/build_draft_bundle.py)
+- [`skills/auto-rebuttal/scripts/build_revision_bundle.py`](skills/auto-rebuttal/scripts/build_revision_bundle.py)
+- [`skills/auto-rebuttal/scripts/build_latex_output_package.py`](skills/auto-rebuttal/scripts/build_latex_output_package.py)
 - [`skills/auto-rebuttal/scripts/render_review_pdf_pages.py`](skills/auto-rebuttal/scripts/render_review_pdf_pages.py)
+- [`skills/auto-rebuttal/scripts/ocr_rendered_pages.py`](skills/auto-rebuttal/scripts/ocr_rendered_pages.py)
 - [`skills/auto-rebuttal/scripts/build_reviewer_outline.py`](skills/auto-rebuttal/scripts/build_reviewer_outline.py)
 - [`skills/auto-rebuttal/scripts/build_reviewer_cards.py`](skills/auto-rebuttal/scripts/build_reviewer_cards.py)
 - [`skills/auto-rebuttal/scripts/response_modes.py`](skills/auto-rebuttal/scripts/response_modes.py)
-- [`skills/auto-rebuttal/scripts/build_draft_bundle.py`](skills/auto-rebuttal/scripts/build_draft_bundle.py)
-- [`skills/auto-rebuttal/scripts/build_revision_bundle.py`](skills/auto-rebuttal/scripts/build_revision_bundle.py)
 - [`skills/auto-rebuttal/scripts/install_skill.py`](skills/auto-rebuttal/scripts/install_skill.py)
 - [`skills/auto-rebuttal/scripts/package_skill.py`](skills/auto-rebuttal/scripts/package_skill.py)
 - [`skills/auto-rebuttal/scripts/validate_budget.py`](skills/auto-rebuttal/scripts/validate_budget.py)
@@ -312,6 +375,8 @@ This is the intended fallback behavior for unsupported or unverified venues.
 - It does not claim that checked venue notes are the same as tested venue automation.
 - It does not claim public official Claude marketplace publication.
 - It does not guarantee score improvement.
+- OCR is best-effort after rendered-page conversion; some scanned PDFs will still end as `image_fallback` in draft mode or a hard error in rebuttal-revise mode.
+- LaTeX support is limited to detecting `.tex` or LaTeX project inputs, preserving `entrypoint` and `latex_sources`, and packaging `revised_latex_paper`; the repo does not prove TeX compilation or automatic multi-file patch synthesis.
 
 ## Research Basis
 

@@ -113,6 +113,56 @@ class DraftBundleTest(unittest.TestCase):
         self.assertIn("Key Questions", bundle["reviews"][0]["text"])
         self.assertIn("Why this baseline", bundle["reviews"][0]["text"])
 
+    def test_draft_bundle_accepts_single_tex_paper(self) -> None:
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_draft_bundle.py"
+        module = load_module("build_draft_bundle", module_path)
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp = pathlib.Path(tmpdir)
+            paper_tex = tmp / "paper.tex"
+            paper_tex.write_text(
+                "\\section{Introduction}\nWe present a latex-paper workflow.\n",
+                encoding="utf-8",
+            )
+
+            bundle = module.build_draft_bundle(
+                paper_input=paper_tex,
+                review_inputs=["Review text: please clarify the latex paper assumptions."],
+            )
+
+        self.assertEqual(bundle["paper"]["source_type"], "latex")
+        self.assertIn("latex-paper workflow", bundle["paper"]["text"])
+        self.assertIn("rebuttal_text", bundle["paper"]["expected_outputs"])
+        self.assertIn("revised_latex_paper", bundle["paper"]["expected_outputs"])
+
+    def test_draft_bundle_accepts_latex_project_directory(self) -> None:
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_draft_bundle.py"
+        module = load_module("build_draft_bundle", module_path)
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp = pathlib.Path(tmpdir)
+            latex_dir = tmp / "paper"
+            latex_dir.mkdir()
+            (latex_dir / "main.tex").write_text(
+                "\\input{sections/method}\n\\section{Intro}\n",
+                encoding="utf-8",
+            )
+            (latex_dir / "sections").mkdir()
+            (latex_dir / "sections" / "method.tex").write_text(
+                "\\section{Method}\nDetailed latex method.\n",
+                encoding="utf-8",
+            )
+
+            bundle = module.build_draft_bundle(
+                paper_input=latex_dir,
+                review_inputs=[],
+            )
+
+        self.assertEqual(bundle["paper"]["source_type"], "latex")
+        self.assertTrue(bundle["paper"]["entrypoint"].endswith("main.tex"))
+        self.assertIn("Detailed latex method", bundle["paper"]["text"])
+        self.assertTrue(bundle["paper"]["latex_sources"])
+
 
 if __name__ == "__main__":
     unittest.main()

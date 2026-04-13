@@ -10,13 +10,14 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 from detect_input_artifact import detect_input_artifact
-from extract_pdf_text import extract_pdf_text
+from detect_paper_artifact import detect_paper_artifact
 
 
 def build_revision_bundle(
     *,
     rebuttal_input: str | pathlib.Path,
-    paper_pdf: str | pathlib.Path | None,
+    paper_input: str | pathlib.Path | None = None,
+    paper_pdf: str | pathlib.Path | None = None,
 ) -> dict[str, object]:
     rebuttal = detect_input_artifact(
         rebuttal_input,
@@ -25,13 +26,9 @@ def build_revision_bundle(
         temp_prefix="autorebuttal_rebuttal_pages_",
     )
     paper = None
-    if paper_pdf is not None:
-        paper_path = pathlib.Path(paper_pdf).expanduser().resolve()
-        paper = {
-            "source_type": "pdf",
-            "path": str(paper_path),
-            "text": extract_pdf_text(paper_path),
-        }
+    resolved_paper_input = paper_input if paper_input is not None else paper_pdf
+    if resolved_paper_input is not None:
+        paper = detect_paper_artifact(resolved_paper_input)
     return {
         "rebuttal": rebuttal,
         "paper": paper,
@@ -40,15 +37,17 @@ def build_revision_bundle(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Build an AutoRebuttal revision bundle from an existing rebuttal and optional paper PDF."
+        description="Build an AutoRebuttal revision bundle from an existing rebuttal and optional paper input."
     )
     parser.add_argument("--rebuttal-input", required=True)
+    parser.add_argument("--paper-input")
     parser.add_argument("--paper-pdf")
     args = parser.parse_args(argv)
     print(
         json.dumps(
             build_revision_bundle(
                 rebuttal_input=args.rebuttal_input,
+                paper_input=args.paper_input,
                 paper_pdf=args.paper_pdf,
             ),
             indent=2,

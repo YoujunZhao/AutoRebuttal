@@ -9,7 +9,7 @@ description: Use when drafting a conference or journal rebuttal from a paper, re
 
 Turn a manuscript, a review set, and venue constraints into a rebuttal strategy and final response text.
 
-First-class input artifacts include one paper PDF plus zero or more review PDFs. When PDFs are used, extract text on a best-effort basis for text-based files and keep each review as a separate source item.
+First-class input artifacts include one paper PDF, paper text, or LaTeX paper plus zero or more review PDFs / review texts. When PDFs are used, extract text on a best-effort basis for text-based files and keep each review as a separate source item.
 
 Load the detailed references only when needed:
 
@@ -19,6 +19,8 @@ Load the detailed references only when needed:
 - `references/source-notes.md` for research basis and source links
 - `scripts/build_draft_bundle.py` when the user provides paper PDF plus review PDF or review text inputs
 - `scripts/build_revision_bundle.py` when the user provides an existing rebuttal PDF or rebuttal text, with optional paper PDF
+- `scripts/detect_paper_artifact.py` when the paper input may be PDF, `.tex`, or a LaTeX project directory
+- `scripts/build_latex_output_package.py` when the paper source type is LaTeX and the workflow should return both rebuttal text and revised LaTeX paper
 - `scripts/build_input_bundle.py` as the PDF-only compatibility wrapper for draft-mode bundle building
 - `scripts/ocr_rendered_pages.py` when a PDF must be OCRed after page rendering
 - `scripts/render_review_pdf_pages.py` when a review PDF has no text layer and must continue through rendered page images
@@ -34,7 +36,7 @@ Load the detailed references only when needed:
 
 ## Supported Inputs
 
-- one paper PDF, or extracted manuscript text
+- one paper PDF, one paper LaTeX file, one LaTeX paper directory, or extracted manuscript text
 - zero or more review PDFs, or copied review text
 - an existing rebuttal draft when the user wants revision-only polish
 - an existing rebuttal PDF when the user wants revision-only polish
@@ -53,17 +55,23 @@ Before drafting, form:
 
 Reviewer cards should include reviewer stance, movability, attitude, and primary concerns.
 
+When the paper artifact is LaTeX, the output target expands to `rebuttal_text` plus `revised_latex_paper`.
+
 ## Core Rules
 
 - Read the paper, abstract, or author summary before drafting.
 - In draft mode, build the draft bundle first and auto-detect whether each review artifact is PDF or text.
+- In draft mode, auto-detect whether the paper artifact is PDF, `.tex`, or a LaTeX project directory.
 - In revise mode, build the revision bundle first and auto-detect whether the rebuttal artifact is PDF or text.
+- In revise mode, if a paper artifact is provided, auto-detect whether it is PDF, `.tex`, or a LaTeX project directory.
 - Do not ask the user to paste review text when review PDF extraction succeeds.
 - If a review PDF has no extractable text but can be rendered, run OCR on the rendered pages first.
 - If OCR succeeds, continue from the OCR text.
 - If OCR fails, keep the rendered-page fallback and inspect the rendered pages before reviewer-card generation. Do not pretend empty text is a usable review.
 - If the user already has an existing rebuttal draft or rebuttal PDF and asks to revise or polish it, treat that rebuttal artifact as first-class input and use the `/rebuttal_revise` command surface behavior.
 - If a rebuttal PDF has no extractable text, run OCR on its rendered pages first; only fail if OCR also produces no usable text.
+- If the paper source type is LaTeX, support two outputs: `rebuttal_text` and `revised_latex_paper`.
+- If the paper source type is LaTeX, preserve the detected `entrypoint` and `latex_sources`. Do not claim TeX compilation or arbitrary multi-file rewrite guarantees unless the repo surface actually proves them.
 - Build a reviewer outline before writing prose so each reviewer can preserve `W#`, `Q#`, and `M#` structure.
 - Build reviewer cards before writing prose.
 - Build a strategy memo before reviewer-by-reviewer drafting.
@@ -94,7 +102,8 @@ Reviewer cards should include reviewer stance, movability, attitude, and primary
    - insert a result placeholder instead of fabricating a number
    - respectfully decline an unreasonable or out-of-scope request
 10. Draft reviewer-by-reviewer responses or a shared response letter, or revise the existing rebuttal draft.
-11. Run the final compliance check before presenting the draft.
+11. If the paper artifact is LaTeX, package the final result as `rebuttal_text` plus `revised_latex_paper`.
+12. Run the final compliance check before presenting the draft.
 
 ## Venue-Aware Formatting Defaults
 
@@ -124,6 +133,12 @@ Default to this shape unless the user asks for a different format:
 5. Open placeholders that still need author input
 
 If the user asks for prose only, still do the analysis internally before drafting.
+
+For LaTeX paper inputs, the repo-level package shape may also include:
+
+- `rebuttal_text`
+- `revised_latex_paper`
+- `entrypoint`
 
 ## Non-Fabrication Guardrail
 

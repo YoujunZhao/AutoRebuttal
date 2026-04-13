@@ -64,11 +64,33 @@ class PluginSurfaceTest(unittest.TestCase):
         self.assertIn("rendered page images", content)
         self.assertIn("build a reviewer outline", content)
 
+    def test_rebuttal_command_mentions_latex_paper_and_dual_outputs(self) -> None:
+        content = (ROOT / "commands" / "rebuttal.md").read_text(encoding="utf-8")
+        self.assertIn("LaTeX", content)
+        self.assertIn(".tex", content)
+        self.assertIn("revised_latex_paper", content)
+
     def test_rebuttal_revise_command_mentions_polishing_existing_rebuttal(self) -> None:
         content = (ROOT / "commands" / "rebuttal_revise.md").read_text(encoding="utf-8").lower()
         self.assertIn("existing rebuttal", content)
         self.assertIn("revise", content)
         self.assertIn("do not invent", content)
+
+    def test_rebuttal_revise_command_mentions_optional_latex_paper(self) -> None:
+        content = (ROOT / "commands" / "rebuttal_revise.md").read_text(encoding="utf-8")
+        self.assertIn("LaTeX", content)
+        self.assertIn(".tex", content)
+        self.assertIn("revised_latex_paper", content)
+
+    def test_skill_and_reference_document_latex_dual_output_contract(self) -> None:
+        skill = (ROOT / "skills" / "auto-rebuttal" / "SKILL.md").read_text(encoding="utf-8")
+        reference = (
+            ROOT / "skills" / "auto-rebuttal" / "references" / "input-contract.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("revised_latex_paper", skill)
+        self.assertIn("entrypoint", skill)
+        self.assertIn("revised_latex_paper", reference)
+        self.assertIn("entrypoint", reference)
 
 
 if __name__ == "__main__":

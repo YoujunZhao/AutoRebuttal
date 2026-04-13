@@ -13,11 +13,19 @@ Accepted inputs for this command:
 - rebuttal PDF
 - rebuttal text
 - optional paper PDF
+- optional paper text
+- optional LaTeX paper as either a single `.tex` file or a directory containing `.tex` files
 
 Auto-detect the rebuttal input:
 
 - rebuttal PDF -> parse it as a rebuttal document
 - rebuttal text -> treat it as existing rebuttal prose directly
+
+Auto-detect the optional paper input too:
+
+- paper PDF -> parse it as a paper artifact
+- paper text -> treat it as manuscript text directly
+- `.tex` file or LaTeX project directory -> preserve it as a LaTeX paper artifact with an entrypoint and `latex_sources`
 
 Start by identifying what should be preserved, tightened, reordered, or removed. Polish for clarity, specificity, and reviewer coverage without changing the factual basis of the response.
 
@@ -25,12 +33,14 @@ Do not invent experiments, numerical gains, citations, or promises that are not 
 
 If review PDF files are already available and text extraction succeeds, do not ask the user to paste review text again.
 
-If a rebuttal PDF has no extractable text, run OCR on the rendered pages first.
+If a rebuttal PDF has no extractable text, run best-effort OCR on the rendered pages first.
 
 - if OCR succeeds, revise from the OCR text
 - if OCR fails, fail clearly instead of pretending the rebuttal was parsed
 
 If a review PDF is also available and has no extractable text but can be rendered, continue from rendered page images and rebuild the reviewer outline before revising the prose.
+
+If the optional paper artifact is LaTeX, keep the LaTeX project context. The dual target for that path is `rebuttal_text` plus `revised_latex_paper`. Do not claim TeX compilation or broad LaTeX refactoring beyond that repo-level output contract.
 
 Before revising the draft:
 

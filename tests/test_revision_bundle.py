@@ -119,6 +119,26 @@ class RevisionBundleTest(unittest.TestCase):
         normalized = bundle["rebuttal"]["text"].replace(" ", "")
         self.assertIn("ExistingrebuttalOCRcontent", normalized)
 
+    def test_revision_bundle_accepts_optional_latex_paper(self) -> None:
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_revision_bundle.py"
+        module = load_module("build_revision_bundle", module_path)
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp = pathlib.Path(tmpdir)
+            paper_tex = tmp / "paper.tex"
+            paper_tex.write_text(
+                "\\section{Conclusion}\nLatex revision paper.\n",
+                encoding="utf-8",
+            )
+
+            bundle = module.build_revision_bundle(
+                rebuttal_input="Reviewer Qc8x\nW1. Existing rebuttal text.",
+                paper_input=paper_tex,
+            )
+
+        self.assertEqual(bundle["paper"]["source_type"], "latex")
+        self.assertIn("Latex revision paper", bundle["paper"]["text"])
+
 
 if __name__ == "__main__":
     unittest.main()

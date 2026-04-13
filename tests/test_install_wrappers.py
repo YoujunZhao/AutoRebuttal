@@ -19,6 +19,28 @@ class ReadmeTruthTest(unittest.TestCase):
         self.assertIn("## Installation", content)
         self.assertIn("## The Basic Workflow", content)
         self.assertIn("## What's Inside", content)
+        self.assertIn("## Parameters", content)
+
+    def test_readme_includes_workflow_diagram(self) -> None:
+        content = (ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn("```mermaid", content)
+        self.assertIn("Build Draft Bundle", content)
+
+    def test_readme_includes_parameter_table(self) -> None:
+        content = (ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn("| Parameter |", content)
+        self.assertIn("| `paper_input` |", content)
+        self.assertIn("| `review_inputs` |", content)
+        self.assertIn("| `rebuttal_input` |", content)
+
+    def test_readmes_document_latex_paper_contract(self) -> None:
+        english = (ROOT / "README.md").read_text(encoding="utf-8")
+        chinese = (ROOT / "README.zh-CN.md").read_text(encoding="utf-8")
+        self.assertIn("LaTeX paper", english)
+        self.assertIn("revised_latex_paper", english)
+        self.assertIn("build_latex_output_package.py", english)
+        self.assertIn("LaTeX", chinese)
+        self.assertIn("revised_latex_paper", chinese)
 
     def test_readme_mentions_codex_install_doc(self) -> None:
         content = (ROOT / "README.md").read_text(encoding="utf-8")
