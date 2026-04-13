@@ -1,6 +1,11 @@
-# AutoRebuttal
+<div align="center">
+  <img src="docs/autorebuttal.png" width="700" alt="AutoResearchClaw Logo">
 
-[Chinese README](README.zh-CN.md)
+
+[![English](https://img.shields.io/badge/Language-English-blue)](./README.md)
+[![中文](https://img.shields.io/badge/语言-中文-red)](./README-CN.md)
+
+</div>
 
 AutoRebuttal is a rebuttal workflow package for coding agents. The repository ships the installation surfaces, the internal `auto-rebuttal` skill, the command entrypoints, the reference notes, and the tests that define what the project can honestly claim today.
 
