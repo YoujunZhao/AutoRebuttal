@@ -19,7 +19,6 @@ The package exposes two command-style entrypoints:
 - `/rebuttal` for drafting from paper + reviews
 - `/rebuttal_revise` for polishing an existing rebuttal draft
 
-## Installation
 
 ## Quick Install
 
