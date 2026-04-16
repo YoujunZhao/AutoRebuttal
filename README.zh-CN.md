@@ -2,9 +2,7 @@
 
 [English README](README.md)
 
-AutoRebuttal 是一个面向 coding agent 的 rebuttal workflow package。
-
-它支持：
+AutoRebuttal 是一个面向 coding agent 的 rebuttal workflow package。仓库里的代码和测试目前已经证明这些能力：
 
 - `paper PDF`
 - `paper text`
@@ -14,15 +12,30 @@ AutoRebuttal 是一个面向 coding agent 的 rebuttal workflow package。
 - `rebuttal PDF`
 - `rebuttal text`
 
+OCR 只应理解为当前仓库里已经实现的 rendered-page fallback 路径，不应被理解成“任意 PDF 都稳定识别”的泛化能力。
+
 ## Installation
 
 ## Quick Install
+
+### Codex
 
 直接告诉 Codex：
 
 ```text
 Fetch and follow instructions from https://raw.githubusercontent.com/YoujunZhao/AutoRebuttal/refs/heads/main/.codex/INSTALL.md
 ```
+
+### Claude Code
+
+通过 Claude plugin workflow 安装：
+
+```text
+/plugin marketplace add YoujunZhao/AutoRebuttal
+/plugin install auto-rebuttal@auto-rebuttal-dev
+```
+
+## Other installation
 
 ### Codex
 
@@ -68,11 +81,6 @@ python scripts/autorebuttal_manager.py codex remove
 python scripts/autorebuttal_manager.py claude install
 python scripts/autorebuttal_manager.py claude update
 python scripts/autorebuttal_manager.py claude remove
-```
-
-```text
-/plugin marketplace add YoujunZhao/AutoRebuttal
-/plugin install auto-rebuttal@auto-rebuttal-dev
 ```
 
 ## How To Use It

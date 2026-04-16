@@ -7,6 +7,10 @@
 
 </div>
 
+# AutoRebuttal
+
+[Chinese README](README.zh-CN.md)
+
 AutoRebuttal is a rebuttal workflow package for coding agents. The repository ships the installation surfaces, the internal `auto-rebuttal` skill, the command entrypoints, the reference notes, and the tests that define what the project can honestly claim today.
 
 It is built for one job: help authors turn a paper, reviews, and explicit rebuttal constraints into a structured, evidence-first response without fabricating experiments, gains, or citations.
