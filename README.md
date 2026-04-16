@@ -29,7 +29,9 @@ The package exposes two command-style entrypoints:
 
 ## AutoRebuttal Outputs
 
-
+| Paper / Reviews | Venue | AutoRebuttal |
+|---|---|---|
+| A | ICLR | A |
 
 ## Quick Install
 
