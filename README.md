@@ -29,7 +29,7 @@ The package exposes two command-style entrypoints:
 
 ## AutoRebuttal Outputs
 
-We show ICLR-style AutoRebuttal outputs:
+
 
 ## Quick Install
 
