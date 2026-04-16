@@ -32,10 +32,10 @@ The package exposes two command-style entrypoints:
 | Paper | Reviews | Venue | AutoRebuttal |
 |---|---|---|---|
 | [Paper A](/docs/110.pdf) | [Reviews A](/docs/11.pdf) | ICLR | [AutoRebuttal A](/docs/11_iclr.md) |
-| [Paper A](/docs/120.pdf) | [Reviews A](/docs/12.pdf) | ICLR | [AutoRebuttal A](/docs/12_iclr.md) |
-| [Paper A](/docs/130.pdf) | [Reviews A](/docs/13.pdf) | ICLR | [AutoRebuttal A](/docs/13_iclr.md) |
-| [Paper A](/docs/140.pdf) | [Reviews A](/docs/14.pdf) | ICLR | [AutoRebuttal A](/docs/14_iclr.md) |
-| [Paper A](/docs/150.pdf) | [Reviews A](/docs/15.pdf) | ICLR | [AutoRebuttal A](/docs/15_iclr.md) |
+| [Paper B](/docs/120.pdf) | [Reviews B](/docs/12.pdf) | ICLR | [AutoRebuttal B](/docs/12_iclr.md) |
+| [Paper C](/docs/130.pdf) | [Reviews C](/docs/13.pdf) | ICLR | [AutoRebuttal C](/docs/13_iclr.md) |
+| [Paper D](/docs/140.pdf) | [Reviews D](/docs/14.pdf) | ICLR | [AutoRebuttal D](/docs/14_iclr.md) |
+| [Paper E](/docs/150.pdf) | [Reviews E](/docs/15.pdf) | ICLR | [AutoRebuttal E](/docs/15_iclr.md) |
 
 ## Quick Install
 
