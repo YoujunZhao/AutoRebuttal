@@ -120,28 +120,24 @@ Draft from `paper PDF + review PDF`:
 
 ```text
 /rebuttal venue=ICML per_reviewer=5000
-Input: paper PDF + review PDF
 ```
 
 Draft from `LaTeX paper + review text`:
 
 ```text
 /rebuttal venue=ICML per_reviewer=5000
-Input: LaTeX paper + review text
 ```
 
 Draft from `paper PDF + review PDF + review text`:
 
 ```text
 /rebuttal venue=ICML per_reviewer=5000
-Input: paper PDF + review PDF + review text
 ```
 
 Revise from `rebuttal PDF`, with optional `paper PDF` or `LaTeX paper`:
 
 ```text
 /rebuttal_revise venue=ICML per_reviewer=5000
-Input: rebuttal PDF + optional paper PDF / LaTeX paper
 ```
 
 Use the `auto-rebuttal` skill directly:

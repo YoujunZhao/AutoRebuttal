@@ -89,22 +89,18 @@ Examples：
 
 ```text
 /rebuttal venue=ICML per_reviewer=5000
-Input: paper PDF + review PDF
 ```
 
 ```text
 /rebuttal venue=ICML per_reviewer=5000
-Input: LaTeX paper + review text
 ```
 
 ```text
 /rebuttal venue=ICML per_reviewer=5000
-Input: paper PDF + review PDF + review text
 ```
 
 ```text
 /rebuttal_revise venue=ICML per_reviewer=5000
-Input: rebuttal PDF + optional paper PDF / LaTeX paper
 ```
 
 ## Parameters
