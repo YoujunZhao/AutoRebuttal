@@ -1,6 +1,19 @@
 from __future__ import annotations
 
 
+_VALID_OUTPUT_FORMATS = {"text", "md"}
+
+
+def resolve_output_format(*, output: str | None) -> str:
+    normalized = (output or "text").strip().lower()
+    if not normalized:
+        normalized = "text"
+    if normalized not in _VALID_OUTPUT_FORMATS:
+        allowed = ", ".join(sorted(_VALID_OUTPUT_FORMATS))
+        raise ValueError(f"Unsupported output format: {output!r}. Expected one of: {allowed}.")
+    return normalized
+
+
 def resolve_workflow_mode(
     *,
     existing_rebuttal_text: str | None,

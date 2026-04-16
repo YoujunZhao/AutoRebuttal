@@ -41,6 +41,7 @@ Load the detailed references only when needed:
 - an existing rebuttal draft when the user wants revision-only polish
 - an existing rebuttal PDF when the user wants revision-only polish
 - venue and budget constraints
+- desired output presentation (`text` or `md`)
 - author notes about promises, limits, or forbidden claims
 
 ## Human-Like Intermediate Artifacts
@@ -61,6 +62,7 @@ When the paper artifact is LaTeX, the output target expands to `rebuttal_text` p
 
 - Read the paper, abstract, or author summary before drafting.
 - In draft mode, build the draft bundle first and auto-detect whether each review artifact is PDF or text.
+- Normalize the requested output format. Use `text` by default and only switch to `md` when the caller explicitly asks for it.
 - In draft mode, auto-detect whether the paper artifact is PDF, `.tex`, or a LaTeX project directory.
 - In revise mode, build the revision bundle first and auto-detect whether the rebuttal artifact is PDF or text.
 - In revise mode, if a paper artifact is provided, auto-detect whether it is PDF, `.tex`, or a LaTeX project directory.
@@ -133,6 +135,11 @@ Default to this shape unless the user asks for a different format:
 5. Open placeholders that still need author input
 
 If the user asks for prose only, still do the analysis internally before drafting.
+
+Default presentation format:
+
+- `text` when the caller omits the parameter
+- `md` when the caller passes `output=md`
 
 For LaTeX paper inputs, the repo-level package shape may also include:
 

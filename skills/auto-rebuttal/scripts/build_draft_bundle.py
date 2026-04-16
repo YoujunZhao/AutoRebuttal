@@ -11,6 +11,7 @@ if __package__ in {None, ""}:
 
 from detect_input_artifact import detect_input_artifact
 from detect_paper_artifact import detect_paper_artifact
+from response_modes import resolve_output_format
 
 
 def build_draft_bundle(
@@ -18,6 +19,7 @@ def build_draft_bundle(
     paper_input: str | pathlib.Path | None = None,
     paper_pdf: str | pathlib.Path | None = None,
     review_inputs: list[str | pathlib.Path] | None = None,
+    output: str | None = None,
 ) -> dict[str, object]:
     resolved_paper_input = paper_input if paper_input is not None else paper_pdf
     if resolved_paper_input is None:
@@ -34,6 +36,7 @@ def build_draft_bundle(
     return {
         "paper": detect_paper_artifact(resolved_paper_input),
         "reviews": reviews,
+        "output_format": resolve_output_format(output=output),
     }
 
 
@@ -44,6 +47,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--paper-input")
     parser.add_argument("--paper-pdf")
     parser.add_argument("--review-input", action="append", default=[])
+    parser.add_argument("--output")
     args = parser.parse_args(argv)
     print(
         json.dumps(
@@ -51,6 +55,7 @@ def main(argv: list[str] | None = None) -> int:
                 paper_input=args.paper_input,
                 paper_pdf=args.paper_pdf,
                 review_inputs=args.review_input,
+                output=args.output,
             ),
             indent=2,
         )

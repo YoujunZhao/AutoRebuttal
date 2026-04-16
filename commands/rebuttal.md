@@ -72,11 +72,17 @@ First identify whether the author needs:
 
 User-provided requirements always override venue defaults.
 
+Accepted output parameter:
+
+- `output=text` -> plain-text style output (default)
+- `output=md` -> Markdown-friendly output
+
 Examples:
 
-- `venue=ICML per_reviewer=5000`
+- `venue=ICML per_reviewer=5000 output=text`
 - `venue=AAAI per_reviewer=3000`
+- `venue=ICML per_reviewer=5000 output=md`
 - `venue=ICLR global_summary=false per_reviewer=4500`
-- `/rebuttal venue=ICML per_reviewer=5000`
+- `/rebuttal venue=ICML per_reviewer=5000 output=text`
 
 If the venue format is not explicitly verified by the repository, ask for an explicit character or word limit and continue in generic mode.

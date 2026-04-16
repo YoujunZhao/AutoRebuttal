@@ -11,6 +11,7 @@ if __package__ in {None, ""}:
 
 from detect_input_artifact import detect_input_artifact
 from detect_paper_artifact import detect_paper_artifact
+from response_modes import resolve_output_format
 
 
 def build_revision_bundle(
@@ -18,6 +19,7 @@ def build_revision_bundle(
     rebuttal_input: str | pathlib.Path,
     paper_input: str | pathlib.Path | None = None,
     paper_pdf: str | pathlib.Path | None = None,
+    output: str | None = None,
 ) -> dict[str, object]:
     rebuttal = detect_input_artifact(
         rebuttal_input,
@@ -32,6 +34,7 @@ def build_revision_bundle(
     return {
         "rebuttal": rebuttal,
         "paper": paper,
+        "output_format": resolve_output_format(output=output),
     }
 
 
@@ -42,6 +45,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--rebuttal-input", required=True)
     parser.add_argument("--paper-input")
     parser.add_argument("--paper-pdf")
+    parser.add_argument("--output")
     args = parser.parse_args(argv)
     print(
         json.dumps(
@@ -49,6 +53,7 @@ def main(argv: list[str] | None = None) -> int:
                 rebuttal_input=args.rebuttal_input,
                 paper_input=args.paper_input,
                 paper_pdf=args.paper_pdf,
+                output=args.output,
             ),
             indent=2,
         )

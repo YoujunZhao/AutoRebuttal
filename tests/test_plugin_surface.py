@@ -70,6 +70,15 @@ class PluginSurfaceTest(unittest.TestCase):
         self.assertIn(".tex", content)
         self.assertIn("revised_latex_paper", content)
 
+
+    def test_command_surfaces_document_output_parameter(self) -> None:
+        draft = (ROOT / "commands" / "rebuttal.md").read_text(encoding="utf-8")
+        revise = (ROOT / "commands" / "rebuttal_revise.md").read_text(encoding="utf-8")
+        self.assertIn("output=text", draft)
+        self.assertIn("output=md", draft)
+        self.assertIn("output=text", revise)
+        self.assertIn("output=md", revise)
+
     def test_rebuttal_revise_command_mentions_polishing_existing_rebuttal(self) -> None:
         content = (ROOT / "commands" / "rebuttal_revise.md").read_text(encoding="utf-8").lower()
         self.assertIn("existing rebuttal", content)

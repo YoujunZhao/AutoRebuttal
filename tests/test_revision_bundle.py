@@ -53,6 +53,37 @@ def write_text_pdf(path: pathlib.Path, text: str) -> None:
 
 
 class RevisionBundleTest(unittest.TestCase):
+    def test_revision_bundle_defaults_output_format_to_text(self) -> None:
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_revision_bundle.py"
+        module = load_module("build_revision_bundle", module_path)
+
+        bundle = module.build_revision_bundle(
+            rebuttal_input="Reviewer Qc8x\nW1. Existing rebuttal text.",
+        )
+
+        self.assertEqual(bundle["output_format"], "text")
+
+    def test_revision_bundle_accepts_markdown_output_format(self) -> None:
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_revision_bundle.py"
+        module = load_module("build_revision_bundle", module_path)
+
+        bundle = module.build_revision_bundle(
+            rebuttal_input="Reviewer Qc8x\nW1. Existing rebuttal text.",
+            output="md",
+        )
+
+        self.assertEqual(bundle["output_format"], "md")
+
+    def test_revision_bundle_rejects_unknown_output_format(self) -> None:
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_revision_bundle.py"
+        module = load_module("build_revision_bundle", module_path)
+
+        with self.assertRaises(ValueError):
+            module.build_revision_bundle(
+                rebuttal_input="Reviewer Qc8x\nW1. Existing rebuttal text.",
+                output="html",
+            )
+
     def test_revision_bundle_auto_detects_pdf_rebuttal_and_optional_paper(self) -> None:
         module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_revision_bundle.py"
         self.assertTrue(module_path.exists(), "Expected build_revision_bundle.py to exist.")

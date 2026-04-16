@@ -53,6 +53,55 @@ def write_text_pdf(path: pathlib.Path, text: str) -> None:
 
 
 class DraftBundleTest(unittest.TestCase):
+    def test_draft_bundle_defaults_output_format_to_text(self) -> None:
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_draft_bundle.py"
+        module = load_module("build_draft_bundle", module_path)
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp = pathlib.Path(tmpdir)
+            paper_pdf = tmp / "paper.pdf"
+            write_text_pdf(paper_pdf, "Paper summary: AutoRebuttal test paper.")
+
+            bundle = module.build_draft_bundle(
+                paper_pdf=paper_pdf,
+                review_inputs=["Review text: please explain prompt sensitivity."],
+            )
+
+        self.assertEqual(bundle["output_format"], "text")
+
+    def test_draft_bundle_accepts_markdown_output_format(self) -> None:
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_draft_bundle.py"
+        module = load_module("build_draft_bundle", module_path)
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp = pathlib.Path(tmpdir)
+            paper_pdf = tmp / "paper.pdf"
+            write_text_pdf(paper_pdf, "Paper summary: AutoRebuttal test paper.")
+
+            bundle = module.build_draft_bundle(
+                paper_pdf=paper_pdf,
+                review_inputs=["Review text: please explain prompt sensitivity."],
+                output="md",
+            )
+
+        self.assertEqual(bundle["output_format"], "md")
+
+    def test_draft_bundle_rejects_unknown_output_format(self) -> None:
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_draft_bundle.py"
+        module = load_module("build_draft_bundle", module_path)
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp = pathlib.Path(tmpdir)
+            paper_pdf = tmp / "paper.pdf"
+            write_text_pdf(paper_pdf, "Paper summary: AutoRebuttal test paper.")
+
+            with self.assertRaises(ValueError):
+                module.build_draft_bundle(
+                    paper_pdf=paper_pdf,
+                    review_inputs=["Review text: please explain prompt sensitivity."],
+                    output="html",
+                )
+
     def test_draft_bundle_auto_detects_pdf_and_text_review_inputs(self) -> None:
         module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_draft_bundle.py"
         self.assertTrue(module_path.exists(), "Expected build_draft_bundle.py to exist.")

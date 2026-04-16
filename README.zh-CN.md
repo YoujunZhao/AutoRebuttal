@@ -85,31 +85,46 @@ python scripts/autorebuttal_manager.py claude remove
 
 ## How To Use It
 
-Examples：
+??????????
+
+- ??? `rebuttal` ??
+- ??? `/rebuttal_revise` ??
+- ???? `auto-rebuttal` skill
+
+???????
+
+? `paper PDF + review PDF` ???
 
 ```text
 /rebuttal venue=ICML per_reviewer=5000
 ```
 
+? `LaTeX paper + review text` ?????? Markdown?
+
 ```text
-/rebuttal venue=ICML per_reviewer=5000
+/rebuttal venue=ICML per_reviewer=5000 output=md
 ```
+
+? `paper PDF + review PDF + review text` ???
 
 ```text
 /rebuttal venue=ICML per_reviewer=5000
 ```
 
+??? `rebuttal PDF` ???`paper PDF` ? `LaTeX paper` ?????? Markdown ???
+
 ```text
-/rebuttal_revise venue=ICML per_reviewer=5000
+/rebuttal_revise venue=ICML per_reviewer=5000 output=md
 ```
 
 ## Parameters
 
-| Parameter | 分类 | Optional | 作用 |
+| Parameter | ?? | Optional | ?? |
 | --- | --- | --- | --- |
-| `rebuttal` / `rebuttal_revise` | command parameter | no | 选择是从 paper + reviews 起草，还是对 existing rebuttal 做 revise。 |
-| `venue` | venue parameter | yes | 应用 ICML / NeurIPS / AAAI / IEEE / CVPR / ICCV / ECCV 等默认格式。 |
-| `per_reviewer` | per-reviewer parameter | yes | 指定每个 reviewer 的字符预算。IEEE 默认是 per-reviewer，但不预设字符上限。 |
+| `rebuttal` / `rebuttal_revise` | command parameter | no | ???? paper + reviews ?????? existing rebuttal ? revise? |
+| `venue` | venue parameter | yes | ?? ICML / NeurIPS / AAAI / IEEE / CVPR / ICCV / ECCV ?????? |
+| `per_reviewer` | per-reviewer parameter | yes | ???? reviewer ??????IEEE ??? per-reviewer?????????? |
+| `output` | presentation parameter | yes | ?????????`text` ?????`md` ???? Markdown ?????? |
 
 ## How It Works
 

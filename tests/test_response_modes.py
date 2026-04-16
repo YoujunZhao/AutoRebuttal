@@ -16,6 +16,30 @@ def load_module(module_name: str, path: pathlib.Path):
 
 
 class ResponseModesSurfaceTest(unittest.TestCase):
+    def test_output_format_defaults_to_text(self) -> None:
+        module = load_module(
+            "response_modes",
+            ROOT / "skills" / "auto-rebuttal" / "scripts" / "response_modes.py",
+        )
+        output_format = module.resolve_output_format(output=None)
+        self.assertEqual(output_format, "text")
+
+    def test_output_format_accepts_markdown(self) -> None:
+        module = load_module(
+            "response_modes",
+            ROOT / "skills" / "auto-rebuttal" / "scripts" / "response_modes.py",
+        )
+        output_format = module.resolve_output_format(output="md")
+        self.assertEqual(output_format, "md")
+
+    def test_output_format_rejects_unknown_value(self) -> None:
+        module = load_module(
+            "response_modes",
+            ROOT / "skills" / "auto-rebuttal" / "scripts" / "response_modes.py",
+        )
+        with self.assertRaises(ValueError):
+            module.resolve_output_format(output="html")
+
     def test_explicit_per_reviewer_budget_resolves_per_reviewer(self) -> None:
         module = load_module(
             "response_modes",

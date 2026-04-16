@@ -122,10 +122,10 @@ Draft from `paper PDF + review PDF`:
 /rebuttal venue=ICML per_reviewer=5000
 ```
 
-Draft from `LaTeX paper + review text`:
+Draft from `LaTeX paper + review text`, returned as Markdown:
 
 ```text
-/rebuttal venue=ICML per_reviewer=5000
+/rebuttal venue=ICML per_reviewer=5000 output=md
 ```
 
 Draft from `paper PDF + review PDF + review text`:
@@ -134,16 +134,16 @@ Draft from `paper PDF + review PDF + review text`:
 /rebuttal venue=ICML per_reviewer=5000
 ```
 
-Revise from `rebuttal PDF`, with optional `paper PDF` or `LaTeX paper`:
+Revise from `rebuttal PDF`, with optional `paper PDF` or `LaTeX paper`, and keep Markdown formatting:
 
 ```text
-/rebuttal_revise venue=ICML per_reviewer=5000
+/rebuttal_revise venue=ICML per_reviewer=5000 output=md
 ```
 
 Use the `auto-rebuttal` skill directly:
 
 ```text
-Use the `auto-rebuttal` skill. Treat ./paper as a LaTeX paper source, and accept review PDF or review text inputs.
+Use the `auto-rebuttal` skill. Treat ./paper as a LaTeX paper source, accept review PDF or review text inputs, and return output=md.
 ```
 
 ## Parameters
@@ -155,6 +155,7 @@ This README keeps the user-facing parameter surface intentionally small.
 | `rebuttal` / `rebuttal_revise` | command parameter | no | Select whether the workflow drafts from paper + reviews or revises an existing rebuttal. |
 | `venue` | venue parameter | yes | Applies venue-specific defaults such as ICML, NeurIPS, AAAI, IEEE, CVPR, ICCV, and ECCV. |
 | `per_reviewer` | per-reviewer parameter | yes | Sets an explicit per-reviewer character budget. IEEE keeps per-reviewer mode but leaves the default limit unset. |
+| `output` | presentation parameter | yes | Selects the final presentation format. Use `text` for plain text or `md` for Markdown. The default is `text`. |
 
 ## How It Works
 

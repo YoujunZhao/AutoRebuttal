@@ -10,6 +10,7 @@ Best case:
 - all reviewer comments
 - venue and year
 - global or per-review character / word limit
+- desired output format: `text` or `md`
 - author notes on what can and cannot be promised
 
 When artifact files are provided, treat them as first-class source artifacts:
@@ -97,6 +98,12 @@ When the paper source type is `latex`, the expected output contract becomes:
 - `rebuttal_text`
 - `revised_latex_paper`
 - optional `entrypoint` in the final `latex-dual` package
+
+Presentation format rules:
+
+- `output=text` -> plain-text style output
+- `output=md` -> Markdown-friendly output
+- omit `output` -> default to `text`
 
 ## Default Output Modes
 

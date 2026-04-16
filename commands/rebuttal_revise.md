@@ -57,8 +57,14 @@ When polishing the final structure:
 
 If the existing rebuttal conflicts with the evidence, prefer a bounded correction or placeholder such as `XX` or `[RESULT-TO-FILL]` rather than a stronger unsupported claim.
 
-Example:
+Accepted output parameter:
+
+- `output=text` -> plain-text style output (default)
+- `output=md` -> Markdown-friendly output
+
+Examples:
 
 ```text
-/rebuttal_revise venue=ICML per_reviewer=5000
+/rebuttal_revise venue=ICML per_reviewer=5000 output=text
+/rebuttal_revise venue=ICML per_reviewer=5000 output=md
 ```
