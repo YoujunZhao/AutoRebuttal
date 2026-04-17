@@ -125,7 +125,7 @@ python scripts/autorebuttal_manager.py claude remove
 从 `paper PDF + review PDF` 起草，并在 reviewer 要求新证据时自动触发 supplementary experiments：
 
 ```text
-/rebuttal venue=ICML per_reviewer=5000 autoexperiment=true code=./project
+/rebuttal venue=ICML per_reviewer=5000 autoexperiment=true code=./project code=./project
 ```
 
 从 `LaTeX paper + review text` 起草，并返回 Markdown：
@@ -143,13 +143,13 @@ python scripts/autorebuttal_manager.py claude remove
 从已有 `rebuttal PDF` 出发润色，`paper PDF` 或 `LaTeX paper` 可选，并保留 Markdown 格式：
 
 ```text
-/rebuttal_revise venue=ICML per_reviewer=5000 output=md autoexperiment=true code=./project
+/rebuttal_revise venue=ICML per_reviewer=5000 output=md autoexperiment=true code=./project code=./project
 ```
 
 如果你想单独跑证据桥接流程：
 
 ```text
-/experiment-bridge autoexperiment=true code=./project
+/experiment-bridge autoexperiment=true code=./project code=./project
 ```
 
 如果你想显式调用 `auto-rebuttal` skill：

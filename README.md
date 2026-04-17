@@ -132,7 +132,7 @@ Draft from `paper PDF + review PDF`:
 Draft from `paper PDF + review PDF`, and auto-run supplementary experiments when reviewers ask for new evidence:
 
 ```text
-/rebuttal venue=ICML per_reviewer=5000 autoexperiment=true code=./project
+/rebuttal venue=ICML per_reviewer=5000 autoexperiment=true code=./project code=./project
 ```
 
 Draft from `LaTeX paper + review text`, returned as Markdown:
@@ -150,13 +150,13 @@ Draft from `paper PDF + review PDF + review text`:
 Revise from `rebuttal PDF`, with optional `paper PDF` or `LaTeX paper`, and keep Markdown formatting:
 
 ```text
-/rebuttal_revise venue=ICML per_reviewer=5000 output=md autoexperiment=true code=./project
+/rebuttal_revise venue=ICML per_reviewer=5000 output=md autoexperiment=true code=./project code=./project
 ```
 
 Run the evidence lane directly:
 
 ```text
-/experiment-bridge autoexperiment=true code=./project
+/experiment-bridge autoexperiment=true code=./project code=./project
 ```
 
 Use the `auto-rebuttal` skill directly:

@@ -17,7 +17,7 @@ Accepted inputs:
 - paper PDF, paper text, or LaTeX paper
 - review PDF or review text
 - optional existing rebuttal text
-- optional experiment workspace
+- optional `code=<path>` project code path
 - optional `code=<path>` project code path
 
 The job of `/experiment-bridge` is to:

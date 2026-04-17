@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pathlib
 
+
 _VALID_OUTPUT_FORMATS = {"text", "md"}
 _VALID_AUTO_EXPERIMENTS = {
     "false": False,

@@ -78,5 +78,5 @@ Examples:
 ```text
 /rebuttal_revise venue=ICML per_reviewer=5000 output=text
 /rebuttal_revise venue=ICML per_reviewer=5000 output=md
-/rebuttal_revise venue=ICML per_reviewer=5000 autoexperiment=true code=./project
+/rebuttal_revise venue=ICML per_reviewer=5000 autoexperiment=true code=./project code=./project
 ```

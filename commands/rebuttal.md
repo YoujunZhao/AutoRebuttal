@@ -93,7 +93,7 @@ Examples:
 - `venue=ICML per_reviewer=5000 output=text`
 - `venue=AAAI per_reviewer=3000`
 - `venue=ICML per_reviewer=5000 output=md`
-- `venue=ICML per_reviewer=5000 autoexperiment=true code=./project`
+- `venue=ICML per_reviewer=5000 autoexperiment=true code=./project code=./project`
 - `venue=ICLR global_summary=false per_reviewer=4500`
 - `/rebuttal venue=ICML per_reviewer=5000 output=text`
 

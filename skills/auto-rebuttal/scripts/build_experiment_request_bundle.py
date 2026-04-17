@@ -145,12 +145,12 @@ def _workspace_blockers(
         return []
     if workspace is None:
         return [
-            "No experiment workspace was provided, so supplementary experiment requests cannot be run."
+            "No code path was provided, so supplementary experiment requests cannot be run."
         ]
     if not workspace.exists():
-        return [f"Experiment workspace path does not exist: {workspace}"]
+        return [f"Project code path does not exist: {workspace}"]
     return [
-        "The provided experiment workspace does not look runnable; expected a project marker or executable script."
+        "The provided code path does not look runnable; expected a project marker or executable script."
     ]
 
 
@@ -159,7 +159,6 @@ def build_experiment_request_bundle(
     reviews: list[dict[str, object] | str | pathlib.Path] | None = None,
     auto_experiment: str | bool | None = None,
     code: str | pathlib.Path | bool | None = None,
-    workspace: str | pathlib.Path | None = None,
 ) -> dict[str, object]:
     normalized_reviews = [
         _normalize_review(review, index=index) for index, review in enumerate(reviews or [])
@@ -167,7 +166,7 @@ def build_experiment_request_bundle(
     normalized_code = resolve_code_path(code=code)
     requests = _extract_requests(normalized_reviews)
     auto_experiment_enabled = resolve_auto_experiment(autoexperiment=auto_experiment)
-    resolved_workspace = _resolve_workspace(normalized_code or workspace)
+    resolved_workspace = _resolve_workspace(normalized_code)
     workspace_ready = auto_experiment_enabled and _workspace_is_runnable(resolved_workspace)
     return {
         "reviews": normalized_reviews,
@@ -191,7 +190,6 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--review-input", action="append", default=[])
     parser.add_argument("--code")
-    parser.add_argument("--workspace")
     parser.add_argument("--autoexperiment")
     args = parser.parse_args(argv)
     print(
@@ -200,7 +198,6 @@ def main(argv: list[str] | None = None) -> int:
                 reviews=args.review_input,
                 auto_experiment=args.autoexperiment,
                 code=args.code,
-                workspace=args.workspace,
             ),
             indent=2,
         )
