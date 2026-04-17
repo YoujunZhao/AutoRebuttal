@@ -18,7 +18,6 @@ Accepted inputs:
 - review PDF or review text
 - optional existing rebuttal text
 - optional `code=<path>` project code path
-- optional `code=<path>` project code path
 
 The job of `/experiment-bridge` is to:
 

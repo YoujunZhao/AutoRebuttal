@@ -178,6 +178,8 @@ class ReadmeTruthTest(unittest.TestCase):
         self.assertIn("autoexperiment=true", english)
         self.assertIn("runnable experiment workspace", english)
         self.assertIn("code", chinese)
+        self.assertNotIn("code=./project code=./project", english)
+        self.assertNotIn("code=./project code=./project", chinese)
 
     def test_readmes_mention_rebuttal_revise_polish_mode(self) -> None:
         english = (ROOT / "README.md").read_text(encoding="utf-8")

@@ -95,6 +95,7 @@ class PluginSurfaceTest(unittest.TestCase):
         self.assertIn("supplementary experiments", bridge.lower())
         self.assertIn("reviewers ask for new evidence", bridge.lower())
         self.assertIn("code path", bridge.lower())
+        self.assertEqual(bridge.count("optional `code=<path>` project code path"), 1)
 
     def test_rebuttal_revise_command_mentions_polishing_existing_rebuttal(self) -> None:
         content = (ROOT / "commands" / "rebuttal_revise.md").read_text(encoding="utf-8").lower()
