@@ -22,6 +22,9 @@ class PluginSurfaceTest(unittest.TestCase):
     def test_rebuttal_revise_command_exists(self) -> None:
         self.assertTrue((ROOT / "commands" / "rebuttal_revise.md").exists())
 
+    def test_experiment_bridge_command_exists(self) -> None:
+        self.assertTrue((ROOT / "commands" / "experiment-bridge.md").exists())
+
     def test_codex_install_guide_uses_autorebuttal_manager_and_path(self) -> None:
         content = (ROOT / ".codex" / "INSTALL.md").read_text(encoding="utf-8")
         self.assertIn("python scripts/autorebuttal_manager.py codex install", content)
@@ -78,6 +81,17 @@ class PluginSurfaceTest(unittest.TestCase):
         self.assertIn("output=md", draft)
         self.assertIn("output=text", revise)
         self.assertIn("output=md", revise)
+
+    def test_command_surfaces_document_auto_experiment_parameter(self) -> None:
+        draft = (ROOT / "commands" / "rebuttal.md").read_text(encoding="utf-8")
+        revise = (ROOT / "commands" / "rebuttal_revise.md").read_text(encoding="utf-8")
+        bridge = (ROOT / "commands" / "experiment-bridge.md").read_text(encoding="utf-8")
+        self.assertIn("autoexperiment=true", draft)
+        self.assertIn("autoexperiment=true", revise)
+        self.assertIn("/experiment-bridge", draft)
+        self.assertIn("/experiment-bridge", revise)
+        self.assertIn("supplementary experiments", bridge.lower())
+        self.assertIn("reviewers ask for new evidence", bridge.lower())
 
     def test_rebuttal_revise_command_mentions_polishing_existing_rebuttal(self) -> None:
         content = (ROOT / "commands" / "rebuttal_revise.md").read_text(encoding="utf-8").lower()

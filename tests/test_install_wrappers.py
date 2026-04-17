@@ -35,6 +35,7 @@ class ReadmeTruthTest(unittest.TestCase):
         self.assertIn("| `venue` |", content)
         self.assertIn("| `per_reviewer` |", content)
         self.assertIn("| `output` |", content)
+        self.assertIn("| `autoexperiment` |", content)
 
     def test_readmes_document_latex_paper_contract(self) -> None:
         english = (ROOT / "README.md").read_text(encoding="utf-8")
@@ -159,6 +160,8 @@ class ReadmeTruthTest(unittest.TestCase):
         self.assertIn("/rebuttal venue=ICML per_reviewer=5000", content)
         self.assertIn("/rebuttal_revise venue=ICML per_reviewer=5000", content)
         self.assertIn("output=md", content)
+        self.assertIn("autoexperiment=true", content)
+        self.assertIn("/experiment-bridge", content)
         self.assertIn("paper PDF", content)
         self.assertIn("review PDF", content)
         self.assertIn("LaTeX paper", content)

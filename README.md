@@ -22,10 +22,11 @@ The current repo proves three paper-input lanes:
 
 Review inputs remain PDF or text. Revise mode still starts from an existing rebuttal PDF or rebuttal text. OCR support is limited to the implemented rendered-page fallback path in `skills/auto-rebuttal/scripts/`; this repo does not claim generic OCR or full LaTeX compilation/edit automation beyond the helpers that already exist.
 
-The package exposes two command-style entrypoints:
+The package exposes three command-style entrypoints:
 
 - `/rebuttal` for drafting from paper + reviews
 - `/rebuttal_revise` for polishing an existing rebuttal draft
+- `/experiment-bridge` for supplementary evidence when reviewers ask for new experiments
 
 ## AutoRebuttal Outputs
 
@@ -128,6 +129,12 @@ Draft from `paper PDF + review PDF`:
 /rebuttal venue=ICML per_reviewer=5000
 ```
 
+Draft from `paper PDF + review PDF`, and auto-run supplementary experiments when reviewers ask for new evidence:
+
+```text
+/rebuttal venue=ICML per_reviewer=5000 autoexperiment=true
+```
+
 Draft from `LaTeX paper + review text`, returned as Markdown:
 
 ```text
@@ -146,6 +153,12 @@ Revise from `rebuttal PDF`, with optional `paper PDF` or `LaTeX paper`, and keep
 /rebuttal_revise venue=ICML per_reviewer=5000 output=md
 ```
 
+Run the evidence lane directly:
+
+```text
+/experiment-bridge autoexperiment=true
+```
+
 Use the `auto-rebuttal` skill directly:
 
 ```text
@@ -162,6 +175,7 @@ This README keeps the user-facing parameter surface intentionally small.
 | `venue` | venue parameter | yes | Applies venue-specific defaults such as ICML, NeurIPS, AAAI, IEEE, CVPR, ICCV, and ECCV. |
 | `per_reviewer` | per-reviewer parameter | yes | Sets an explicit per-reviewer character budget. IEEE keeps per-reviewer mode but leaves the default limit unset. |
 | `output` | presentation parameter | yes | Selects the final presentation format. Use `text` for plain text or `md` for Markdown. The default is `text`. |
+| `autoexperiment` | experiment parameter | yes | Auto-run supplementary experiments via `/experiment-bridge` when reviewers ask for new evidence. The default is `false`. |
 
 ## How It Works
 
@@ -193,8 +207,11 @@ flowchart TD
     J --> S[Build reviewer outline, reviewer cards, and strategy memo]
     M --> S
     P --> S
+    S --> X{autoexperiment=true?}
+    X -->|yes| Y[/experiment-bridge/]
+    X -->|no| U[Draft or revise rebuttal_text]
     G --> T[Optional latex-dual output package]
-    S --> U[Draft or revise rebuttal_text]
+    Y --> U[Draft or revise rebuttal_text]
     T --> V[Package revised_latex_paper with entrypoint]
     U --> W[Return final artifacts]
     V --> W
@@ -212,8 +229,9 @@ In practice, the flow is:
 8. build a reviewer outline with `W#`, `Q#`, and minor-point structure when the review supports it
 9. build reviewer cards with reviewer stance, movability, attitude, and primary concerns
 10. produce a global strategy memo before reviewer-by-reviewer prose
-11. allocate the character budget before drafting
-12. return `rebuttal_text`, and for LaTeX paper inputs also target `revised_latex_paper`
+11. if `autoexperiment=true` and reviewers ask for new evidence, route those requests through `/experiment-bridge`
+12. allocate the character budget before drafting
+13. return `rebuttal_text`, and for LaTeX paper inputs also target `revised_latex_paper`
 
 For LaTeX paper inputs, the repo-level output contract remains:
 
@@ -276,12 +294,15 @@ These are the things the project can present as verified support today:
 - Claude plugin shell metadata via [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json)
 - local Claude marketplace metadata via [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json)
 - command entrypoints via [`commands/rebuttal.md`](commands/rebuttal.md) and [`commands/rebuttal_revise.md`](commands/rebuttal_revise.md)
+- supplementary experiment routing via [`commands/experiment-bridge.md`](commands/experiment-bridge.md)
 - draft and revision bundle builders via [`skills/auto-rebuttal/scripts/build_draft_bundle.py`](skills/auto-rebuttal/scripts/build_draft_bundle.py) and [`skills/auto-rebuttal/scripts/build_revision_bundle.py`](skills/auto-rebuttal/scripts/build_revision_bundle.py)
+- experiment request extraction via [`skills/auto-rebuttal/scripts/build_experiment_request_bundle.py`](skills/auto-rebuttal/scripts/build_experiment_request_bundle.py)
 - paper artifact detection for PDF, text, single `.tex` files, and LaTeX project directories via [`skills/auto-rebuttal/scripts/detect_paper_artifact.py`](skills/auto-rebuttal/scripts/detect_paper_artifact.py)
 - best-effort rendered-page OCR fallback for PDFs via [`skills/auto-rebuttal/scripts/ocr_rendered_pages.py`](skills/auto-rebuttal/scripts/ocr_rendered_pages.py) and [`skills/auto-rebuttal/scripts/render_review_pdf_pages.py`](skills/auto-rebuttal/scripts/render_review_pdf_pages.py)
 - a LaTeX output package helper via [`skills/auto-rebuttal/scripts/build_latex_output_package.py`](skills/auto-rebuttal/scripts/build_latex_output_package.py)
 - `per-reviewer mode`
 - `shared-global mode`
+- `/experiment-bridge` as a bounded supplementary-evidence lane
 
 ## Checked Reference Notes
 
@@ -306,6 +327,7 @@ That is intentionally weaker than saying "full venue support." These notes are r
 - [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json)
 - [`commands/rebuttal.md`](commands/rebuttal.md)
 - [`commands/rebuttal_revise.md`](commands/rebuttal_revise.md)
+- [`commands/experiment-bridge.md`](commands/experiment-bridge.md)
 
 ### Canonical Rebuttal Engine
 
@@ -313,6 +335,7 @@ That is intentionally weaker than saying "full venue support." These notes are r
 - [`skills/auto-rebuttal/scripts/build_input_bundle.py`](skills/auto-rebuttal/scripts/build_input_bundle.py)
 - [`skills/auto-rebuttal/scripts/build_draft_bundle.py`](skills/auto-rebuttal/scripts/build_draft_bundle.py)
 - [`skills/auto-rebuttal/scripts/build_revision_bundle.py`](skills/auto-rebuttal/scripts/build_revision_bundle.py)
+- [`skills/auto-rebuttal/scripts/build_experiment_request_bundle.py`](skills/auto-rebuttal/scripts/build_experiment_request_bundle.py)
 - [`skills/auto-rebuttal/scripts/build_latex_output_package.py`](skills/auto-rebuttal/scripts/build_latex_output_package.py)
 - [`skills/auto-rebuttal/scripts/render_review_pdf_pages.py`](skills/auto-rebuttal/scripts/render_review_pdf_pages.py)
 - [`skills/auto-rebuttal/scripts/ocr_rendered_pages.py`](skills/auto-rebuttal/scripts/ocr_rendered_pages.py)
@@ -347,7 +370,8 @@ This is the intended fallback behavior for unsupported or unverified venues.
 
 ## Limitations
 
-- It does not run experiments.
+- It does not guarantee generic experiment execution by itself.
+- It does not guarantee that `/experiment-bridge` can execute inside every repository; if no runnable experiment workspace exists, it returns blockers instead of fake results.
 - It does not fetch private reviews from submission systems.
 - It does not claim support for every conference rebuttal format.
 - It does not claim that checked venue notes are the same as tested venue automation.

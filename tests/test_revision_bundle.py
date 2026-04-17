@@ -53,6 +53,37 @@ def write_text_pdf(path: pathlib.Path, text: str) -> None:
 
 
 class RevisionBundleTest(unittest.TestCase):
+    def test_revision_bundle_defaults_auto_experiment_to_false(self) -> None:
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_revision_bundle.py"
+        module = load_module("build_revision_bundle", module_path)
+
+        bundle = module.build_revision_bundle(
+            rebuttal_input="Reviewer Qc8x\nW1. Existing rebuttal text.",
+        )
+
+        self.assertFalse(bundle["auto_experiment"])
+
+    def test_revision_bundle_accepts_auto_experiment_true(self) -> None:
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_revision_bundle.py"
+        module = load_module("build_revision_bundle", module_path)
+
+        bundle = module.build_revision_bundle(
+            rebuttal_input="Reviewer Qc8x\nW1. Existing rebuttal text.",
+            autoexperiment="true",
+        )
+
+        self.assertTrue(bundle["auto_experiment"])
+
+    def test_revision_bundle_rejects_invalid_auto_experiment_value(self) -> None:
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_revision_bundle.py"
+        module = load_module("build_revision_bundle", module_path)
+
+        with self.assertRaises(ValueError):
+            module.build_revision_bundle(
+                rebuttal_input="Reviewer Qc8x\nW1. Existing rebuttal text.",
+                autoexperiment="later",
+            )
+
     def test_revision_bundle_defaults_output_format_to_text(self) -> None:
         module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_revision_bundle.py"
         module = load_module("build_revision_bundle", module_path)

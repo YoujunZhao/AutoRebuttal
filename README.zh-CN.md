@@ -14,10 +14,11 @@ AutoRebuttal 是一个面向 coding agent 的 rebuttal workflow package。这个
 
 review 输入仍然是 PDF 或 text。`revise` 模式仍然从已有 rebuttal PDF 或 rebuttal text 开始。OCR 只限于 `skills/auto-rebuttal/scripts/` 里已经实现的 rendered-page fallback 路径；这个仓库并不宣称支持任意 OCR，也不宣称已经实现完整的 LaTeX 编译或自动多文件重写。
 
-当前项目暴露两个命令式入口：
+当前项目暴露三个命令式入口：
 
 - `/rebuttal`：从 paper + reviews 起草新 rebuttal
 - `/rebuttal_revise`：对已有 rebuttal draft 做润色和整理
+- `/experiment-bridge`：当 reviewer 要求新实验时，进入 supplementary evidence lane
 
 ## AutoRebuttal Outputs
 
@@ -121,6 +122,12 @@ python scripts/autorebuttal_manager.py claude remove
 /rebuttal venue=ICML per_reviewer=5000
 ```
 
+从 `paper PDF + review PDF` 起草，并在 reviewer 要求新证据时自动触发 supplementary experiments：
+
+```text
+/rebuttal venue=ICML per_reviewer=5000 autoexperiment=true
+```
+
 从 `LaTeX paper + review text` 起草，并返回 Markdown：
 
 ```text
@@ -139,6 +146,12 @@ python scripts/autorebuttal_manager.py claude remove
 /rebuttal_revise venue=ICML per_reviewer=5000 output=md
 ```
 
+如果你想单独跑证据桥接流程：
+
+```text
+/experiment-bridge autoexperiment=true
+```
+
 如果你想显式调用 `auto-rebuttal` skill：
 
 ```text
@@ -155,6 +168,7 @@ Use the `auto-rebuttal` skill. Treat ./paper as a LaTeX paper source, accept rev
 | `venue` | venue parameter | yes | 应用 ICML、NeurIPS、AAAI、IEEE、CVPR、ICCV、ECCV 等 venue 默认格式。 |
 | `per_reviewer` | per-reviewer parameter | yes | 指定每个 reviewer 的字符预算。IEEE 保持 per-reviewer 模式，但默认不设字符上限。 |
 | `output` | presentation parameter | yes | 选择最终输出格式。`text` 表示纯文本，`md` 表示 Markdown。默认值是 `text`。 |
+| `autoexperiment` | experiment parameter | yes | 当 reviewer 要求新证据时，通过 `/experiment-bridge` 自动跑 supplementary experiments。默认值是 `false`。 |
 
 ## How It Works
 
@@ -186,8 +200,11 @@ flowchart TD
     J --> S[Build reviewer outline, reviewer cards, and strategy memo]
     M --> S
     P --> S
+    S --> X{autoexperiment=true?}
+    X -->|yes| Y[/experiment-bridge/]
+    X -->|no| U[Draft or revise rebuttal_text]
     G --> T[Optional latex-dual output package]
-    S --> U[Draft or revise rebuttal_text]
+    Y --> U[Draft or revise rebuttal_text]
     T --> V[Package revised_latex_paper with entrypoint]
     U --> W[Return final artifacts]
     V --> W
@@ -205,8 +222,9 @@ flowchart TD
 8. 当 review 支持时，构建带 `W#`、`Q#` 和 minor-point 结构的 reviewer outline
 9. 构建包含 reviewer stance、movability、attitude 和 primary concerns 的 reviewer cards
 10. 在 reviewer-by-reviewer prose 之前先生成 global strategy memo
-11. 在 drafting 之前先分配字符预算
-12. 返回 `rebuttal_text`；如果 paper 输入是 LaTeX，还会同时返回 `revised_latex_paper`
+11. 如果 `autoexperiment=true` 且 reviewer 明确要求新证据，把这些请求转交给 `/experiment-bridge`
+12. 在 drafting 之前先分配字符预算
+13. 返回 `rebuttal_text`；如果 paper 输入是 LaTeX，还会同时返回 `revised_latex_paper`
 
 对于 LaTeX paper 输入，repo-level output contract 仍然是：
 
@@ -269,12 +287,15 @@ AutoRebuttal 内置了：
 - Claude plugin shell metadata，通过 [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json)
 - 本地 Claude marketplace metadata，通过 [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json)
 - 命令入口，通过 [`commands/rebuttal.md`](commands/rebuttal.md) 和 [`commands/rebuttal_revise.md`](commands/rebuttal_revise.md)
+- supplementary experiment routing，通过 [`commands/experiment-bridge.md`](commands/experiment-bridge.md)
 - draft / revision bundle builders，通过 [`skills/auto-rebuttal/scripts/build_draft_bundle.py`](skills/auto-rebuttal/scripts/build_draft_bundle.py) 和 [`skills/auto-rebuttal/scripts/build_revision_bundle.py`](skills/auto-rebuttal/scripts/build_revision_bundle.py)
+- experiment request extraction，通过 [`skills/auto-rebuttal/scripts/build_experiment_request_bundle.py`](skills/auto-rebuttal/scripts/build_experiment_request_bundle.py)
 - paper artifact detection，支持 PDF、text、单个 `.tex` 和 LaTeX project directory，通过 [`skills/auto-rebuttal/scripts/detect_paper_artifact.py`](skills/auto-rebuttal/scripts/detect_paper_artifact.py)
 - best-effort 的 rendered-page OCR fallback，通过 [`skills/auto-rebuttal/scripts/ocr_rendered_pages.py`](skills/auto-rebuttal/scripts/ocr_rendered_pages.py) 和 [`skills/auto-rebuttal/scripts/render_review_pdf_pages.py`](skills/auto-rebuttal/scripts/render_review_pdf_pages.py)
 - LaTeX output package helper，通过 [`skills/auto-rebuttal/scripts/build_latex_output_package.py`](skills/auto-rebuttal/scripts/build_latex_output_package.py)
 - `per-reviewer mode`
 - `shared-global mode`
+- `/experiment-bridge` 这一条有边界的 supplementary-evidence lane
 
 ## Checked Reference Notes
 
@@ -299,6 +320,7 @@ AutoRebuttal 内置了：
 - [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json)
 - [`commands/rebuttal.md`](commands/rebuttal.md)
 - [`commands/rebuttal_revise.md`](commands/rebuttal_revise.md)
+- [`commands/experiment-bridge.md`](commands/experiment-bridge.md)
 
 ### Canonical Rebuttal Engine
 
@@ -306,6 +328,7 @@ AutoRebuttal 内置了：
 - [`skills/auto-rebuttal/scripts/build_input_bundle.py`](skills/auto-rebuttal/scripts/build_input_bundle.py)
 - [`skills/auto-rebuttal/scripts/build_draft_bundle.py`](skills/auto-rebuttal/scripts/build_draft_bundle.py)
 - [`skills/auto-rebuttal/scripts/build_revision_bundle.py`](skills/auto-rebuttal/scripts/build_revision_bundle.py)
+- [`skills/auto-rebuttal/scripts/build_experiment_request_bundle.py`](skills/auto-rebuttal/scripts/build_experiment_request_bundle.py)
 - [`skills/auto-rebuttal/scripts/build_latex_output_package.py`](skills/auto-rebuttal/scripts/build_latex_output_package.py)
 - [`skills/auto-rebuttal/scripts/render_review_pdf_pages.py`](skills/auto-rebuttal/scripts/render_review_pdf_pages.py)
 - [`skills/auto-rebuttal/scripts/ocr_rendered_pages.py`](skills/auto-rebuttal/scripts/ocr_rendered_pages.py)
@@ -340,7 +363,8 @@ AutoRebuttal 内置了：
 
 ## Limitations
 
-- 不会运行实验
+- 不保证自己能在所有仓库里通用地直接执行实验
+- 不保证 `/experiment-bridge` 能在所有仓库里直接执行；如果没有可运行的 experiment workspace，它会返回 blocker，而不会编造结果
 - 不会抓取投稿系统里的私有 reviews
 - 不会宣称支持所有 conference rebuttal format
 - 不会把 checked venue notes 说成 fully tested venue automation

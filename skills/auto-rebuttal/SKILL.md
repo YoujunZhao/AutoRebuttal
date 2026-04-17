@@ -19,6 +19,7 @@ Load the detailed references only when needed:
 - `references/source-notes.md` for research basis and source links
 - `scripts/build_draft_bundle.py` when the user provides paper PDF plus review PDF or review text inputs
 - `scripts/build_revision_bundle.py` when the user provides an existing rebuttal PDF or rebuttal text, with optional paper PDF
+- `scripts/build_experiment_request_bundle.py` when the user asks to auto-run supplementary experiments via the experiment bridge
 - `scripts/detect_paper_artifact.py` when the paper input may be PDF, `.tex`, or a LaTeX project directory
 - `scripts/build_latex_output_package.py` when the paper source type is LaTeX and the workflow should return both rebuttal text and revised LaTeX paper
 - `scripts/build_input_bundle.py` as the PDF-only compatibility wrapper for draft-mode bundle building
@@ -31,6 +32,7 @@ Load the detailed references only when needed:
 - `scripts/build_style_plan.py` to decide how the initial rebuttal should sound
 - `scripts/allocate_rebuttal_budget.py` to plan characters before drafting
 - `scripts/build_experiment_placeholder_table.py` when a reviewer asks for new empirical evidence
+- `commands/experiment-bridge.md` when `autoexperiment=true` or the user explicitly asks to route evidence requests into the experiment lane
 - `references/reviewer-model.md` for reviewer stance and attitude analysis
 - `references/human-rebuttal-style.md` for a more human-like rebuttal rhythm
 
@@ -42,6 +44,7 @@ Load the detailed references only when needed:
 - an existing rebuttal PDF when the user wants revision-only polish
 - venue and budget constraints
 - desired output presentation (`text` or `md`)
+- whether `autoexperiment` should trigger supplementary evidence work
 - author notes about promises, limits, or forbidden claims
 
 ## Human-Like Intermediate Artifacts
@@ -63,6 +66,7 @@ When the paper artifact is LaTeX, the output target expands to `rebuttal_text` p
 - Read the paper, abstract, or author summary before drafting.
 - In draft mode, build the draft bundle first and auto-detect whether each review artifact is PDF or text.
 - Normalize the requested output format. Use `text` by default and only switch to `md` when the caller explicitly asks for it.
+- Normalize `autoexperiment`. Keep it `false` by default and only switch it on when the caller explicitly asks for automatic supplementary experiments.
 - In draft mode, auto-detect whether the paper artifact is PDF, `.tex`, or a LaTeX project directory.
 - In revise mode, build the revision bundle first and auto-detect whether the rebuttal artifact is PDF or text.
 - In revise mode, if a paper artifact is provided, auto-detect whether it is PDF, `.tex`, or a LaTeX project directory.
@@ -79,6 +83,7 @@ When the paper artifact is LaTeX, the output target expands to `rebuttal_text` p
 - Build a strategy memo before reviewer-by-reviewer drafting.
 - Build a venue-aware format plan before deciding whether a summary is needed.
 - Build a character budget plan before drafting.
+- If `autoexperiment=true` and the reviews ask for new evidence, route the request through `/experiment-bridge` before final drafting.
 - Normalize reviews into atomic concerns before writing prose.
 - Use venue rules when available; if the user provides explicit limits, those override bundled defaults.
 - Never invent experiments, numerical gains, p-values, baselines, or citations.
@@ -140,6 +145,11 @@ Default presentation format:
 
 - `text` when the caller omits the parameter
 - `md` when the caller passes `output=md`
+
+Default supplementary-experiment behavior:
+
+- `autoexperiment=false` when the caller omits the parameter
+- `autoexperiment=true` only when the caller explicitly asks to auto-run supplementary experiments
 
 For LaTeX paper inputs, the repo-level package shape may also include:
 

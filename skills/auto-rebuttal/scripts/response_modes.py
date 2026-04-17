@@ -2,6 +2,10 @@ from __future__ import annotations
 
 
 _VALID_OUTPUT_FORMATS = {"text", "md"}
+_VALID_AUTO_EXPERIMENTS = {
+    "false": False,
+    "true": True,
+}
 
 
 def resolve_output_format(*, output: str | None) -> str:
@@ -12,6 +16,21 @@ def resolve_output_format(*, output: str | None) -> str:
         allowed = ", ".join(sorted(_VALID_OUTPUT_FORMATS))
         raise ValueError(f"Unsupported output format: {output!r}. Expected one of: {allowed}.")
     return normalized
+
+
+def resolve_auto_experiment(*, autoexperiment: str | bool | None) -> bool:
+    if isinstance(autoexperiment, bool):
+        return autoexperiment
+
+    normalized = (autoexperiment or "false").strip().lower()
+    if not normalized:
+        return False
+    if normalized in _VALID_AUTO_EXPERIMENTS:
+        return _VALID_AUTO_EXPERIMENTS[normalized]
+    allowed = ", ".join(sorted(_VALID_AUTO_EXPERIMENTS))
+    raise ValueError(
+        f"Unsupported autoexperiment value: {autoexperiment!r}. Expected one of: {allowed}."
+    )
 
 
 def resolve_workflow_mode(

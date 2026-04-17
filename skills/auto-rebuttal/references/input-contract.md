@@ -11,6 +11,7 @@ Best case:
 - venue and year
 - global or per-review character / word limit
 - desired output format: `text` or `md`
+- desired supplementary-experiment behavior: `autoexperiment=true|false`
 - author notes on what can and cannot be promised
 
 When artifact files are provided, treat them as first-class source artifacts:
@@ -104,6 +105,12 @@ Presentation format rules:
 - `output=text` -> plain-text style output
 - `output=md` -> Markdown-friendly output
 - omit `output` -> default to `text`
+
+Supplementary experiment rules:
+
+- `autoexperiment=false` -> keep placeholders and do not auto-run experiments
+- `autoexperiment=true` -> route reviewer experiment requests through `/experiment-bridge`
+- if no runnable experiment workspace exists, report blockers clearly and keep placeholders
 
 ## Default Output Modes
 

@@ -16,6 +16,28 @@ def load_module(module_name: str, path: pathlib.Path):
 
 
 class ResponseModesSurfaceTest(unittest.TestCase):
+    def test_auto_experiment_defaults_to_false(self) -> None:
+        module = load_module(
+            "response_modes",
+            ROOT / "skills" / "auto-rebuttal" / "scripts" / "response_modes.py",
+        )
+        self.assertFalse(module.resolve_auto_experiment(autoexperiment=None))
+
+    def test_auto_experiment_accepts_true(self) -> None:
+        module = load_module(
+            "response_modes",
+            ROOT / "skills" / "auto-rebuttal" / "scripts" / "response_modes.py",
+        )
+        self.assertTrue(module.resolve_auto_experiment(autoexperiment="true"))
+
+    def test_auto_experiment_rejects_unknown_value(self) -> None:
+        module = load_module(
+            "response_modes",
+            ROOT / "skills" / "auto-rebuttal" / "scripts" / "response_modes.py",
+        )
+        with self.assertRaises(ValueError):
+            module.resolve_auto_experiment(autoexperiment="maybe")
+
     def test_output_format_defaults_to_text(self) -> None:
         module = load_module(
             "response_modes",

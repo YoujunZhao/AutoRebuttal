@@ -77,11 +77,17 @@ Accepted output parameter:
 - `output=text` -> plain-text style output (default)
 - `output=md` -> Markdown-friendly output
 
+Accepted experiment parameter:
+
+- `autoexperiment=false` -> keep experiment placeholders only (default)
+- `autoexperiment=true` -> Auto-run supplementary experiments via `/experiment-bridge` when reviewers ask for new evidence
+
 Examples:
 
 - `venue=ICML per_reviewer=5000 output=text`
 - `venue=AAAI per_reviewer=3000`
 - `venue=ICML per_reviewer=5000 output=md`
+- `venue=ICML per_reviewer=5000 autoexperiment=true`
 - `venue=ICLR global_summary=false per_reviewer=4500`
 - `/rebuttal venue=ICML per_reviewer=5000 output=text`
 

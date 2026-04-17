@@ -11,7 +11,7 @@ if __package__ in {None, ""}:
 
 from detect_input_artifact import detect_input_artifact
 from detect_paper_artifact import detect_paper_artifact
-from response_modes import resolve_output_format
+from response_modes import resolve_auto_experiment, resolve_output_format
 
 
 def build_draft_bundle(
@@ -20,6 +20,7 @@ def build_draft_bundle(
     paper_pdf: str | pathlib.Path | None = None,
     review_inputs: list[str | pathlib.Path] | None = None,
     output: str | None = None,
+    autoexperiment: str | bool | None = None,
 ) -> dict[str, object]:
     resolved_paper_input = paper_input if paper_input is not None else paper_pdf
     if resolved_paper_input is None:
@@ -37,6 +38,7 @@ def build_draft_bundle(
         "paper": detect_paper_artifact(resolved_paper_input),
         "reviews": reviews,
         "output_format": resolve_output_format(output=output),
+        "auto_experiment": resolve_auto_experiment(autoexperiment=autoexperiment),
     }
 
 
@@ -48,6 +50,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--paper-pdf")
     parser.add_argument("--review-input", action="append", default=[])
     parser.add_argument("--output")
+    parser.add_argument("--autoexperiment")
     args = parser.parse_args(argv)
     print(
         json.dumps(
@@ -56,6 +59,7 @@ def main(argv: list[str] | None = None) -> int:
                 paper_pdf=args.paper_pdf,
                 review_inputs=args.review_input,
                 output=args.output,
+                autoexperiment=args.autoexperiment,
             ),
             indent=2,
         )
