@@ -45,6 +45,7 @@ Load the detailed references only when needed:
 - venue and budget constraints
 - desired output presentation (`text` or `md`)
 - whether `autoexperiment` should trigger supplementary evidence work
+- whether a project code path is available through `code=<path>`
 - author notes about promises, limits, or forbidden claims
 
 ## Human-Like Intermediate Artifacts
@@ -67,6 +68,7 @@ When the paper artifact is LaTeX, the output target expands to `rebuttal_text` p
 - In draft mode, build the draft bundle first and auto-detect whether each review artifact is PDF or text.
 - Normalize the requested output format. Use `text` by default and only switch to `md` when the caller explicitly asks for it.
 - Normalize `autoexperiment`. Keep it `false` by default and only switch it on when the caller explicitly asks for automatic supplementary experiments.
+- Normalize `code`. Treat it as disabled by default and only consider supplementary experiments runnable when `code=<path>` points to project code.
 - In draft mode, auto-detect whether the paper artifact is PDF, `.tex`, or a LaTeX project directory.
 - In revise mode, build the revision bundle first and auto-detect whether the rebuttal artifact is PDF or text.
 - In revise mode, if a paper artifact is provided, auto-detect whether it is PDF, `.tex`, or a LaTeX project directory.
@@ -84,6 +86,7 @@ When the paper artifact is LaTeX, the output target expands to `rebuttal_text` p
 - Build a venue-aware format plan before deciding whether a summary is needed.
 - Build a character budget plan before drafting.
 - If `autoexperiment=true` and the reviews ask for new evidence, route the request through `/experiment-bridge` before final drafting.
+- Only let `/experiment-bridge` proceed when `code=<path>` is available and points to a runnable experiment workspace.
 - Normalize reviews into atomic concerns before writing prose.
 - Use venue rules when available; if the user provides explicit limits, those override bundled defaults.
 - Never invent experiments, numerical gains, p-values, baselines, or citations.
@@ -150,6 +153,8 @@ Default supplementary-experiment behavior:
 
 - `autoexperiment=false` when the caller omits the parameter
 - `autoexperiment=true` only when the caller explicitly asks to auto-run supplementary experiments
+- `code=false` when the caller omits the parameter
+- `code=<path>` when the caller provides project code for experiment execution
 
 For LaTeX paper inputs, the repo-level package shape may also include:
 

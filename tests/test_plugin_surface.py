@@ -88,10 +88,13 @@ class PluginSurfaceTest(unittest.TestCase):
         bridge = (ROOT / "commands" / "experiment-bridge.md").read_text(encoding="utf-8")
         self.assertIn("autoexperiment=true", draft)
         self.assertIn("autoexperiment=true", revise)
+        self.assertIn("code=", draft)
+        self.assertIn("code=", revise)
         self.assertIn("/experiment-bridge", draft)
         self.assertIn("/experiment-bridge", revise)
         self.assertIn("supplementary experiments", bridge.lower())
         self.assertIn("reviewers ask for new evidence", bridge.lower())
+        self.assertIn("code path", bridge.lower())
 
     def test_rebuttal_revise_command_mentions_polishing_existing_rebuttal(self) -> None:
         content = (ROOT / "commands" / "rebuttal_revise.md").read_text(encoding="utf-8").lower()
@@ -114,6 +117,8 @@ class PluginSurfaceTest(unittest.TestCase):
         self.assertIn("entrypoint", skill)
         self.assertIn("revised_latex_paper", reference)
         self.assertIn("entrypoint", reference)
+        self.assertIn("code", skill.lower())
+        self.assertIn("code", reference.lower())
 
 
 if __name__ == "__main__":

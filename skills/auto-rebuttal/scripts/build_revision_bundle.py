@@ -11,7 +11,7 @@ if __package__ in {None, ""}:
 
 from detect_input_artifact import detect_input_artifact
 from detect_paper_artifact import detect_paper_artifact
-from response_modes import resolve_auto_experiment, resolve_output_format
+from response_modes import resolve_auto_experiment, resolve_code_path, resolve_output_format
 
 
 def build_revision_bundle(
@@ -21,6 +21,7 @@ def build_revision_bundle(
     paper_pdf: str | pathlib.Path | None = None,
     output: str | None = None,
     autoexperiment: str | bool | None = None,
+    code: str | pathlib.Path | bool | None = None,
 ) -> dict[str, object]:
     rebuttal = detect_input_artifact(
         rebuttal_input,
@@ -37,6 +38,7 @@ def build_revision_bundle(
         "paper": paper,
         "output_format": resolve_output_format(output=output),
         "auto_experiment": resolve_auto_experiment(autoexperiment=autoexperiment),
+        "code": resolve_code_path(code=code),
     }
 
 
@@ -49,6 +51,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--paper-pdf")
     parser.add_argument("--output")
     parser.add_argument("--autoexperiment")
+    parser.add_argument("--code")
     args = parser.parse_args(argv)
     print(
         json.dumps(
@@ -58,6 +61,7 @@ def main(argv: list[str] | None = None) -> int:
                 paper_pdf=args.paper_pdf,
                 output=args.output,
                 autoexperiment=args.autoexperiment,
+                code=args.code,
             ),
             indent=2,
         )

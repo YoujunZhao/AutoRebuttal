@@ -36,6 +36,7 @@ class ReadmeTruthTest(unittest.TestCase):
         self.assertIn("| `per_reviewer` |", content)
         self.assertIn("| `output` |", content)
         self.assertIn("| `autoexperiment` |", content)
+        self.assertIn("| `code` |", content)
 
     def test_readmes_document_latex_paper_contract(self) -> None:
         english = (ROOT / "README.md").read_text(encoding="utf-8")
@@ -162,12 +163,21 @@ class ReadmeTruthTest(unittest.TestCase):
         self.assertIn("output=md", content)
         self.assertIn("autoexperiment=true", content)
         self.assertIn("/experiment-bridge", content)
+        self.assertIn("code=", content)
         self.assertIn("paper PDF", content)
         self.assertIn("review PDF", content)
         self.assertIn("LaTeX paper", content)
         self.assertIn("review text", content)
         self.assertIn("/plugin marketplace add", content)
         self.assertIn("/plugin install", content)
+
+    def test_readmes_document_code_gate_for_experiments(self) -> None:
+        english = (ROOT / "README.md").read_text(encoding="utf-8").lower()
+        chinese = (ROOT / "README.zh-CN.md").read_text(encoding="utf-8").lower()
+        self.assertIn("code path", english)
+        self.assertIn("autoexperiment=true", english)
+        self.assertIn("runnable experiment workspace", english)
+        self.assertIn("code", chinese)
 
     def test_readmes_mention_rebuttal_revise_polish_mode(self) -> None:
         english = (ROOT / "README.md").read_text(encoding="utf-8")

@@ -67,10 +67,16 @@ Accepted experiment parameter:
 - `autoexperiment=false` -> keep experiment placeholders only (default)
 - `autoexperiment=true` -> Auto-run supplementary experiments via `/experiment-bridge` when reviewers ask for new evidence
 
+Accepted code parameter:
+
+- `code=false` -> no project code path is available (default)
+- `code=/path/to/project` -> project code path used by `/experiment-bridge`
+- supplementary experiments only run when both `autoexperiment=true` and `code=<path>` are provided
+
 Examples:
 
 ```text
 /rebuttal_revise venue=ICML per_reviewer=5000 output=text
 /rebuttal_revise venue=ICML per_reviewer=5000 output=md
-/rebuttal_revise venue=ICML per_reviewer=5000 autoexperiment=true
+/rebuttal_revise venue=ICML per_reviewer=5000 autoexperiment=true code=./project
 ```

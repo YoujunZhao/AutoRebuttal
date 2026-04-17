@@ -82,12 +82,18 @@ Accepted experiment parameter:
 - `autoexperiment=false` -> keep experiment placeholders only (default)
 - `autoexperiment=true` -> Auto-run supplementary experiments via `/experiment-bridge` when reviewers ask for new evidence
 
+Accepted code parameter:
+
+- `code=false` -> no project code path is available (default)
+- `code=/path/to/project` -> project code path used by `/experiment-bridge`
+- supplementary experiments only run when both `autoexperiment=true` and `code=<path>` are provided
+
 Examples:
 
 - `venue=ICML per_reviewer=5000 output=text`
 - `venue=AAAI per_reviewer=3000`
 - `venue=ICML per_reviewer=5000 output=md`
-- `venue=ICML per_reviewer=5000 autoexperiment=true`
+- `venue=ICML per_reviewer=5000 autoexperiment=true code=./project`
 - `venue=ICLR global_summary=false per_reviewer=4500`
 - `/rebuttal venue=ICML per_reviewer=5000 output=text`
 

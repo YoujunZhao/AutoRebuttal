@@ -11,7 +11,7 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 from detect_input_artifact import detect_input_artifact
-from response_modes import resolve_auto_experiment
+from response_modes import resolve_auto_experiment, resolve_code_path
 
 
 _REQUEST_PATTERNS = (
@@ -115,10 +115,10 @@ def _extract_requests(reviews: list[dict[str, object]]) -> list[dict[str, object
     return requests
 
 
-def _resolve_workspace(workspace: str | pathlib.Path | None) -> pathlib.Path | None:
-    if workspace is None:
+def _resolve_workspace(code: str | pathlib.Path | None) -> pathlib.Path | None:
+    if code is None:
         return None
-    candidate = pathlib.Path(str(workspace)).expanduser()
+    candidate = pathlib.Path(str(code)).expanduser()
     if not candidate.exists():
         return candidate
     return candidate.resolve()
@@ -136,11 +136,12 @@ def _workspace_is_runnable(workspace: pathlib.Path | None) -> bool:
 
 def _workspace_blockers(
     *,
+    auto_experiment_enabled: bool,
     workspace: pathlib.Path | None,
     workspace_ready: bool,
     requests: list[dict[str, object]],
 ) -> list[str]:
-    if not requests or workspace_ready:
+    if not auto_experiment_enabled or not requests or workspace_ready:
         return []
     if workspace is None:
         return [
@@ -157,21 +158,26 @@ def build_experiment_request_bundle(
     *,
     reviews: list[dict[str, object] | str | pathlib.Path] | None = None,
     auto_experiment: str | bool | None = None,
+    code: str | pathlib.Path | bool | None = None,
     workspace: str | pathlib.Path | None = None,
 ) -> dict[str, object]:
     normalized_reviews = [
         _normalize_review(review, index=index) for index, review in enumerate(reviews or [])
     ]
+    normalized_code = resolve_code_path(code=code)
     requests = _extract_requests(normalized_reviews)
-    resolved_workspace = _resolve_workspace(workspace)
-    workspace_ready = _workspace_is_runnable(resolved_workspace)
+    auto_experiment_enabled = resolve_auto_experiment(autoexperiment=auto_experiment)
+    resolved_workspace = _resolve_workspace(normalized_code or workspace)
+    workspace_ready = auto_experiment_enabled and _workspace_is_runnable(resolved_workspace)
     return {
         "reviews": normalized_reviews,
         "requests": requests,
-        "auto_experiment": resolve_auto_experiment(autoexperiment=auto_experiment),
+        "auto_experiment": auto_experiment_enabled,
+        "code": normalized_code,
         "workspace": None if resolved_workspace is None else str(resolved_workspace),
         "workspace_ready": workspace_ready,
         "blockers": _workspace_blockers(
+            auto_experiment_enabled=auto_experiment_enabled,
             workspace=resolved_workspace,
             workspace_ready=workspace_ready,
             requests=requests,
@@ -184,6 +190,7 @@ def main(argv: list[str] | None = None) -> int:
         description="Build an AutoRebuttal experiment request bundle from review inputs."
     )
     parser.add_argument("--review-input", action="append", default=[])
+    parser.add_argument("--code")
     parser.add_argument("--workspace")
     parser.add_argument("--autoexperiment")
     args = parser.parse_args(argv)
@@ -192,6 +199,7 @@ def main(argv: list[str] | None = None) -> int:
             build_experiment_request_bundle(
                 reviews=args.review_input,
                 auto_experiment=args.autoexperiment,
+                code=args.code,
                 workspace=args.workspace,
             ),
             indent=2,

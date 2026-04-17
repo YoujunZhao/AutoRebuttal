@@ -53,6 +53,33 @@ def write_text_pdf(path: pathlib.Path, text: str) -> None:
 
 
 class RevisionBundleTest(unittest.TestCase):
+    def test_revision_bundle_defaults_code_to_none(self) -> None:
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_revision_bundle.py"
+        module = load_module("build_revision_bundle", module_path)
+
+        bundle = module.build_revision_bundle(
+            rebuttal_input="Reviewer Qc8x\nW1. Existing rebuttal text.",
+        )
+
+        self.assertIsNone(bundle["code"])
+
+    def test_revision_bundle_accepts_code_path(self) -> None:
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_revision_bundle.py"
+        module = load_module("build_revision_bundle", module_path)
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp = pathlib.Path(tmpdir)
+            code_dir = tmp / "project"
+            code_dir.mkdir()
+            (code_dir / "eval.py").write_text("print('ok')\n", encoding="utf-8")
+
+            bundle = module.build_revision_bundle(
+                rebuttal_input="Reviewer Qc8x\nW1. Existing rebuttal text.",
+                code=str(code_dir),
+            )
+
+        self.assertTrue(str(bundle["code"]).endswith("project"))
+
     def test_revision_bundle_defaults_auto_experiment_to_false(self) -> None:
         module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_revision_bundle.py"
         module = load_module("build_revision_bundle", module_path)
@@ -79,9 +106,19 @@ class RevisionBundleTest(unittest.TestCase):
         module = load_module("build_revision_bundle", module_path)
 
         with self.assertRaises(ValueError):
+                module.build_revision_bundle(
+                    rebuttal_input="Reviewer Qc8x\nW1. Existing rebuttal text.",
+                    autoexperiment="later",
+                )
+
+    def test_revision_bundle_rejects_true_code_flag_without_path(self) -> None:
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_revision_bundle.py"
+        module = load_module("build_revision_bundle", module_path)
+
+        with self.assertRaises(ValueError):
             module.build_revision_bundle(
                 rebuttal_input="Reviewer Qc8x\nW1. Existing rebuttal text.",
-                autoexperiment="later",
+                code="true",
             )
 
     def test_revision_bundle_defaults_output_format_to_text(self) -> None:

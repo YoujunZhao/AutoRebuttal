@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import pathlib
 
 _VALID_OUTPUT_FORMATS = {"text", "md"}
 _VALID_AUTO_EXPERIMENTS = {
@@ -31,6 +32,31 @@ def resolve_auto_experiment(*, autoexperiment: str | bool | None) -> bool:
     raise ValueError(
         f"Unsupported autoexperiment value: {autoexperiment!r}. Expected one of: {allowed}."
     )
+
+
+def resolve_code_path(*, code: str | pathlib.Path | bool | None) -> str | None:
+    if code is None:
+        return None
+    if isinstance(code, bool):
+        if code:
+            raise ValueError("The `code` parameter must be a project code path, not a boolean `true`.")
+        return None
+
+    normalized = str(code).strip()
+    if not normalized:
+        return None
+
+    lowered = normalized.lower()
+    if lowered in {"false", "none", "null", "off"}:
+        return None
+    if lowered in {"true", "1", "yes", "on"}:
+        raise ValueError("The `code` parameter must be a project code path, not a boolean-like `true` value.")
+
+    candidate = pathlib.Path(normalized).expanduser()
+    try:
+        return str(candidate.resolve())
+    except FileNotFoundError:
+        return str(candidate)
 
 
 def resolve_workflow_mode(

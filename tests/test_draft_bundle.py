@@ -53,6 +53,42 @@ def write_text_pdf(path: pathlib.Path, text: str) -> None:
 
 
 class DraftBundleTest(unittest.TestCase):
+    def test_draft_bundle_defaults_code_to_none(self) -> None:
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_draft_bundle.py"
+        module = load_module("build_draft_bundle", module_path)
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp = pathlib.Path(tmpdir)
+            paper_pdf = tmp / "paper.pdf"
+            write_text_pdf(paper_pdf, "Paper summary: AutoRebuttal test paper.")
+
+            bundle = module.build_draft_bundle(
+                paper_pdf=paper_pdf,
+                review_inputs=["Review text: please compare more baselines."],
+            )
+
+        self.assertIsNone(bundle["code"])
+
+    def test_draft_bundle_accepts_code_path(self) -> None:
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_draft_bundle.py"
+        module = load_module("build_draft_bundle", module_path)
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp = pathlib.Path(tmpdir)
+            paper_pdf = tmp / "paper.pdf"
+            code_dir = tmp / "project"
+            code_dir.mkdir()
+            (code_dir / "train.py").write_text("print('ok')\n", encoding="utf-8")
+            write_text_pdf(paper_pdf, "Paper summary: AutoRebuttal test paper.")
+
+            bundle = module.build_draft_bundle(
+                paper_pdf=paper_pdf,
+                review_inputs=["Review text: please compare more baselines."],
+                code=str(code_dir),
+            )
+
+        self.assertTrue(str(bundle["code"]).endswith("project"))
+
     def test_draft_bundle_defaults_auto_experiment_to_false(self) -> None:
         module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_draft_bundle.py"
         module = load_module("build_draft_bundle", module_path)
@@ -100,6 +136,22 @@ class DraftBundleTest(unittest.TestCase):
                     paper_pdf=paper_pdf,
                     review_inputs=["Review text: please compare more baselines."],
                     autoexperiment="later",
+                )
+
+    def test_draft_bundle_rejects_true_code_flag_without_path(self) -> None:
+        module_path = ROOT / "skills" / "auto-rebuttal" / "scripts" / "build_draft_bundle.py"
+        module = load_module("build_draft_bundle", module_path)
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp = pathlib.Path(tmpdir)
+            paper_pdf = tmp / "paper.pdf"
+            write_text_pdf(paper_pdf, "Paper summary: AutoRebuttal test paper.")
+
+            with self.assertRaises(ValueError):
+                module.build_draft_bundle(
+                    paper_pdf=paper_pdf,
+                    review_inputs=["Review text: please compare more baselines."],
+                    code="true",
                 )
 
     def test_draft_bundle_defaults_output_format_to_text(self) -> None:

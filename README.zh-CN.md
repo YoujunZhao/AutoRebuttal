@@ -125,7 +125,7 @@ python scripts/autorebuttal_manager.py claude remove
 从 `paper PDF + review PDF` 起草，并在 reviewer 要求新证据时自动触发 supplementary experiments：
 
 ```text
-/rebuttal venue=ICML per_reviewer=5000 autoexperiment=true
+/rebuttal venue=ICML per_reviewer=5000 autoexperiment=true code=./project
 ```
 
 从 `LaTeX paper + review text` 起草，并返回 Markdown：
@@ -143,13 +143,13 @@ python scripts/autorebuttal_manager.py claude remove
 从已有 `rebuttal PDF` 出发润色，`paper PDF` 或 `LaTeX paper` 可选，并保留 Markdown 格式：
 
 ```text
-/rebuttal_revise venue=ICML per_reviewer=5000 output=md
+/rebuttal_revise venue=ICML per_reviewer=5000 output=md autoexperiment=true code=./project
 ```
 
 如果你想单独跑证据桥接流程：
 
 ```text
-/experiment-bridge autoexperiment=true
+/experiment-bridge autoexperiment=true code=./project
 ```
 
 如果你想显式调用 `auto-rebuttal` skill：
@@ -167,8 +167,9 @@ Use the `auto-rebuttal` skill. Treat ./paper as a LaTeX paper source, accept rev
 | `rebuttal` / `rebuttal_revise` | command parameter | no | 选择是从 paper + reviews 起草，还是对现有 rebuttal 做 revise。 |
 | `venue` | venue parameter | yes | 应用 ICML、NeurIPS、AAAI、IEEE、CVPR、ICCV、ECCV 等 venue 默认格式。 |
 | `per_reviewer` | per-reviewer parameter | yes | 指定每个 reviewer 的字符预算。IEEE 保持 per-reviewer 模式，但默认不设字符上限。 |
-| `output` | presentation parameter | yes | 选择最终输出格式。`text` 表示纯文本，`md` 表示 Markdown。默认值是 `text`。 |
 | `autoexperiment` | experiment parameter | yes | 当 reviewer 要求新证据时，通过 `/experiment-bridge` 自动跑 supplementary experiments。默认值是 `false`。 |
+| `code` | code parameter | yes | 提供项目代码路径。只有同时满足 `autoexperiment=true` 和 `code=<path>` 时，实验才会真正执行。 |
+| `output` | presentation parameter | yes | 选择最终输出格式。`text` 表示纯文本，`md` 表示 Markdown。默认值是 `text`。 |
 
 ## How It Works
 
@@ -201,10 +202,12 @@ flowchart TD
     M --> S
     P --> S
     S --> X{autoexperiment=true?}
-    X -->|yes| Y[/experiment-bridge/]
+    X -->|yes and code path is runnable| Y[/experiment-bridge/]
+    X -->|yes but code path missing or not runnable| Z[Report blocker honestly]
     X -->|no| U[Draft or revise rebuttal_text]
     G --> T[Optional latex-dual output package]
     Y --> U[Draft or revise rebuttal_text]
+    Z --> U[Draft or revise rebuttal_text]
     T --> V[Package revised_latex_paper with entrypoint]
     U --> W[Return final artifacts]
     V --> W
@@ -222,7 +225,7 @@ flowchart TD
 8. 当 review 支持时，构建带 `W#`、`Q#` 和 minor-point 结构的 reviewer outline
 9. 构建包含 reviewer stance、movability、attitude 和 primary concerns 的 reviewer cards
 10. 在 reviewer-by-reviewer prose 之前先生成 global strategy memo
-11. 如果 `autoexperiment=true` 且 reviewer 明确要求新证据，把这些请求转交给 `/experiment-bridge`
+11. 如果 `autoexperiment=true` 且 reviewer 明确要求新证据，只有在 `code=<path>` 指向可运行项目目录时，才把这些请求转交给 `/experiment-bridge`
 12. 在 drafting 之前先分配字符预算
 13. 返回 `rebuttal_text`；如果 paper 输入是 LaTeX，还会同时返回 `revised_latex_paper`
 
@@ -364,7 +367,7 @@ AutoRebuttal 内置了：
 ## Limitations
 
 - 不保证自己能在所有仓库里通用地直接执行实验
-- 不保证 `/experiment-bridge` 能在所有仓库里直接执行；如果没有可运行的 experiment workspace，它会返回 blocker，而不会编造结果
+- 不保证 `/experiment-bridge` 能在所有仓库里直接执行；如果 `code` 缺失或没有可运行的 experiment workspace，它会返回 blocker，而不会编造结果
 - 不会抓取投稿系统里的私有 reviews
 - 不会宣称支持所有 conference rebuttal format
 - 不会把 checked venue notes 说成 fully tested venue automation

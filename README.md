@@ -132,7 +132,7 @@ Draft from `paper PDF + review PDF`:
 Draft from `paper PDF + review PDF`, and auto-run supplementary experiments when reviewers ask for new evidence:
 
 ```text
-/rebuttal venue=ICML per_reviewer=5000 autoexperiment=true
+/rebuttal venue=ICML per_reviewer=5000 autoexperiment=true code=./project
 ```
 
 Draft from `LaTeX paper + review text`, returned as Markdown:
@@ -150,13 +150,13 @@ Draft from `paper PDF + review PDF + review text`:
 Revise from `rebuttal PDF`, with optional `paper PDF` or `LaTeX paper`, and keep Markdown formatting:
 
 ```text
-/rebuttal_revise venue=ICML per_reviewer=5000 output=md
+/rebuttal_revise venue=ICML per_reviewer=5000 output=md autoexperiment=true code=./project
 ```
 
 Run the evidence lane directly:
 
 ```text
-/experiment-bridge autoexperiment=true
+/experiment-bridge autoexperiment=true code=./project
 ```
 
 Use the `auto-rebuttal` skill directly:
@@ -174,8 +174,9 @@ This README keeps the user-facing parameter surface intentionally small.
 | `rebuttal` / `rebuttal_revise` | command parameter | no | Select whether the workflow drafts from paper + reviews or revises an existing rebuttal. |
 | `venue` | venue parameter | yes | Applies venue-specific defaults such as ICML, NeurIPS, AAAI, IEEE, CVPR, ICCV, and ECCV. |
 | `per_reviewer` | per-reviewer parameter | yes | Sets an explicit per-reviewer character budget. IEEE keeps per-reviewer mode but leaves the default limit unset. |
-| `output` | presentation parameter | yes | Selects the final presentation format. Use `text` for plain text or `md` for Markdown. The default is `text`. |
 | `autoexperiment` | experiment parameter | yes | Auto-run supplementary experiments via `/experiment-bridge` when reviewers ask for new evidence. The default is `false`. |
+| `code` | code parameter | yes | Supplies the project code path. Experiments only run when both `autoexperiment=true` and `code=<path>` are provided. |
+| `output` | presentation parameter | yes | Selects the final presentation format. Use `text` for plain text or `md` for Markdown. The default is `text`. |
 
 ## How It Works
 
@@ -208,10 +209,12 @@ flowchart TD
     M --> S
     P --> S
     S --> X{autoexperiment=true?}
-    X -->|yes| Y[/experiment-bridge/]
+    X -->|yes and code path is runnable| Y[/experiment-bridge/]
+    X -->|yes but code path missing or not runnable| Z[Report blocker honestly]
     X -->|no| U[Draft or revise rebuttal_text]
     G --> T[Optional latex-dual output package]
     Y --> U[Draft or revise rebuttal_text]
+    Z --> U[Draft or revise rebuttal_text]
     T --> V[Package revised_latex_paper with entrypoint]
     U --> W[Return final artifacts]
     V --> W
@@ -229,7 +232,7 @@ In practice, the flow is:
 8. build a reviewer outline with `W#`, `Q#`, and minor-point structure when the review supports it
 9. build reviewer cards with reviewer stance, movability, attitude, and primary concerns
 10. produce a global strategy memo before reviewer-by-reviewer prose
-11. if `autoexperiment=true` and reviewers ask for new evidence, route those requests through `/experiment-bridge`
+11. if `autoexperiment=true` and reviewers ask for new evidence, route those requests through `/experiment-bridge` only when `code=<path>` points to a runnable project workspace
 12. allocate the character budget before drafting
 13. return `rebuttal_text`, and for LaTeX paper inputs also target `revised_latex_paper`
 
@@ -371,7 +374,7 @@ This is the intended fallback behavior for unsupported or unverified venues.
 ## Limitations
 
 - It does not guarantee generic experiment execution by itself.
-- It does not guarantee that `/experiment-bridge` can execute inside every repository; if no runnable experiment workspace exists, it returns blockers instead of fake results.
+- It does not guarantee that `/experiment-bridge` can execute inside every repository; if `code` is missing or no runnable experiment workspace exists, it returns blockers instead of fake results.
 - It does not fetch private reviews from submission systems.
 - It does not claim support for every conference rebuttal format.
 - It does not claim that checked venue notes are the same as tested venue automation.

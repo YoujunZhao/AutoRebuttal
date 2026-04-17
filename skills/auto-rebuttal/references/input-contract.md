@@ -12,6 +12,7 @@ Best case:
 - global or per-review character / word limit
 - desired output format: `text` or `md`
 - desired supplementary-experiment behavior: `autoexperiment=true|false`
+- desired project code path: `code=<path>` or `code=false`
 - author notes on what can and cannot be promised
 
 When artifact files are provided, treat them as first-class source artifacts:
@@ -110,6 +111,8 @@ Supplementary experiment rules:
 
 - `autoexperiment=false` -> keep placeholders and do not auto-run experiments
 - `autoexperiment=true` -> route reviewer experiment requests through `/experiment-bridge`
+- `code=false` -> no project code path is available, so experiments remain blocked
+- `code=<path>` -> treat the path as the project code root for supplementary evidence
 - if no runnable experiment workspace exists, report blockers clearly and keep placeholders
 
 ## Default Output Modes
