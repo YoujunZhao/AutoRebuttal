@@ -19,7 +19,15 @@ review 输入仍然是 PDF 或 text。`revise` 模式仍然从已有 rebuttal PD
 - `/rebuttal`：从 paper + reviews 起草新 rebuttal
 - `/rebuttal_revise`：对已有 rebuttal draft 做润色和整理
 
-## Installation
+## AutoRebuttal Outputs
+
+| 论文 | Reviews | Venue | AutoRebuttal |
+|---|---|---|---|
+| [Paper A](/docs/110.pdf) | [Reviews A](/docs/11.pdf) | ICLR | [AutoRebuttal A](/docs/11_iclr.md) |
+| [Paper B](/docs/120.pdf) | [Reviews B](/docs/12.pdf) | ICLR | [AutoRebuttal B](/docs/12_iclr.md) |
+| [Paper C](/docs/130.pdf) | [Reviews C](/docs/13.pdf) | ICLR | [AutoRebuttal C](/docs/13_iclr.md) |
+| [Paper D](/docs/140.pdf) | [Reviews D](/docs/14.pdf) | ICLR | [AutoRebuttal D](/docs/14_iclr.md) |
+| [Paper E](/docs/150.pdf) | [Reviews E](/docs/15.pdf) | ICLR | [AutoRebuttal E](/docs/15_iclr.md) |
 
 ## Quick Install
 

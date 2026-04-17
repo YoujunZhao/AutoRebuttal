@@ -15,10 +15,12 @@ class ReadmeTruthTest(unittest.TestCase):
 
     def test_readme_uses_product_style_sections(self) -> None:
         content = (ROOT / "README.md").read_text(encoding="utf-8")
-        self.assertIn("## Installation", content)
+        self.assertIn("## AutoRebuttal Outputs", content)
+        self.assertIn("## Quick Install", content)
         self.assertIn("## How To Use It", content)
         self.assertIn("## Parameters", content)
-        self.assertLess(content.index("## Installation"), content.index("## How To Use It"))
+        self.assertLess(content.index("## AutoRebuttal Outputs"), content.index("## Quick Install"))
+        self.assertLess(content.index("## Quick Install"), content.index("## How To Use It"))
         self.assertLess(content.index("## How To Use It"), content.index("## Parameters"))
 
     def test_readme_includes_workflow_diagram(self) -> None:
