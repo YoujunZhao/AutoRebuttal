@@ -4,8 +4,6 @@ import argparse
 import json
 import pathlib
 
-import fitz
-
 
 def render_review_pdf_pages(
     pdf_path: str | pathlib.Path,
@@ -14,6 +12,13 @@ def render_review_pdf_pages(
     max_pages: int = 3,
     zoom: float = 2.0,
 ) -> list[str]:
+    try:
+        import fitz
+    except ModuleNotFoundError as exc:
+        raise RuntimeError(
+            "PDF page rendering requires PyMuPDF. Install fitz/PyMuPDF or provide extracted review text."
+        ) from exc
+
     pdf_path = pathlib.Path(pdf_path).resolve()
     output_dir = pathlib.Path(output_dir).resolve()
     output_dir.mkdir(parents=True, exist_ok=True)

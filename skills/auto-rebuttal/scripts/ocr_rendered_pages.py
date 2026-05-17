@@ -3,22 +3,33 @@ from __future__ import annotations
 import argparse
 import pathlib
 import sys
-
-from PIL import Image
-from rapidocr_onnxruntime import RapidOCR
+from typing import Any
 
 
-_OCR_ENGINE: RapidOCR | None = None
+_OCR_ENGINE: Any | None = None
 
 
-def _engine() -> RapidOCR:
+def _engine() -> Any:
     global _OCR_ENGINE
     if _OCR_ENGINE is None:
+        try:
+            from rapidocr_onnxruntime import RapidOCR
+        except ModuleNotFoundError as exc:
+            raise RuntimeError(
+                "OCR support requires rapidocr_onnxruntime. Install it or provide a PDF with a text layer."
+            ) from exc
         _OCR_ENGINE = RapidOCR()
     return _OCR_ENGINE
 
 
 def ocr_rendered_pages(image_paths: list[str | pathlib.Path]) -> str:
+    try:
+        from PIL import Image
+    except ModuleNotFoundError as exc:
+        raise RuntimeError(
+            "OCR support requires Pillow. Install it or provide a PDF with a text layer."
+        ) from exc
+
     lines: list[str] = []
     engine = _engine()
     for image_path in image_paths:

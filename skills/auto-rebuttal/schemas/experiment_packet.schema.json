@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://autorebuttal.local/schemas/experiment_packet.schema.json",
+  "title": "AutoRebuttal Experiment Packet",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "packet_id",
+    "request_id",
+    "hypothesis",
+    "command",
+    "working_dir",
+    "launcher",
+    "timeout_minutes",
+    "metric",
+    "baseline",
+    "success_condition",
+    "allowed_files",
+    "forbidden_files",
+    "output_files",
+    "rebuttal_usage",
+    "rollback_on_failure"
+  ],
+  "properties": {
+    "packet_id": {"type": "string", "minLength": 1},
+    "request_id": {"type": "string", "minLength": 1},
+    "hypothesis": {"type": "string", "minLength": 1},
+    "command": {"type": "string", "minLength": 1},
+    "working_dir": {"type": "string", "minLength": 1},
+    "launcher": {"type": "string", "enum": ["local", "slurm"]},
+    "timeout_minutes": {"type": "number", "exclusiveMinimum": 0},
+    "metric": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["name", "direction", "parser", "source", "key"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "direction": {"type": "string", "enum": ["higher", "lower"]},
+        "parser": {"type": "string", "enum": ["json", "csv", "log"]},
+        "source": {"type": "string", "minLength": 1},
+        "key": {"type": "string", "minLength": 1},
+        "pattern": {"type": "string"}
+      }
+    },
+    "baseline": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "command": {"type": "string"},
+        "metric_value": {"type": ["number", "null"]}
+      }
+    },
+    "success_condition": {"type": "string"},
+    "allowed_files": {"type": "array", "items": {"type": "string"}},
+    "forbidden_files": {"type": "array", "items": {"type": "string"}},
+    "output_files": {"type": "array", "items": {"type": "string"}},
+    "rebuttal_usage": {"type": "string"},
+    "rollback_on_failure": {"type": "boolean"},
+    "slurm": {"type": "object"}
+  }
+}
+

@@ -2,7 +2,7 @@
 
 [English README](README.md)
 
-AutoRebuttal 是一个面向 coding agent 的 rebuttal workflow package。这个仓库包含安装入口、内部 `auto-rebuttal` skill、命令入口、参考资料，以及定义当前项目真实能力边界的测试。
+AutoRebuttal 是一个面向 coding agent 的 evidence-first rebuttal workflow。它可以解析论文和 reviews，拆分 reviewer concerns，生成 venue-aware 的 response draft，并在需要时把 empirical concerns 路由到可度量、可追溯、且不编造结论的 experiment loop。
 
 它只做一件事：帮助作者把论文、reviews 和明确的 rebuttal 约束整理成结构化、证据优先、且不编造实验结果、提升幅度或引用的回复。
 
@@ -19,6 +19,32 @@ review 输入仍然是 PDF 或 text。`revise` 模式仍然从已有 rebuttal PD
 - `/rebuttal`：从 paper + reviews 起草新 rebuttal
 - `/rebuttal_revise`：对已有 rebuttal draft 做润色和整理
 - `/experiment-bridge`：当 reviewer 要求新实验时，进入 supplementary evidence lane
+
+## Why Evidence-First Rebuttal?
+
+rebuttal 常见的两个问题是：一类会承诺“我们补了实验”，但实际上没有真实可核查的 run；另一类虽然真的跑了实验，却把结果埋在零散日志里，最后无法把 rebuttal 里的 claim 追溯回命令、metric 和输出文件。AutoRebuttal 把 drafting layer 和 evidence layer 接起来，但不把两者混为一谈。
+
+现在的 workflow 可以把 reviewer comment 表达成 `Experiment Request`，再映射成可运行的 `Experiment Packet`，执行或生成 dry-run 脚本，解析 metric，并写入 `Evidence Ledger`。ledger 才是实验性 claim 的事实来源；rebuttal prose 只能使用 verified claim，或者显式 placeholder。
+
+## What AutoRebuttal Can And Cannot Do
+
+AutoRebuttal 可以：
+
+- 把 papers、reviews 和已有 rebuttal 解析成结构化 drafting bundle
+- 识别 ablation、baseline、runtime、robustness、dataset、metric、failure case 等 empirical reviewer concerns
+- 运行本地 shell experiment packet，带 timeout 和 stdout/stderr capture
+- 解析 JSON、CSV 和 regex-log metric
+- 在给定 baseline 时比较 candidate metric 和 baseline metric
+- 为 CV / HPC 场景生成 Slurm `sbatch` dry-run 脚本
+- 写出 `results.tsv` 或 `results.jsonl`，并更新 `evidence_ledger.json`
+
+AutoRebuttal 不会：
+
+- 在作者没有映射命令的前提下，为任意项目自动推断正确的训练或评测命令
+- 保证生成的 Slurm 脚本能被任意集群直接接受
+- 在没有真实 command、log、result file 和 metric parser 的情况下证明“实验改进了”
+- 在不了解项目版本控制策略的情况下安全回滚任意代码改动
+- 把未验证的实验结果直接写成 rebuttal 里的事实性 claim
 
 ## AutoRebuttal Outputs
 
@@ -234,6 +260,103 @@ flowchart TD
 - `rebuttal_text`
 - `revised_latex_paper`
 
+## Experiment Loop Overview
+
+v2 experiment loop 刻意保持小而可测：
+
+1. 从 reviewer text 中提取或手写一个 `Experiment Request`
+2. 把它映射成 `Experiment Packet`，其中包含 command、timeout、metric parser、baseline、allowed/forbidden path 和 rebuttal usage
+3. 本地运行 packet，或者生成 Slurm script
+4. 把 stdout/stderr 保存到 `logs/experiments/`
+5. 解析 JSON、CSV 或 log metric
+6. 如果有 baseline，就把 candidate metric 和 baseline 对比
+7. 写出 decision：`keep`、`discard`、`crash`、`timeout`、`checks_failed` 或 `inconclusive`
+8. 追加 `results.tsv` 或 `results.jsonl`
+9. upsert `evidence_ledger.json`
+
+runner 也会记录 failed 和 inconclusive packet，因为这些结果本身就是“不能声称什么”的证据。
+
+## Experiment Request vs Experiment Packet vs Evidence Ledger
+
+`Experiment Request` 是 review-facing need，例如 `R2-W3` 要求一个 ablation。它的 schema 在 [`skills/auto-rebuttal/schemas/experiment_request.schema.json`](skills/auto-rebuttal/schemas/experiment_request.schema.json)。
+
+`Experiment Packet` 是真正的 runnable unit，包含 hypothesis、command、launcher、timeout、metric parser、baseline、file contract、output files 和 rollback preference。它的 schema 在 [`skills/auto-rebuttal/schemas/experiment_packet.schema.json`](skills/auto-rebuttal/schemas/experiment_packet.schema.json)。
+
+`Evidence Ledger` 是 rebuttal-facing provenance store。每个实验性 claim 都应该能追溯到 request id、packet id、command、commit、metric before/after、result files、log files 和保守的 rebuttal sentence。它的 schema 在 [`skills/auto-rebuttal/schemas/evidence_ledger.schema.json`](skills/auto-rebuttal/schemas/evidence_ledger.schema.json)。
+
+examples：
+
+- [`skills/auto-rebuttal/examples/experiment_request.example.json`](skills/auto-rebuttal/examples/experiment_request.example.json)
+- [`skills/auto-rebuttal/examples/experiment_packet.example.json`](skills/auto-rebuttal/examples/experiment_packet.example.json)
+- [`skills/auto-rebuttal/examples/evidence_ledger.example.json`](skills/auto-rebuttal/examples/evidence_ledger.example.json)
+
+## Local Runner Usage
+
+校验 packet：
+
+```bash
+python3 skills/auto-rebuttal/scripts/validate_experiment_plan.py \
+  skills/auto-rebuttal/examples/experiment_packet.example.json
+```
+
+运行本地 packet：
+
+```bash
+python3 skills/auto-rebuttal/scripts/run_experiment_packet.py \
+  skills/auto-rebuttal/examples/experiment_packet.example.json \
+  --results results.tsv \
+  --ledger evidence_ledger.json
+```
+
+local runner 会：
+
+- 检查声明式 file contract，确认 command 没有引用 forbidden path
+- 按 packet timeout 运行 command
+- 把 stdout/stderr 存到 `logs/experiments/`
+- 解析配置好的 metric
+- 在有 `baseline.metric_value` 时做比较
+- 追加结果行，并更新 ledger
+
+## Slurm Runner Usage
+
+面向 HPC / CV 实验时，把 packet 的 `"launcher"` 设成 `"slurm"`，并补一个 `slurm` 对象：
+
+```json
+{
+  "slurm": {
+    "partition": "gpu",
+    "account": "project-account",
+    "gres": "gpu:1",
+    "cpus_per_task": 8,
+    "mem": "32G",
+    "time": "02:00:00",
+    "conda_env": "paper",
+    "output_log_path": "logs/slurm-%j.out"
+  }
+}
+```
+
+当前 Slurm adapter 只会生成 `sbatch` script 作为 dry-run artifact，不会直接提交作业、轮询 scheduler，也不会假设任何 cluster-specific module。
+
+## Non-Fabrication Policy
+
+AutoRebuttal 不会把未验证 packet 直接变成 rebuttal 里的事实性 claim。runner 会为每个 packet outcome 写 ledger entry，但只有 `keep` 会生成 verified rebuttal sentence。`discard`、`crash`、`timeout`、`checks_failed` 和 `inconclusive` 都应该被当作 blocker、placeholder 或内部证据，而不是写成“我们已经证明了什么”。
+
+允许的 rebuttal 用法：
+
+- verified ledger claim: “The ablation reduced LPIPS from 0.231 to 0.218 under packet `R2-W3-ablation-depth`.”
+- unverified packet: “`[RESULT-TO-FILL]` once the ablation packet completes.”
+- failed packet: “We cannot claim this experiment yet; the run crashed or did not produce a parseable metric.”
+
+## Example Workflow
+
+1. 从 reviewer feedback 构建或手写一个 experiment request。
+2. 用 `build_experiment_plan.py` 把它转成 packet，再由作者补全 command、metric 和 baseline。
+3. 用 `validate_experiment_plan.py` 校验 packet。
+4. 用 `run_experiment_packet.py` 运行 packet。
+5. 检查 `results.tsv`、logs 和 `evidence_ledger.json`。
+6. 只把 verified ledger sentence 写进 rebuttal；其他情况保留 placeholder。
+
 ## Human-Like Rebuttal Layer
 
 AutoRebuttal 内置了：
@@ -293,6 +416,11 @@ AutoRebuttal 内置了：
 - supplementary experiment routing，通过 [`commands/experiment-bridge.md`](commands/experiment-bridge.md)
 - draft / revision bundle builders，通过 [`skills/auto-rebuttal/scripts/build_draft_bundle.py`](skills/auto-rebuttal/scripts/build_draft_bundle.py) 和 [`skills/auto-rebuttal/scripts/build_revision_bundle.py`](skills/auto-rebuttal/scripts/build_revision_bundle.py)
 - experiment request extraction，通过 [`skills/auto-rebuttal/scripts/build_experiment_request_bundle.py`](skills/auto-rebuttal/scripts/build_experiment_request_bundle.py)
+- experiment request / packet / evidence ledger schemas，通过 [`skills/auto-rebuttal/schemas/`](skills/auto-rebuttal/schemas/)
+- local experiment packet runner，通过 [`skills/auto-rebuttal/scripts/run_experiment_packet.py`](skills/auto-rebuttal/scripts/run_experiment_packet.py)
+- JSON / CSV / regex-log metric parsing，通过 [`skills/auto-rebuttal/adapters/`](skills/auto-rebuttal/adapters/)
+- Slurm dry-run `sbatch` script generation，通过 [`skills/auto-rebuttal/adapters/slurm.py`](skills/auto-rebuttal/adapters/slurm.py)
+- evidence ledger updates，通过 [`skills/auto-rebuttal/scripts/update_evidence_ledger.py`](skills/auto-rebuttal/scripts/update_evidence_ledger.py)
 - paper artifact detection，支持 PDF、text、单个 `.tex` 和 LaTeX project directory，通过 [`skills/auto-rebuttal/scripts/detect_paper_artifact.py`](skills/auto-rebuttal/scripts/detect_paper_artifact.py)
 - best-effort 的 rendered-page OCR fallback，通过 [`skills/auto-rebuttal/scripts/ocr_rendered_pages.py`](skills/auto-rebuttal/scripts/ocr_rendered_pages.py) 和 [`skills/auto-rebuttal/scripts/render_review_pdf_pages.py`](skills/auto-rebuttal/scripts/render_review_pdf_pages.py)
 - LaTeX output package helper，通过 [`skills/auto-rebuttal/scripts/build_latex_output_package.py`](skills/auto-rebuttal/scripts/build_latex_output_package.py)
@@ -332,6 +460,11 @@ AutoRebuttal 内置了：
 - [`skills/auto-rebuttal/scripts/build_draft_bundle.py`](skills/auto-rebuttal/scripts/build_draft_bundle.py)
 - [`skills/auto-rebuttal/scripts/build_revision_bundle.py`](skills/auto-rebuttal/scripts/build_revision_bundle.py)
 - [`skills/auto-rebuttal/scripts/build_experiment_request_bundle.py`](skills/auto-rebuttal/scripts/build_experiment_request_bundle.py)
+- [`skills/auto-rebuttal/scripts/build_experiment_plan.py`](skills/auto-rebuttal/scripts/build_experiment_plan.py)
+- [`skills/auto-rebuttal/scripts/validate_experiment_plan.py`](skills/auto-rebuttal/scripts/validate_experiment_plan.py)
+- [`skills/auto-rebuttal/scripts/run_experiment_packet.py`](skills/auto-rebuttal/scripts/run_experiment_packet.py)
+- [`skills/auto-rebuttal/scripts/parse_experiment_result.py`](skills/auto-rebuttal/scripts/parse_experiment_result.py)
+- [`skills/auto-rebuttal/scripts/update_evidence_ledger.py`](skills/auto-rebuttal/scripts/update_evidence_ledger.py)
 - [`skills/auto-rebuttal/scripts/build_latex_output_package.py`](skills/auto-rebuttal/scripts/build_latex_output_package.py)
 - [`skills/auto-rebuttal/scripts/render_review_pdf_pages.py`](skills/auto-rebuttal/scripts/render_review_pdf_pages.py)
 - [`skills/auto-rebuttal/scripts/ocr_rendered_pages.py`](skills/auto-rebuttal/scripts/ocr_rendered_pages.py)
@@ -345,6 +478,8 @@ AutoRebuttal 内置了：
 ### Reference Material
 
 - [`skills/auto-rebuttal/references/input-contract.md`](skills/auto-rebuttal/references/input-contract.md)
+- [`skills/auto-rebuttal/references/experiment-loop.md`](skills/auto-rebuttal/references/experiment-loop.md)
+- [`skills/auto-rebuttal/references/evidence-ledger.md`](skills/auto-rebuttal/references/evidence-ledger.md)
 - [`skills/auto-rebuttal/references/rebuttal-playbook.md`](skills/auto-rebuttal/references/rebuttal-playbook.md)
 - [`skills/auto-rebuttal/references/venue-policies.md`](skills/auto-rebuttal/references/venue-policies.md)
 - [`skills/auto-rebuttal/references/source-notes.md`](skills/auto-rebuttal/references/source-notes.md)
@@ -366,8 +501,10 @@ AutoRebuttal 内置了：
 
 ## Limitations
 
-- 不保证自己能在所有仓库里通用地直接执行实验
+- 不会自动推断任意项目的正确训练或评测命令；作者仍然需要把 reviewer request 映射成 runnable packet
 - 不保证 `/experiment-bridge` 能在所有仓库里直接执行；如果 `code` 缺失或没有可运行的 experiment workspace，它会返回 blocker，而不会编造结果
+- 当前不会直接提交 Slurm job；adapter 只生成 `sbatch` 脚本作为 dry-run
+- 不会自动做破坏性 rollback。失败的 packet 会被标记成 `discard`、`crash`、`timeout`、`checks_failed` 或 `inconclusive`，并给出 rollback recommendation，但真正怎么回滚仍由作者或项目自动化决定
 - 不会抓取投稿系统里的私有 reviews
 - 不会宣称支持所有 conference rebuttal format
 - 不会把 checked venue notes 说成 fully tested venue automation

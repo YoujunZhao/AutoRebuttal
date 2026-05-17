@@ -1,0 +1,14 @@
+{
+  "id": "R2-W3",
+  "reviewer": "R2",
+  "weakness_id": "W3",
+  "reviewer_text": "Please add an ablation showing whether the depth prior matters.",
+  "experiment_type": "ablation",
+  "needed_evidence": "A measured ablation comparing the method with and without the depth prior.",
+  "claim_to_support": "The depth prior improves geometry consistency.",
+  "risk": "medium",
+  "estimated_cost": "one evaluation run after author maps the project command",
+  "status": "needs_author_mapping",
+  "notes": "Do not cite a gain until a real metric file exists."
+}
+

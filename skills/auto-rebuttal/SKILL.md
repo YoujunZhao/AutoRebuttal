@@ -20,6 +20,14 @@ Load the detailed references only when needed:
 - `scripts/build_draft_bundle.py` when the user provides paper PDF plus review PDF or review text inputs
 - `scripts/build_revision_bundle.py` when the user provides an existing rebuttal PDF or rebuttal text, with optional paper PDF
 - `scripts/build_experiment_request_bundle.py` when the user asks to auto-run supplementary experiments via the experiment bridge
+- `schemas/experiment_request.schema.json` when a reviewer concern must become a structured experiment request
+- `schemas/experiment_packet.schema.json` when an experiment request must become a runnable packet
+- `schemas/evidence_ledger.schema.json` when a rebuttal claim must be traced to measured evidence
+- `scripts/build_experiment_plan.py` when reviewer requests need draft experiment packets
+- `scripts/validate_experiment_plan.py` before running any experiment packet
+- `scripts/run_experiment_packet.py` for local packet execution, metric comparison, result logging, and evidence-ledger updates
+- `scripts/parse_experiment_result.py` when a JSON, CSV, or regex-log metric must be parsed independently
+- `scripts/update_evidence_ledger.py` when a claim needs to be upserted into the evidence ledger
 - `scripts/detect_paper_artifact.py` when the paper input may be PDF, `.tex`, or a LaTeX project directory
 - `scripts/build_latex_output_package.py` when the paper source type is LaTeX and the workflow should return both rebuttal text and revised LaTeX paper
 - `scripts/build_input_bundle.py` as the PDF-only compatibility wrapper for draft-mode bundle building
@@ -33,6 +41,8 @@ Load the detailed references only when needed:
 - `scripts/allocate_rebuttal_budget.py` to plan characters before drafting
 - `scripts/build_experiment_placeholder_table.py` when a reviewer asks for new empirical evidence
 - `commands/experiment-bridge.md` when `autoexperiment=true` or the user explicitly asks to route evidence requests into the experiment lane
+- `references/experiment-loop.md` for measured loop semantics and decision values
+- `references/evidence-ledger.md` for claim provenance and non-fabrication boundaries
 - `references/reviewer-model.md` for reviewer stance and attitude analysis
 - `references/human-rebuttal-style.md` for a more human-like rebuttal rhythm
 
@@ -87,6 +97,10 @@ When the paper artifact is LaTeX, the output target expands to `rebuttal_text` p
 - Build a character budget plan before drafting.
 - If `autoexperiment=true` and the reviews ask for new evidence, route the request through `/experiment-bridge` before final drafting.
 - Only let `/experiment-bridge` proceed when `code=<path>` is available and points to a runnable experiment workspace.
+- Treat experiment execution as packet-based. Do not run broad or implicit experiments without an `Experiment Packet` that declares command, timeout, metric, baseline, file contract, and rebuttal usage.
+- Record packet outcomes in `results.tsv` or `results.jsonl` and `evidence_ledger.json`.
+- Only use verified ledger entries as experimental rebuttal claims. Failed, inconclusive, crashed, timed-out, or placeholder-only entries must not become factual rebuttal claims.
+- Slurm support is script generation first. Do not claim a Slurm job ran unless a real cluster submission and result parser evidence are provided.
 - Normalize reviews into atomic concerns before writing prose.
 - Use venue rules when available; if the user provides explicit limits, those override bundled defaults.
 - Never invent experiments, numerical gains, p-values, baselines, or citations.
@@ -112,8 +126,9 @@ When the paper artifact is LaTeX, the output target expands to `rebuttal_text` p
    - insert a result placeholder instead of fabricating a number
    - respectfully decline an unreasonable or out-of-scope request
 10. Draft reviewer-by-reviewer responses or a shared response letter, or revise the existing rebuttal draft.
-11. If the paper artifact is LaTeX, package the final result as `rebuttal_text` plus `revised_latex_paper`.
-12. Run the final compliance check before presenting the draft.
+11. If empirical claims are requested, build experiment requests and packets, validate them, run only mapped packets, and update the evidence ledger.
+12. If the paper artifact is LaTeX, package the final result as `rebuttal_text` plus `revised_latex_paper`.
+13. Run the final compliance check before presenting the draft.
 
 ## Venue-Aware Formatting Defaults
 
@@ -131,6 +146,7 @@ If the review contains minor weaknesses or minor comments, respond to them as sh
 When reading OpenReview-style reviews, preserve header variants such as `Main Weaknesses`, `Key Questions For Authors`, and `Minor Weaknesses` rather than flattening them into `W#` only.
 
 If a reviewer asks for empirical evidence, include a local experiment placeholder table with `XX` values rather than fabricating results.
+When an evidence ledger contains a verified claim, the rebuttal may use the ledger's conservative `rebuttal_sentence` or a shorter equivalent that preserves the metric and provenance.
 
 ## Required Output Structure
 

@@ -46,11 +46,25 @@ def detect_input_artifact(
                 }
             except ValueError:
                 tmp_root = pathlib.Path(tempfile.mkdtemp(prefix=temp_prefix))
-                page_images = render_review_pdf_pages(
-                    pdf_path=resolved_path,
-                    output_dir=_render_bucket(tmp_root, resolved_path, index),
-                )
-                ocr_text = ocr_rendered_pages(page_images).strip()
+                try:
+                    page_images = render_review_pdf_pages(
+                        pdf_path=resolved_path,
+                        output_dir=_render_bucket(tmp_root, resolved_path, index),
+                    )
+                except RuntimeError:
+                    if not allow_pdf_image_fallback:
+                        raise
+                    return {
+                        "source_type": "pdf",
+                        "path": str(resolved_path),
+                        "text": None,
+                        "extraction_mode": "image_fallback",
+                        "page_images": [],
+                    }
+                try:
+                    ocr_text = ocr_rendered_pages(page_images).strip()
+                except RuntimeError:
+                    ocr_text = ""
                 if ocr_text:
                     return {
                         "source_type": "pdf",

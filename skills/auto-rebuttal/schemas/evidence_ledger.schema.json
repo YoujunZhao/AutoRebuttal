@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://autorebuttal.local/schemas/evidence_ledger.schema.json",
+  "title": "AutoRebuttal Evidence Ledger",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "claims"],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "updated_at": {"type": ["string", "null"]},
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "claim_id",
+          "request_id",
+          "packet_id",
+          "claim",
+          "status",
+          "command",
+          "git_commit_before",
+          "git_commit_after",
+          "metric_before",
+          "metric_after",
+          "metric_name",
+          "metric_direction",
+          "log_files",
+          "result_files",
+          "rebuttal_sentence",
+          "do_not_overclaim"
+        ],
+        "properties": {
+          "claim_id": {"type": "string", "minLength": 1},
+          "request_id": {"type": "string", "minLength": 1},
+          "packet_id": {"type": "string", "minLength": 1},
+          "claim": {"type": "string"},
+          "status": {
+            "type": "string",
+            "enum": ["verified", "failed", "inconclusive", "placeholder_only"]
+          },
+          "command": {"type": ["string", "null"]},
+          "git_commit_before": {"type": ["string", "null"]},
+          "git_commit_after": {"type": ["string", "null"]},
+          "metric_before": {"type": ["number", "null"]},
+          "metric_after": {"type": ["number", "null"]},
+          "metric_name": {"type": ["string", "null"]},
+          "metric_direction": {"type": ["string", "null"], "enum": ["higher", "lower", null]},
+          "log_files": {"type": "array", "items": {"type": ["string", "null"]}},
+          "result_files": {"type": "array", "items": {"type": ["string", "null"]}},
+          "rebuttal_sentence": {"type": ["string", "null"]},
+          "do_not_overclaim": {"type": "boolean"}
+        }
+      }
+    }
+  }
+}
+

@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://autorebuttal.local/schemas/experiment_request.schema.json",
+  "title": "AutoRebuttal Experiment Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "reviewer",
+    "weakness_id",
+    "reviewer_text",
+    "experiment_type",
+    "needed_evidence",
+    "claim_to_support",
+    "risk",
+    "estimated_cost",
+    "status",
+    "notes"
+  ],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "reviewer": {"type": "string", "minLength": 1},
+    "weakness_id": {"type": "string", "minLength": 1},
+    "reviewer_text": {"type": "string", "minLength": 1},
+    "experiment_type": {
+      "type": "string",
+      "enum": [
+        "ablation",
+        "baseline",
+        "runtime",
+        "robustness",
+        "failure_case",
+        "dataset",
+        "metric",
+        "other"
+      ]
+    },
+    "needed_evidence": {"type": "string"},
+    "claim_to_support": {"type": "string"},
+    "risk": {"type": "string", "enum": ["low", "medium", "high"]},
+    "estimated_cost": {"type": "string"},
+    "status": {
+      "type": "string",
+      "enum": [
+        "planned",
+        "needs_author_mapping",
+        "runnable",
+        "blocked",
+        "completed",
+        "rejected"
+      ]
+    },
+    "notes": {"type": "string"}
+  }
+}
+

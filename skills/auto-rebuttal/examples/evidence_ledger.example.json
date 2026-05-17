@@ -1,0 +1,24 @@
+{
+  "schema_version": "0.1",
+  "updated_at": "2026-05-16T00:00:00Z",
+  "claims": [
+    {
+      "claim_id": "claim-R2-W3-ablation-depth",
+      "request_id": "R2-W3",
+      "packet_id": "R2-W3-ablation-depth",
+      "claim": "The depth prior improves geometry consistency.",
+      "status": "verified",
+      "command": "python eval_ablation.py --with-depth-prior",
+      "git_commit_before": null,
+      "git_commit_after": null,
+      "metric_before": 0.231,
+      "metric_after": 0.218,
+      "metric_name": "LPIPS",
+      "metric_direction": "lower",
+      "log_files": ["logs/experiments/R2-W3-ablation-depth/candidate.stdout.log"],
+      "result_files": ["outputs/metrics.json"],
+      "rebuttal_sentence": "[VERIFIED:R2-W3-ablation-depth] The depth prior improves geometry consistency (LPIPS=0.218).",
+      "do_not_overclaim": true
+    }
+  ]
+}

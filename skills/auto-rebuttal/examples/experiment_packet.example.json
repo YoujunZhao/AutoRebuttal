@@ -1,0 +1,26 @@
+{
+  "packet_id": "R2-W3-ablation-depth",
+  "request_id": "R2-W3",
+  "hypothesis": "The depth prior improves geometry consistency.",
+  "command": "python3 -c \"import json, pathlib; pathlib.Path('outputs').mkdir(exist_ok=True); json.dump({'lpips': 0.218}, open('outputs/metrics.json', 'w'))\"",
+  "working_dir": ".",
+  "launcher": "local",
+  "timeout_minutes": 2,
+  "metric": {
+    "name": "LPIPS",
+    "direction": "lower",
+    "parser": "json",
+    "source": "outputs/metrics.json",
+    "key": "lpips"
+  },
+  "baseline": {
+    "command": "",
+    "metric_value": 0.231
+  },
+  "success_condition": "LPIPS is lower than the provided baseline value.",
+  "allowed_files": ["configs/", "scripts/", "eval/"],
+  "forbidden_files": ["data/", "paper/main.tex"],
+  "output_files": ["outputs/metrics.json", "logs/experiments"],
+  "rebuttal_usage": "short table + one sentence",
+  "rollback_on_failure": true
+}

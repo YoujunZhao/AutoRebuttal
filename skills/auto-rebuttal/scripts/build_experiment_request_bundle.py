@@ -17,8 +17,23 @@ from response_modes import resolve_auto_experiment, resolve_code_path
 _REQUEST_PATTERNS = (
     ("comparison", ("baseline", "compare", "comparison", "against")),
     ("ablation", ("ablation", "ablate")),
+    ("runtime", ("runtime", "latency", "memory", "efficiency", "speed")),
+    ("robustness", ("robustness", "robust", "sensitivity", "noise", "perturb")),
+    ("failure_case", ("failure case", "failure mode", "failure example")),
+    ("dataset", ("dataset", "data split", "additional data", "domain shift")),
+    ("metric", ("metric", "score", "measure")),
     ("additional_experiment", ("experiment", "evaluation", "benchmark")),
 )
+_EXPERIMENT_TYPE_BY_REQUEST_TYPE = {
+    "comparison": "baseline",
+    "ablation": "ablation",
+    "runtime": "runtime",
+    "robustness": "robustness",
+    "failure_case": "failure_case",
+    "dataset": "dataset",
+    "metric": "metric",
+    "additional_experiment": "other",
+}
 _WORKSPACE_MARKERS = (
     "pyproject.toml",
     "requirements.txt",
@@ -76,6 +91,11 @@ def _looks_like_request(sentence: str) -> bool:
             "run ",
             "ablation",
             "experiment",
+            "runtime",
+            "latency",
+            "robust",
+            "dataset",
+            "metric",
         )
     )
 
@@ -84,12 +104,15 @@ def _extract_requests(reviews: list[dict[str, object]]) -> list[dict[str, object
     requests: list[dict[str, object]] = []
     seen: set[tuple[str, str]] = set()
 
+    per_review_counts: dict[int, int] = {}
+
     for review_index, review in enumerate(reviews):
         text = str(review.get("text") or "").strip()
         if not text:
             continue
 
         reviewer = _extract_reviewer_label(text)
+        reviewer_id = reviewer or f"R{review_index + 1}"
         for sentence in _iter_sentences(text):
             if not _looks_like_request(sentence):
                 continue
@@ -103,12 +126,24 @@ def _extract_requests(reviews: list[dict[str, object]]) -> list[dict[str, object
                 if marker in seen:
                     continue
                 seen.add(marker)
+                per_review_counts[review_index] = per_review_counts.get(review_index, 0) + 1
+                weakness_id = f"W{per_review_counts[review_index]}"
                 requests.append(
                     {
+                        "id": f"R{review_index + 1}-{weakness_id}",
                         "request_type": request_type,
+                        "experiment_type": _EXPERIMENT_TYPE_BY_REQUEST_TYPE[request_type],
                         "review_index": review_index,
-                        "reviewer": reviewer,
+                        "reviewer": reviewer_id,
+                        "weakness_id": weakness_id,
+                        "reviewer_text": sentence,
                         "request_text": sentence,
+                        "needed_evidence": sentence,
+                        "claim_to_support": "",
+                        "risk": "medium",
+                        "estimated_cost": "needs author mapping",
+                        "status": "planned",
+                        "notes": "Extracted from reviewer text; author must map this into a runnable experiment packet before execution.",
                     }
                 )
 
